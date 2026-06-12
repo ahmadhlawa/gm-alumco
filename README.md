@@ -5,7 +5,7 @@ This repository is organized as a frontend/backend workspace for the Ofok Alumin
 ```text
 project-root/
   frontend/   Existing Vite + React frontend
-  backend/    Reserved for the future NestJS backend
+  backend/    NestJS + PostgreSQL + Prisma backend foundation
   README.md
   .gitignore
 ```
@@ -26,6 +26,15 @@ See [frontend/README.md](frontend/README.md) for routes, architecture, limitatio
 
 ## Backend
 
-The `backend/` directory is reserved for the future NestJS + PostgreSQL + Prisma application. The backend has not been initialized.
+The `backend/` directory contains the NestJS + PostgreSQL + Prisma foundation, including validated environment configuration, security middleware, the initial database schema, an admin seed, and cookie-based JWT authentication.
 
-See [backend/BACKEND_ROADMAP.md](backend/BACKEND_ROADMAP.md) for the proposed implementation plan.
+Run backend setup commands from its directory:
+
+```bash
+cd backend
+npm install
+npm run prisma:generate
+npm run start:dev
+```
+
+See [backend/README.md](backend/README.md) for local database setup and [backend/BACKEND_ROADMAP.md](backend/BACKEND_ROADMAP.md) for the remaining implementation plan.
