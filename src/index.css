@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Tajawal", ui-sans-serif, system-ui, sans-serif;
+  --color-brand-navy: #0A192F;
+  --color-brand-surface: #112240;
+  --color-brand-surface-alt: #172A45;
+  --color-brand-text: #F3F4F6;
+  --color-brand-silver: #8892B0;
+  --color-brand-gold: #D4AF37;
+  --color-brand-border: #233554;
+}
+
+@layer base {
+  body {
+    @apply font-sans antialiased bg-brand-navy text-brand-text;
+  }
+  
+  select option {
+    background-color: var(--color-brand-navy);
+    color: var(--color-brand-text);
+  }
+}
