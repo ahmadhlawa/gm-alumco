@@ -1,6 +1,6 @@
 # Backend Roadmap
 
-This document defines the proposed backend integration plan for the Ofok Aluminum website and Visual CMS. It is a roadmap only; the current repository remains a frontend application.
+This document defines the proposed backend integration plan for the Ofok Aluminum website and Visual CMS. It is a roadmap only; no backend project has been initialized in this directory yet.
 
 ## Target Backend Stack
 
