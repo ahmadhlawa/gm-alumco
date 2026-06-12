@@ -1,82 +1,105 @@
-# Ofok Aluminum Backend
+# Ofok Aluminum FastAPI Backend
 
-NestJS foundation for the Ofok Aluminum website and Visual CMS. This baseline provides PostgreSQL/Prisma models and admin authentication only. CMS CRUD, uploads, deployment, and frontend integration are intentionally not implemented yet.
+Clean FastAPI and MySQL baseline for the Ofok Aluminum CMS. The frontend is not connected to this API yet, and the resource routers are placeholders for future CRUD work.
 
-## Stack
+## Requirements
 
-- NestJS and TypeScript
-- PostgreSQL and Prisma
-- JWT authentication with HTTP-only cookies
-- Passport and bcrypt
-- `class-validator` and `class-transformer`
-- Helmet, CORS, and cookie-parser
+- Python 3.11 or newer
+- MySQL 8 or newer
+- A MySQL database named `ofok_db`
 
-## Structure
+## 1. Create a virtual environment
 
-```text
-src/
-  admins/   Admin lookup service
-  auth/     Login, current-admin, logout, JWT guard and strategy
-  common/   Shared decorators and future cross-cutting utilities
-  config/   Environment validation
-  prisma/   Prisma module and lifecycle-managed client
-prisma/
-  schema.prisma
-  seed.ts
+From the `backend` directory:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ```
 
-## Local Setup
-
-1. Install dependencies:
+On macOS or Linux:
 
 ```bash
-npm install
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-2. Copy `.env.example` to `.env` and replace the development secrets.
-
-3. Start PostgreSQL and create the database configured by `DATABASE_URL`.
-
-4. Generate the Prisma client and create the first migration:
+## 2. Install dependencies
 
 ```bash
-npm run prisma:generate
-npm run prisma:migrate -- --name init
+python -m pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
-5. Seed the initial administrator:
+## 3. Configure environment variables
+
+Copy `.env.example` to `.env` and update the database credentials, JWT secret, frontend origin, and initial superadmin credentials.
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Create the database if it does not already exist:
+
+```sql
+CREATE DATABASE ofok_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+Multilingual database fields use JSON objects in this shape:
+
+```json
+{
+  "ar": "temporary development text",
+  "en": "English production text",
+  "he": "Hebrew production text"
+}
+```
+
+Arabic is temporary during development. The intended production languages are English and Hebrew.
+
+## 4. Run migrations
 
 ```bash
-npm run prisma:seed
+alembic upgrade head
 ```
 
-6. Run the API in watch mode:
+For future model changes, create and apply a migration:
 
 ```bash
-npm run start:dev
+alembic revision --autogenerate -m "describe change"
+alembic upgrade head
 ```
 
-The default API address is `http://localhost:4000`.
+## 5. Seed the first superadmin
 
-## Authentication Endpoints
+The command is idempotent and will not create a duplicate admin with the configured email.
 
-- `POST /auth/login` accepts `{ "email": "...", "password": "..." }` and sets the JWT cookie.
-- `GET /auth/me` returns the authenticated administrator.
-- `POST /auth/logout` clears the JWT cookie.
+```bash
+python -m app.utils.seed_admin
+```
 
-Set `credentials: "include"` when the frontend later calls these endpoints.
+There is no public registration endpoint.
 
-## Environment
+## 6. Run the API
 
-See `.env.example`. Required values are `DATABASE_URL` and `JWT_SECRET`. The seed also requires `ADMIN_EMAIL` and `ADMIN_PASSWORD`.
+```bash
+uvicorn app.main:app --reload
+```
 
-Use a long random `JWT_SECRET` and a unique administrator password outside local development. `FRONTEND_URL` accepts a comma-separated list of allowed CORS origins.
+Useful URLs:
 
-## Current Scope
+- Health check: `GET http://localhost:8000/api/v1/health`
+- API docs: `http://localhost:8000/api/v1/docs`
+- Login: `POST http://localhost:8000/api/v1/auth/login`
+- Current admin: `GET http://localhost:8000/api/v1/auth/me`
 
-- No public registration
-- No refresh-token flow
-- No CMS CRUD controllers
-- No image uploads
-- No frontend connection
-- No production deployment configuration
+Login accepts JSON:
+
+```json
+{
+  "email": "admin@ofok.local",
+  "password": "ChangeMe123!"
+}
+```
+
+Send the returned token to `/auth/me` as `Authorization: Bearer <token>`.

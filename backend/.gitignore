@@ -1,6 +1,9 @@
-node_modules/
-dist/
-coverage/
+__pycache__/
+*.py[cod]
 .env
-src/generated/prisma/
-*.log
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+alembic/versions/__pycache__/
