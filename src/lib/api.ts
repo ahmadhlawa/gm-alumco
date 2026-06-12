@@ -1,97 +1,59 @@
-import { Project, Service, Product, GalleryImage, Client, Testimonial, BlogPost, ContactMessage, QuoteRequest } from '@/types';
-import { mockProjects } from '../data/projects';
-import { mockServices } from '../data/services';
-import { mockProducts, mockGallery, mockClients, mockTestimonials, mockBlogPosts } from '../data/entities';
+import type {
+  ContactMessage,
+  GalleryImage,
+  Product,
+  Project,
+  QuoteRequest,
+  Service,
+  Testimonial
+} from '@/types';
+import { galleryImages } from '@/data/gallery';
+import { products } from '@/data/products';
+import { projects } from '@/data/projects';
+import { services } from '@/data/services';
+import { testimonials } from '@/data/testimonials';
 
-// Simulate artificial delay
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const resolveAfter = <T>(value: T, delayMs: number): Promise<T> =>
+  new Promise((resolve) => {
+    setTimeout(() => resolve(value), delayMs);
+  });
 
-export async function getProjects(): Promise<Project[]> {
-  await delay(800);
-  return mockProjects;
+export function getProjects(): Promise<Project[]> {
+  return resolveAfter(projects, 800);
 }
 
-export async function getFeaturedProjects(): Promise<Project[]> {
-  await delay(600);
-  return mockProjects.filter((p) => p.featured);
+export function createProject(data: Partial<Project>): Promise<Project> {
+  return resolveAfter({ ...data, id: `proj-${Date.now()}` } as Project, 1000);
 }
 
-export async function getProjectBySlug(slug: string): Promise<Project | null> {
-  await delay(500);
-  return mockProjects.find((p) => p.slug === slug) || null;
+export function updateProject(id: string, data: Partial<Project>): Promise<Project> {
+  return resolveAfter({ ...data, id } as Project, 1000);
 }
 
-export async function createProject(data: Partial<Project>): Promise<Project> {
-  await delay(1000);
-  // TODO: Replace mock implementation with real backend API integration later.
-  return { ...data, id: `proj-${Date.now()}` } as Project;
+export function deleteProject(_id: string): Promise<boolean> {
+  return resolveAfter(true, 1000);
 }
 
-export async function updateProject(id: string, data: Partial<Project>): Promise<Project> {
-  await delay(1000);
-  // TODO: Replace with real patch/put update
-  return { ...data, id } as Project;
+export function getServices(): Promise<Service[]> {
+  return resolveAfter(services, 700);
 }
 
-export async function deleteProject(id: string): Promise<boolean> {
-  await delay(1000);
-  // TODO: Replace with real delete
-  return true;
+export function getProducts(): Promise<Product[]> {
+  return resolveAfter(products, 800);
 }
 
-export async function getServices(): Promise<Service[]> {
-  await delay(700);
-  return mockServices;
+export function getGalleryImages(): Promise<GalleryImage[]> {
+  return resolveAfter(galleryImages, 1000);
 }
 
-export async function getServiceBySlug(slug: string): Promise<Service | null> {
-  await delay(500);
-  return mockServices.find((s) => s.slug === slug) || null;
+export function getTestimonials(): Promise<Testimonial[]> {
+  return resolveAfter(testimonials, 600);
 }
 
-export async function getProducts(): Promise<Product[]> {
-  await delay(800);
-  return mockProducts;
+export function submitContactMessage(_data: Partial<ContactMessage>): Promise<boolean> {
+  return resolveAfter(true, 1200);
 }
 
-export async function getProductBySlug(slug: string): Promise<Product | null> {
-  await delay(500);
-  return mockProducts.find((p) => p.slug === slug) || null;
-}
-
-export async function getGalleryImages(): Promise<GalleryImage[]> {
-  await delay(1000);
-  return mockGallery;
-}
-
-export async function getClients(): Promise<Client[]> {
-  await delay(500);
-  return mockClients;
-}
-
-export async function getTestimonials(): Promise<Testimonial[]> {
-  await delay(600);
-  return mockTestimonials;
-}
-
-export async function getBlogPosts(): Promise<BlogPost[]> {
-  await delay(800);
-  return mockBlogPosts;
-}
-
-export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-  await delay(500);
-  return mockBlogPosts.find((b) => b.slug === slug) || null;
-}
-
-export async function submitContactMessage(data: Partial<ContactMessage>): Promise<boolean> {
-  await delay(1200);
-  // TODO: Connect to real messaging endpoint
-  return true;
-}
-
-export async function submitQuoteRequest(data: Partial<QuoteRequest>): Promise<boolean> {
-  await delay(1500);
-  // TODO: Connect to backend quoting system
-  return true;
+export function submitQuoteRequest(_data: Partial<QuoteRequest>): Promise<boolean> {
+  return resolveAfter(true, 1500);
 }

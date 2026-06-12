@@ -1,8 +1,6 @@
-export type LocalizedText = {
-  ar: string;
-  en: string;
-  he: string;
-};
+import type { LocalizedText } from '@/types';
+
+export type { LocalizedText } from '@/types';
 
 export interface SiteStats {
   id: string;
@@ -328,6 +326,13 @@ export const initialSiteContent: SiteContent = {
     }
   }
 };
+
+export const getCompanyStats = (translate: (ar: string, he?: string, en?: string) => string) => [
+  { label: translate('سنوات من الخبرة', 'שנות נסיון'), value: '+15' },
+  { label: translate('مشروع منجز', 'פרויקטים שהושלמו'), value: '+350' },
+  { label: translate('عميل سعيد', 'לקוחות מרוצים'), value: '+200' },
+  { label: translate('فريق هندسي متخصص', 'צוות מהנדסים מומחים'), value: '+40' }
+];
 
 // Simple global client-side persistence for preview during active session.
 // We fall back inside local component state, but let's provide a session-storage utility

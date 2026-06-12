@@ -3,7 +3,7 @@ import { useState } from "react";
 import { submitQuoteRequest } from "@/lib/api";
 import { FileUploadPlaceholder } from "../common/FileUploadPlaceholder";
 
-export function QuoteRequestForm({ t }: { t: any }) {
+export function QuoteRequestForm() {
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle');
 
   const handleSubmit = async (e: React.FormEvent) => {

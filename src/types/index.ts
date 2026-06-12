@@ -1,3 +1,15 @@
+export type CmsLocale = 'ar' | 'en' | 'he';
+
+export type LocalizedText = {
+  ar: string;
+  en: string;
+  he: string;
+};
+
+export type LocalizedFields<T, K extends keyof T> = Omit<T, K> & {
+  [P in K]: LocalizedText;
+};
+
 export interface Service {
   id: string;
   slug: string;
@@ -10,11 +22,6 @@ export interface Service {
   seoTitle?: string;
   seoDescription?: string;
 }
-
-export type ProjectImage = {
-  url: string;
-  alt: string;
-};
 
 export interface Project {
   id: string;
@@ -52,19 +59,6 @@ export interface Product {
   seoDescription?: string;
 }
 
-export interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  date: string;
-  category: string;
-  image: string;
-  excerpt: string;
-  content: string;
-  seoTitle?: string;
-  seoDescription?: string;
-}
-
 export interface Testimonial {
   id: string;
   name: string;
@@ -85,21 +79,6 @@ export interface Partner {
   id: string;
   name: string;
   logo: string;
-}
-
-export interface Client {
-  id: string;
-  name: string;
-  logo: string;
-  url?: string;
-}
-
-export interface AdminUser {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  avatar?: string;
 }
 
 export interface ContactMessage {

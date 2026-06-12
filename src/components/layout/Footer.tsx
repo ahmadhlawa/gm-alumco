@@ -1,10 +1,28 @@
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Instagram, Linkedin, Twitter, Facebook } from 'lucide-react';
-import { useLanguage } from '@/lib/i18n';
+import { useLanguage } from '@/i18n';
+import type { CmsLocale, LocalizedText } from '@/types';
+import { translated } from '@/lib/cms';
 
-export function Footer() {
+export interface FooterCmsContent {
+  logoText: LocalizedText;
+  description: LocalizedText;
+  address: LocalizedText;
+  phone: string;
+  email: string;
+  copyright: LocalizedText;
+}
+
+interface FooterProps {
+  cmsContent?: FooterCmsContent;
+  previewLocale?: CmsLocale;
+}
+
+export function Footer({ cmsContent, previewLocale }: FooterProps = {}) {
   const currentYear = new Date().getFullYear();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const locale = previewLocale ?? language;
+  const cmsText = (value: LocalizedText | undefined, ar: string, he: string) => value ? translated(value, locale) : t(ar, he);
 
   return (
     <footer className="bg-brand-navy text-white pt-16 pb-8 border-t border-white/10">
@@ -18,11 +36,11 @@ export function Footer() {
                 <span className="text-brand-gold font-bold text-xl">AL</span>
               </div>
               <span className="font-bold text-xl tracking-tight text-white">
-                {t('أفق الألمنيوم', 'אופק אלומיניום')}
+                {cmsText(cmsContent?.logoText, 'أفق الألمنيوم', 'אופק אלומיניום')}
               </span>
             </Link>
             <p className="text-gray-400 mb-6 leading-relaxed">
-              {t('شركة رائدة متخصصة في تصميم وتصنيع وتركيب أنظمة الألمنيوم والزجاج المتطورة للمشاريع السكنية والتجارية بصمة معمارية فريدة.', 'חברה מובילה המתמחה בתכנון, ייצור והתקנה של מערכות אלומיניום וזכוכית מתקדמות לפרויקטים למגורים ומסחר, טביעת רגל אדריכלית ייחודית.')}
+              {cmsText(cmsContent?.description, 'شركة رائدة متخصصة في تصميم وتصنيع وتركيب أنظمة الألمنيوم والزجاج المتطورة للمشاريع السكنية والتجارية بصمة معمارية فريدة.', 'חברה מובילה המתמחה בתכנון, ייצור והתקנה של מערכות אלומיניום וזכוכית מתקדמות לפרויקטים למגורים ומסחר, טביעת רגל אדריכלית ייחודית.')}
             </p>
             <div className="flex gap-4">
               <a href="#" className="w-10 h-10 rounded-full bg-brand-surface/5 flex items-center justify-center text-gray-400 hover:bg-brand-gold hover:text-white transition-colors">
@@ -70,15 +88,15 @@ export function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3 text-gray-400">
                 <MapPin className="w-5 h-5 text-brand-gold shrink-0 mt-0.5" />
-                <span>{t('المنطقة الصناعية، شارع الملك فهد، الرياض، المملكة العربية السعودية', 'אזור תעשייה, רחוב המלך פהד, ריאד, ערב הסעודית')}</span>
+                <span>{cmsText(cmsContent?.address, 'المنطقة الصناعية، شارع الملك فهد، الرياض، المملكة العربية السعودية', 'אזור תעשייה, רחוב המלך פהד, ריאד, ערב הסעודית')}</span>
               </li>
               <li className="flex items-center gap-3 text-gray-400">
                 <Phone className="w-5 h-5 text-brand-gold shrink-0" />
-                <span dir="ltr">+966 50 123 4567</span>
+                <span dir="ltr">{cmsContent?.phone ?? '+966 50 123 4567'}</span>
               </li>
               <li className="flex items-center gap-3 text-gray-400">
                 <Mail className="w-5 h-5 text-brand-gold shrink-0" />
-                <span>info@alu-horizon.com</span>
+                <span>{cmsContent?.email ?? 'info@alu-horizon.com'}</span>
               </li>
             </ul>
           </div>
@@ -87,7 +105,7 @@ export function Footer() {
 
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-right">
           <p className="text-brand-silver text-sm">
-            &copy; {currentYear} {t('شركة أفق الألمنيوم. جميع الحقوق محفوظة.', 'אופק אלומיניום. כל הזכויות שמורות.')}
+            &copy; {currentYear} {cmsText(cmsContent?.copyright, 'شركة أفق الألمنيوم. جميع الحقوق محفوظة.', 'אופק אלומיניום. כל הזכויות שמורות.')}
           </p>
           <div className="flex gap-4 text-sm text-brand-silver">
             <Link to="/admin/login" className="hover:text-brand-gold transition-colors">{t('تسجيل دخول الإدارة', 'התחברות מנהל')}</Link>

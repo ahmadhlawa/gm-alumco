@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion } from 'motion/react';
 import { SectionHeader } from '@/components/common/SectionHeader';
 import { partners } from '@/data/partners';
-import { useLanguage } from '@/lib/i18n';
+import { useLanguage } from '@/i18n';
 
 export function SuccessPartners() {
   const { t } = useLanguage();
@@ -36,10 +35,6 @@ export function SuccessPartners() {
 
   const nextSlide = useCallback(() => {
     setCurrentIndex(prev => prev + 1);
-  }, []);
-
-  const prevSlide = useCallback(() => {
-    setCurrentIndex(prev => prev - 1);
   }, []);
 
   // Autoplay

@@ -1,9 +1,8 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '@/types';
 import { motion } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
-import { useLanguage } from '@/lib/i18n';
+import { useLanguage } from '@/i18n';
 
 interface ProductCardProps {
   product: Product;

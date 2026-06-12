@@ -1,6 +1,6 @@
 import { MessageCircle } from "lucide-react";
 import { motion } from "motion/react";
-import { useLanguage } from "@/lib/i18n";
+import { useLanguage } from "@/i18n";
 
 export function WhatsAppButton() {
   const { t } = useLanguage();

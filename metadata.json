@@ -1,8 +1,0 @@
-{
-  "name": "Ofok Aluminum Visual CMS",
-  "description": "Visual inline CMS platform for Ofok Aluminum services, products, and luxury architectural projects in Arabic, English, and Hebrew.",
-  "requestFramePermissions": [],
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
-}

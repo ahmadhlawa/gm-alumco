@@ -1,6 +1,6 @@
-import { Service } from '@/types';
+import type { Service } from '@/types';
 
-export const mockServices: Service[] = [
+export const services: Service[] = [
   {
     id: "srv-1",
     slug: "curtain-walls",

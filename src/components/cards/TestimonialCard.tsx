@@ -1,4 +1,3 @@
-import React from 'react';
 import { Testimonial } from '@/types';
 import { motion } from 'motion/react';
 import { Star, Quote } from 'lucide-react';

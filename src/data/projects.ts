@@ -1,6 +1,6 @@
-import { Project } from '@/types';
+import type { Project } from '@/types';
 
-export const mockProjects: Project[] = [
+export const projects: Project[] = [
   {
     id: "proj-1",
     slug: "modern-commercial-tower",

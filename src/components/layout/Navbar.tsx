@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Globe, ChevronDown } from 'lucide-react';
+import { Menu, X, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '../common/Button';
 import { cn } from '@/lib/utils';
-import { useLanguage } from '@/lib/i18n';
+import { useLanguage } from '@/i18n';
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);

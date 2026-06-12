@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { Button } from "./Button";
 import { cn } from "@/lib/utils";
-import { useLanguage } from "@/lib/i18n";
+import { useLanguage } from "@/i18n";
 
 interface CTASectionProps {
   title?: string;

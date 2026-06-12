@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { useState } from 'react';
 import { EditableBlock } from '@/components/admin/EditableBlock';
 import { SiteContent } from '@/data/siteContent';
 import { Globe, ArrowLeft, ArrowUpRight } from 'lucide-react';
@@ -212,12 +211,15 @@ export function HeroVisualEditor({ content, onChange }: HeroVisualEditorProps) {
             <div className="p-4 lg:p-8 relative z-20 w-full">
               <EditableBlock
                 title="تعديل مشروع مميز بالواجهة (Hero Featured Project Widget)"
-                type="image" // Since we can pass Alt text also
-                value={{
-                  url: content.featuredProject.image,
-                  alt: content.featuredProject.title // Use title as alt text wrapper
-                }}
-                onSave={(val) => updateField(['featuredProject', 'image'], typeof val === 'string' ? val : val.url)}
+                type="fields"
+                value={content.featuredProject}
+                fields={[
+                  { key: 'badge', label: 'شارة المشروع', localized: true },
+                  { key: 'title', label: 'اسم المشروع', localized: true },
+                  { key: 'description', label: 'وصف المشروع', type: 'textarea', localized: true },
+                  { key: 'image', label: 'رابط صورة المشروع', type: 'url' }
+                ]}
+                onSave={(featuredProject) => onChange({ ...content, featuredProject })}
               >
                 <div className="p-4 bg-black/60 backdrop-blur-xl border border-white/10 rounded group cursor-pointer hover:border-brand-gold transition-colors">
                   <div className="flex justify-between items-end gap-4" dir={previewLocale === 'en' ? 'ltr' : 'rtl'}>

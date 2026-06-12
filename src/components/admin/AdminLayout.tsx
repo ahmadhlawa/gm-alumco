@@ -11,7 +11,10 @@ import {
   Menu,
   X,
   ExternalLink,
-  Globe
+  Globe,
+  PanelBottom,
+  Handshake,
+  Quote
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -24,6 +27,9 @@ const navItems = [
   { path: '/admin/gallery', label: 'المعرض', icon: ImageIcon },
   { path: '/admin/services', label: 'الخدمات', icon: Layers },
   { path: '/admin/products', label: 'المنتجات', icon: Package },
+  { path: '/admin/partners', label: 'شركاء النجاح', icon: Handshake },
+  { path: '/admin/testimonials', label: 'آراء العملاء', icon: Quote },
+  { path: '/admin/footer', label: 'تذييل الموقع', icon: PanelBottom },
   { path: '/admin/messages', label: 'الرسائل', icon: MessageSquare },
   { path: '/admin/settings', label: 'الإعدادات', icon: Settings },
 ];

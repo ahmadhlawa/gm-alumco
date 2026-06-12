@@ -1,8 +1,7 @@
 import { motion } from 'motion/react';
-import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
-import { useLanguage } from '@/lib/i18n';
+import { useLanguage } from '@/i18n';
 
 interface PageHeroProps {
   title: string;
