@@ -13,6 +13,7 @@ import { projects } from '@/data/projects';
 import { services } from '@/data/services';
 import { testimonials } from '@/data/testimonials';
 
+// TODO(backend): Replace this Promise-only adapter with the NestJS REST client.
 const resolveAfter = <T>(value: T, delayMs: number): Promise<T> =>
   new Promise((resolve) => {
     setTimeout(() => resolve(value), delayMs);
@@ -51,9 +52,11 @@ export function getTestimonials(): Promise<Testimonial[]> {
 }
 
 export function submitContactMessage(_data: Partial<ContactMessage>): Promise<boolean> {
+  // TODO(backend): POST validated contact data to /api/v1/contact-messages.
   return resolveAfter(true, 1200);
 }
 
 export function submitQuoteRequest(_data: Partial<QuoteRequest>): Promise<boolean> {
+  // TODO(backend): POST the quote request and attachment references to the API.
   return resolveAfter(true, 1500);
 }

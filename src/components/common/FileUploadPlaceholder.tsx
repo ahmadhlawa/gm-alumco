@@ -1,6 +1,6 @@
 import { UploadCloud } from "lucide-react";
 
-// TODO: Connect to secure backend upload service later.
+// TODO(backend): Replace with validated presigned uploads to object storage.
 
 export function FileUploadPlaceholder({ label = "رفع ملف" }: { label?: string }) {
   return (

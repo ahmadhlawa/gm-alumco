@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { MessageSquare, Briefcase } from 'lucide-react';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 
-// Mock messages for display
+// TODO(backend): Load contact messages and quote requests from the protected admin API.
 const MOCK_MESSAGES = [
   { id: 1, type: 'quote', name: 'أحمد عبدالله', email: 'ahmed@example.com', phone: '0501234567', project: 'فيلا سكنية', service: 'واجهات كيرتن وول', date: '2023-11-20', status: 'جديد' },
   { id: 2, type: 'contact', name: 'شركة الأفق للاستثمار', email: 'info@horizon-inv.com', phone: '0555555555', message: 'نود الاستفسار عن إمكانية تنفيذ واجهات تجارية...', date: '2023-11-19', status: 'مقروء' },

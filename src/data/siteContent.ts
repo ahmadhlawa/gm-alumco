@@ -334,9 +334,7 @@ export const getCompanyStats = (translate: (ar: string, he?: string, en?: string
   { label: translate('فريق هندسي متخصص', 'צוות מהנדסים מומחים'), value: '+40' }
 ];
 
-// Simple global client-side persistence for preview during active session.
-// We fall back inside local component state, but let's provide a session-storage utility
-// so editing behaves cleanly as expected in a single turn.
+// TODO(backend): Replace preview storage with versioned draft and publish APIs.
 const STORAGE_KEY = "ofok_site_content";
 
 export function loadSiteContent(): SiteContent {

@@ -15,7 +15,7 @@ export function ProjectFormPage() {
 
   useEffect(() => {
     if (isEdit) {
-      // In a real app we'd fetch by ID here. Mocking by slug isn't perfect, we'll just fetch all and find
+      // TODO(backend): Fetch the project directly from the protected project detail endpoint.
       getProjects().then(data => {
         const found = data.find(p => p.id === id);
         if (found) setInitialData(found);

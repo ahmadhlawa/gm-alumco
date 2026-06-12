@@ -6,6 +6,7 @@ export function AdminSettings() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // TODO(backend): Persist validated settings through the protected settings endpoint.
     setSuccess(true);
     setTimeout(() => {
       setSuccess(false);

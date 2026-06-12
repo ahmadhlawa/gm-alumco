@@ -10,7 +10,7 @@ export function AdminLogin() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate login
+    // TODO(backend): Authenticate through the admin-only login endpoint and secure cookies.
     setTimeout(() => {
       setLoading(false);
       navigate('/admin');
