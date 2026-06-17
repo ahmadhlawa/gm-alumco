@@ -8,6 +8,7 @@ import { ProjectCard } from '@/components/cards/ProjectCard';
 import { TestimonialCard } from '@/components/cards/TestimonialCard';
 import { ProductCard } from '@/components/cards/ProductCard';
 import { SuccessPartners } from '@/components/sections/SuccessPartners';
+import { GeometricHero } from '@/components/sections/GeometricHero';
 import { getServices, getProjects, getProducts, getTestimonials } from '@/lib/api';
 import { useLanguage } from '@/i18n';
 import { ShieldCheck, Ruler, Clock, LayoutTemplate } from 'lucide-react';
@@ -54,95 +55,7 @@ export function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hero Section */}
-      <section className="relative min-h-[calc(100vh-80px)] flex flex-col lg:flex-row overflow-hidden bg-brand-navy">
-        <div className="lg:w-[55%] p-8 lg:p-16 flex flex-col justify-center relative">
-          <div className="absolute -top-20 -right-20 w-96 h-96 bg-brand-gold/5 blur-[120px] rounded-full pointer-events-none"></div>
-          <div className="relative z-10">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <span className="w-10 h-px bg-brand-gold"></span>
-                <span className="text-xs font-bold uppercase tracking-[0.2em] text-brand-gold">
-                  {t(content.hero.badge.ar, content.hero.badge.he, content.hero.badge.en)}
-                </span>
-              </div>
-              <h1 className="text-4xl md:text-5xl font-bold leading-[1.1] mb-8 text-white">
-                {t(content.hero.headline.ar, content.hero.headline.he, content.hero.headline.en)}
-              </h1>
-              <p className="text-lg text-brand-silver max-w-lg leading-relaxed mb-10">
-                {t(content.hero.subtitle.ar, content.hero.subtitle.he, content.hero.subtitle.en)}
-              </p>
-              <div className="flex flex-wrap items-center gap-6">
-                <Button href={content.hero.primaryCta.href} variant="primary" size="lg" className="bg-white text-black font-bold hover:bg-gray-200">
-                  {t(content.hero.primaryCta.label.ar, content.hero.primaryCta.label.he, content.hero.primaryCta.label.en)}
-                </Button>
-                <Button href={content.hero.secondaryCta.href} variant="outline" size="lg" className="border-white/20 text-white font-bold hover:bg-white/5">
-                  {t(content.hero.secondaryCta.label.ar, content.hero.secondaryCta.label.he, content.hero.secondaryCta.label.en)}
-                </Button>
-              </div>
-              
-              <div className="mt-16 flex flex-wrap gap-12 border-t border-white/5 pt-10">
-                {content.hero.stats.map((stat) => (
-                  <div key={stat.id} className="flex flex-col">
-                    <span className="text-3xl font-bold text-white font-sans">{stat.value}</span>
-                    <span className="text-[10px] uppercase tracking-widest text-[#9CA3AF]">
-                      {t(stat.label.ar, stat.label.he, stat.label.en)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        <div className="lg:w-[45%] min-h-[400px] lg:h-auto bg-brand-surface relative group overflow-hidden border-l border-white/5 font-sans">
-           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-brand-navy/20 to-brand-navy z-10 pointer-events-none"></div>
-           <div 
-             className="absolute inset-0 bg-cover bg-center transition-transform duration-[10s] group-hover:scale-110"
-             style={{ backgroundImage: `url(${content.hero.backgroundImage})` }}
-           ></div>
-           
-           <div className="absolute bottom-12 left-6 right-6 lg:left-12 lg:right-12 z-20">
-             <div className="p-6 bg-black/40 backdrop-blur-xl border border-white/10 rounded-sm">
-               <div className="flex justify-between items-end">
-                 <div>
-                   <span className="text-[10px] uppercase tracking-widest text-brand-gold mb-2 block">
-                     {t(content.hero.featuredProject.badge.ar, content.hero.featuredProject.badge.he, content.hero.featuredProject.badge.en)}
-                   </span>
-                   <h3 className="text-xl font-bold text-white">
-                     {t(content.hero.featuredProject.title.ar, content.hero.featuredProject.title.he, content.hero.featuredProject.title.en)}
-                   </h3>
-                   <p className="text-sm text-white/60 mt-1">
-                     {t(content.hero.featuredProject.description.ar, content.hero.featuredProject.description.he, content.hero.featuredProject.description.en)}
-                   </p>
-                 </div>
-                 <div className="w-12 h-12 border border-brand-gold flex items-center justify-center text-brand-gold bg-black/20">
-                   ↗
-                 </div>
-               </div>
-             </div>
-           </div>
-
-           <div className="absolute top-12 left-0 z-20 hidden md:flex flex-col gap-4">
-             <div className="bg-brand-navy p-4 border border-l-0 border-white/10">
-               <div className="flex flex-col items-center gap-1">
-                 <span className="text-[10px] uppercase tracking-widest opacity-40 -rotate-180" style={{ writingMode: 'vertical-lr' }}>Curtain Wall</span>
-                 <span className="w-1.5 h-1.5 rounded-full bg-brand-gold mt-2"></span>
-               </div>
-             </div>
-             <div className="bg-brand-navy/50 p-4 border border-l-0 border-white/10 opacity-50">
-               <div className="flex flex-col items-center gap-1">
-                 <span className="text-[10px] uppercase tracking-widest -rotate-180" style={{ writingMode: 'vertical-lr' }}>Windows</span>
-                 <span className="w-1.5 h-1.5 rounded-full bg-white/20 mt-2"></span>
-               </div>
-             </div>
-           </div>
-        </div>
-      </section>
+      <GeometricHero />
 
       {/* About Preview */}
       <section className="py-24 bg-brand-surface">
