@@ -1,20 +1,21 @@
-from datetime import date, datetime
+from datetime import datetime
 
 from pydantic import BaseModel
 
-from app.schemas.common import LocalizedText, ORMModel
+from app.schemas.common import ORMModel
 
 
 class ProjectBase(BaseModel):
-    slug: str
-    title: LocalizedText
-    description: LocalizedText | None = None
-    location: LocalizedText | None = None
-    cover_image_url: str | None = None
-    completed_at: date | None = None
-    is_featured: bool = False
-    is_published: bool = False
-    display_order: int = 0
+    title_ar: str
+    title_en: str
+    title_he: str
+    description_ar: str | None = None
+    description_en: str | None = None
+    description_he: str | None = None
+    category: str = "local"
+    main_image_url: str | None = None
+    is_active: bool = True
+    sort_order: int = 0
 
 
 class ProjectCreate(ProjectBase):
@@ -22,15 +23,16 @@ class ProjectCreate(ProjectBase):
 
 
 class ProjectUpdate(BaseModel):
-    slug: str | None = None
-    title: LocalizedText | None = None
-    description: LocalizedText | None = None
-    location: LocalizedText | None = None
-    cover_image_url: str | None = None
-    completed_at: date | None = None
-    is_featured: bool | None = None
-    is_published: bool | None = None
-    display_order: int | None = None
+    title_ar: str | None = None
+    title_en: str | None = None
+    title_he: str | None = None
+    description_ar: str | None = None
+    description_en: str | None = None
+    description_he: str | None = None
+    category: str | None = None
+    main_image_url: str | None = None
+    is_active: bool | None = None
+    sort_order: int | None = None
 
 
 class ProjectRead(ProjectBase, ORMModel):

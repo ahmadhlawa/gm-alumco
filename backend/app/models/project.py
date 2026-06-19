@@ -1,7 +1,6 @@
-from datetime import date, datetime
-from typing import Any
+from datetime import datetime
 
-from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, JSON, String, func
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -11,15 +10,16 @@ class Project(Base):
     __tablename__ = "projects"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    slug: Mapped[str] = mapped_column(String(180), unique=True, index=True)
-    title: Mapped[dict[str, Any]] = mapped_column(JSON)
-    description: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
-    location: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
-    cover_image_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    completed_at: Mapped[date | None] = mapped_column(Date, nullable=True)
-    is_featured: Mapped[bool] = mapped_column(Boolean, default=False)
-    is_published: Mapped[bool] = mapped_column(Boolean, default=False)
-    display_order: Mapped[int] = mapped_column(Integer, default=0)
+    title_ar: Mapped[str] = mapped_column(String(255))
+    title_en: Mapped[str] = mapped_column(String(255))
+    title_he: Mapped[str] = mapped_column(String(255))
+    description_ar: Mapped[str | None] = mapped_column(String(2000), nullable=True)
+    description_en: Mapped[str | None] = mapped_column(String(2000), nullable=True)
+    description_he: Mapped[str | None] = mapped_column(String(2000), nullable=True)
+    category: Mapped[str] = mapped_column(String(50), default="local", index=True)
+    main_image_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now(), onupdate=func.now()
@@ -28,7 +28,7 @@ class Project(Base):
     images: Mapped[list["ProjectImage"]] = relationship(
         back_populates="project",
         cascade="all, delete-orphan",
-        order_by="ProjectImage.display_order",
+        order_by="ProjectImage.sort_order",
     )
 
 
@@ -40,8 +40,10 @@ class ProjectImage(Base):
         ForeignKey("projects.id", ondelete="CASCADE"), index=True
     )
     image_url: Mapped[str] = mapped_column(String(500))
-    alt_text: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
-    display_order: Mapped[int] = mapped_column(Integer, default=0)
+    alt_text_ar: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    alt_text_en: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    alt_text_he: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     project: Mapped[Project] = relationship(back_populates="images")

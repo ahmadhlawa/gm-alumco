@@ -4,11 +4,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    app_name: str = "Ofok Aluminum API"
+    app_name: str = "GM Alomco API"
     environment: str = "development"
     api_prefix: str = "/api/v1"
 
-    database_url: str = "mysql+pymysql://root:password@localhost:3306/ofok_db"
+    database_url: str = "mysql+pymysql://root:password@localhost:3306/gm_alomco_db"
 
     jwt_secret_key: str = "change-this-secret"
     jwt_algorithm: str = "HS256"
@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     frontend_url: str = "http://localhost:5173"
 
     first_superadmin_name: str = "Super Admin"
-    first_superadmin_email: str = "admin@ofok.local"
+    first_superadmin_email: str = "admin@gm-alomco.local"
     first_superadmin_password: str = "ChangeMe123!"
 
     model_config = SettingsConfigDict(

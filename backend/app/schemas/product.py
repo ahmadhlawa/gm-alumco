@@ -1,21 +1,20 @@
 from datetime import datetime
-from typing import Any
 
 from pydantic import BaseModel
 
-from app.schemas.common import LocalizedText, ORMModel
+from app.schemas.common import ORMModel
 
 
 class ProductBase(BaseModel):
-    slug: str
-    title: LocalizedText
-    description: LocalizedText | None = None
-    category: LocalizedText | None = None
-    specifications: dict[str, Any] | None = None
+    title_ar: str
+    title_en: str
+    title_he: str
+    description_ar: str | None = None
+    description_en: str | None = None
+    description_he: str | None = None
     image_url: str | None = None
-    is_featured: bool = False
-    is_published: bool = False
-    display_order: int = 0
+    is_active: bool = True
+    sort_order: int = 0
 
 
 class ProductCreate(ProductBase):
@@ -23,15 +22,15 @@ class ProductCreate(ProductBase):
 
 
 class ProductUpdate(BaseModel):
-    slug: str | None = None
-    title: LocalizedText | None = None
-    description: LocalizedText | None = None
-    category: LocalizedText | None = None
-    specifications: dict[str, Any] | None = None
+    title_ar: str | None = None
+    title_en: str | None = None
+    title_he: str | None = None
+    description_ar: str | None = None
+    description_en: str | None = None
+    description_he: str | None = None
     image_url: str | None = None
-    is_featured: bool | None = None
-    is_published: bool | None = None
-    display_order: int | None = None
+    is_active: bool | None = None
+    sort_order: int | None = None
 
 
 class ProductRead(ProductBase, ORMModel):

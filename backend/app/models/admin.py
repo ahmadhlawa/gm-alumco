@@ -10,7 +10,7 @@ class Admin(Base):
     __tablename__ = "admins"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(150))
+    full_name: Mapped[str] = mapped_column(String(150))
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(String(255))
     role: Mapped[str] = mapped_column(String(50), default="admin")
@@ -21,5 +21,6 @@ class Admin(Base):
         server_default=func.now(),
         onupdate=func.now(),
     )
+    last_login_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     audit_logs = relationship("AuditLog", back_populates="admin")

@@ -16,15 +16,15 @@ def seed_admin() -> None:
             return
 
         admin = Admin(
-            name=settings.first_superadmin_name,
+            full_name=settings.first_superadmin_name,
             email=email,
             password_hash=get_password_hash(settings.first_superadmin_password),
-            role="superadmin",
+            role="super_admin",
             is_active=True,
         )
         db.add(admin)
         db.commit()
-        print(f"Superadmin created: {email}")
+        print(f"Super admin created: {email}")
 
 
 if __name__ == "__main__":
