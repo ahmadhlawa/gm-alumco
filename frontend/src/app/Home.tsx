@@ -17,7 +17,7 @@ import { Service, Project, Product, Testimonial } from '@/types';
 import { loadSiteContent } from '@/data/siteContent';
 
 export function Home() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [content] = useState(() => loadSiteContent());
   const [services, setServices] = useState<Service[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -31,19 +31,24 @@ export function Home() {
   }));
 
   useEffect(() => {
+    setLoading(true);
     Promise.all([
-      getServices(),
-      getProjects(),
-      getProducts(),
-      getTestimonials()
+      getServices(language),
+      getProjects(language),
+      getProducts(language),
+      getTestimonials(language)
     ]).then(([svcs, projs, prods, tests]) => {
       setServices(svcs);
       setProjects(projs);
       setProducts(prods);
       setTestimonials(tests);
-      setLoading(false);
-    });
-  }, []);
+    }).catch(() => {
+      setServices([]);
+      setProjects([]);
+      setProducts([]);
+      setTestimonials([]);
+    }).finally(() => setLoading(false));
+  }, [language]);
 
   if (loading) {
     return (

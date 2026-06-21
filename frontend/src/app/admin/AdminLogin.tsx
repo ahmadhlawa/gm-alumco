@@ -1,20 +1,31 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { login } from '@/api/auth';
+import { ApiError } from '@/api/client';
 
 export function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // TODO(backend): Authenticate through the admin-only login endpoint and secure cookies.
-    setTimeout(() => {
-      setLoading(false);
+    setError('');
+    try {
+      await login(email, password);
       navigate('/admin');
-    }, 1000);
+    } catch (err) {
+      setError(
+        err instanceof ApiError && err.status === 401
+          ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة.'
+          : 'تعذر تسجيل الدخول. تحقق من الاتصال وحاول مرة أخرى.'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -31,6 +42,11 @@ export function AdminLogin() {
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 text-red-300 p-3 rounded text-sm text-center">
+              {error}
+            </div>
+          )}
           <div className="space-y-2">
             <label className="text-sm font-bold text-gray-300">البريد الإلكتروني</label>
             <input 

@@ -1,4 +1,5 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { logout } from '@/api/auth';
 import { 
   LayoutDashboard, 
   Briefcase, 
@@ -36,7 +37,13 @@ const navItems = [
 
 export function AdminLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/admin/login', { replace: true });
+  };
 
   // Exclude login from layout
   if (location.pathname === '/admin/login') {
@@ -82,7 +89,7 @@ export function AdminLayout() {
               <ExternalLink className="w-5 h-5 shrink-0" />
               <span className="font-medium">العودة للموقع</span>
            </Link>
-           <button className="w-full flex items-center gap-3 px-4 py-3 rounded-md text-red-400 hover:bg-red-400/10 transition-colors">
+           <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-md text-red-400 hover:bg-red-400/10 transition-colors">
               <LogOut className="w-5 h-5 shrink-0" />
               <span className="font-medium">تسجيل الخروج</span>
            </button>

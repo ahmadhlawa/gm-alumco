@@ -6,19 +6,24 @@ import { getServices } from '@/lib/api';
 import { useLanguage } from '@/i18n';
 import { useState, useEffect } from 'react';
 import { LoadingState } from '@/components/common/LoadingState';
+import { ErrorState } from '@/components/common/ErrorState';
+import { EmptyState } from '@/components/common/EmptyState';
 import { Service } from '@/types';
 
 export function Services() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    getServices().then(data => {
-      setServices(data);
-      setLoading(false);
-    });
-  }, []);
+    setLoading(true);
+    setError(false);
+    getServices(language)
+      .then(data => setServices(data))
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
+  }, [language]);
 
   return (
     <div className="bg-brand-navy">
@@ -38,6 +43,10 @@ export function Services() {
           <div className="min-h-[400px]">
              {loading ? (
                 <LoadingState />
+             ) : error ? (
+                <ErrorState />
+             ) : services.length === 0 ? (
+                <EmptyState message={t('لا توجد خدمات لعرضها حالياً.', 'אין שירותים להצגה כעת.')} />
              ) : (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {services.map((service, idx) => (

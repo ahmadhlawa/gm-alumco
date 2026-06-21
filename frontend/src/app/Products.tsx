@@ -6,19 +6,24 @@ import { getProducts } from '@/lib/api';
 import { useLanguage } from '@/i18n';
 import { useState, useEffect } from 'react';
 import { LoadingState } from '@/components/common/LoadingState';
+import { ErrorState } from '@/components/common/ErrorState';
+import { EmptyState } from '@/components/common/EmptyState';
 import { Product } from '@/types';
 
 export function Products() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    getProducts().then(data => {
-      setProducts(data);
-      setLoading(false);
-    });
-  }, []);
+    setLoading(true);
+    setError(false);
+    getProducts(language)
+      .then(data => setProducts(data))
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
+  }, [language]);
 
   return (
     <div className="bg-brand-navy">
@@ -38,6 +43,10 @@ export function Products() {
           <div className="min-h-[400px]">
              {loading ? (
                 <LoadingState />
+             ) : error ? (
+                <ErrorState />
+             ) : products.length === 0 ? (
+                <EmptyState message={t('لا توجد منتجات لعرضها حالياً.', 'אין מוצרים להצגה כעת.')} />
              ) : (
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {products.map((product, idx) => (

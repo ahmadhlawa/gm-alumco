@@ -9,22 +9,26 @@ import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { Search } from 'lucide-react';
 import { LoadingState } from '@/components/common/LoadingState';
+import { ErrorState } from '@/components/common/ErrorState';
 import { Project } from '@/types';
 
 export function Projects() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [filter, setFilter] = useState(t('الكل', 'הכל'));
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    getProjects().then(data => {
-      setProjects(data);
-      setLoading(false);
-    });
-  }, []);
+    setLoading(true);
+    setError(false);
+    getProjects(language)
+      .then(data => setProjects(data))
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
+  }, [language]);
 
   const categories = [t('الكل', 'הכל'), ...Array.from(new Set(projects.map(p => p.category)))];
 
@@ -86,6 +90,8 @@ export function Projects() {
           <div className="min-h-[400px]">
             {loading ? (
               <LoadingState />
+            ) : error ? (
+              <ErrorState />
             ) : (
               <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <AnimatePresence>

@@ -131,7 +131,7 @@ npm install
 npm run dev
 ```
 
-The development server runs on port `3000` and is exposed on the local network by the existing Vite script.
+The development server runs on port `5173` (matching the backend's allowed CORS origin) and is exposed on the local network by the existing Vite script.
 
 Other commands:
 

@@ -5,12 +5,31 @@ import { FileUploadPlaceholder } from "../common/FileUploadPlaceholder";
 
 export function QuoteRequestForm() {
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle');
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    projectType: '',
+    serviceType: ''
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
     try {
-      await submitQuoteRequest({});
+      await submitQuoteRequest({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        service_type: formData.serviceType || undefined,
+        message: formData.projectType ? `نوع المشروع: ${formData.projectType}` : undefined
+      });
       setStatus('success');
     } catch {
       setStatus('error');
@@ -33,11 +52,15 @@ export function QuoteRequestForm() {
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-sm font-bold text-gray-200">الاسم الكامل <span className="text-red-500">*</span></label>
-            <input required type="text" className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded text-white" />
+            <input required type="text" name="name" value={formData.name} onChange={handleChange} className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded text-white" />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-bold text-gray-200">رقم التواصل <span className="text-red-500">*</span></label>
-            <input required type="tel" dir="ltr" className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded text-white text-right" />
+            <input required type="tel" name="phone" value={formData.phone} onChange={handleChange} dir="ltr" className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded text-white text-right" />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <label className="text-sm font-bold text-gray-200">البريد الإلكتروني <span className="text-red-500">*</span></label>
+            <input required type="email" name="email" value={formData.email} onChange={handleChange} dir="ltr" className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded text-white text-right" />
           </div>
         </div>
       </div>
@@ -47,7 +70,7 @@ export function QuoteRequestForm() {
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-sm font-bold text-gray-200">نوع المشروع</label>
-            <select className="w-full h-12 px-4 bg-brand-navy border border-white/10 rounded text-white appearance-none">
+            <select name="projectType" value={formData.projectType} onChange={handleChange} className="w-full h-12 px-4 bg-brand-navy border border-white/10 rounded text-white appearance-none">
               <option value="" className="bg-brand-navy text-white">اختر...</option>
               <option value="villa" className="bg-brand-navy text-white">فيلا سكنية</option>
               <option value="commercial" className="bg-brand-navy text-white">مبنى تجاري</option>
@@ -55,7 +78,7 @@ export function QuoteRequestForm() {
           </div>
           <div className="space-y-2">
             <label className="text-sm font-bold text-gray-200">الخدمة المطلوبة</label>
-            <select className="w-full h-12 px-4 bg-brand-navy border border-white/10 rounded text-white appearance-none">
+            <select name="serviceType" value={formData.serviceType} onChange={handleChange} className="w-full h-12 px-4 bg-brand-navy border border-white/10 rounded text-white appearance-none">
               <option value="" className="bg-brand-navy text-white">اختر...</option>
               <option value="curtain" className="bg-brand-navy text-white">واجهات كيرتن وول</option>
               <option value="doors" className="bg-brand-navy text-white">نوافذ وأبواب</option>
@@ -69,8 +92,14 @@ export function QuoteRequestForm() {
         <FileUploadPlaceholder label="ارفع المخططات هنا إن وجدت" />
       </div>
 
-      <button 
-        type="submit" 
+      {status === 'error' && (
+        <div className="bg-red-500/10 border border-red-500/20 text-red-300 p-4 rounded text-center text-sm">
+          تعذر إرسال الطلب. يرجى المحاولة مرة أخرى.
+        </div>
+      )}
+
+      <button
+        type="submit"
         disabled={status === 'loading'}
         className="w-full h-14 bg-brand-gold text-white font-bold rounded text-lg hover:bg-[#b8962e] transition-colors disabled:opacity-50"
       >
