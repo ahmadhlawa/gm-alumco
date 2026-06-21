@@ -10,3 +10,5 @@ passlib[bcrypt]
 bcrypt<4.1
 python-multipart
 email-validator
+pytest
+httpx

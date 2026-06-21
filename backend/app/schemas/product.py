@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from app.schemas.common import ORMModel
+from app.schemas.common import HttpUrlString, ORMModel
 
 
 class ProductBase(BaseModel):
@@ -12,7 +12,7 @@ class ProductBase(BaseModel):
     description_ar: str | None = None
     description_en: str | None = None
     description_he: str | None = None
-    image_url: str | None = None
+    image_url: HttpUrlString | None = None
     is_active: bool = True
     sort_order: int = 0
 
@@ -28,7 +28,7 @@ class ProductUpdate(BaseModel):
     description_ar: str | None = None
     description_en: str | None = None
     description_he: str | None = None
-    image_url: str | None = None
+    image_url: HttpUrlString | None = None
     is_active: bool | None = None
     sort_order: int | None = None
 

@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -11,6 +13,9 @@ def authenticate_admin(db: Session, email: str, password: str) -> Admin | None:
         return None
     if not verify_password(password, admin.password_hash):
         return None
+    admin.last_login_at = datetime.now(timezone.utc).replace(tzinfo=None)
+    db.commit()
+    db.refresh(admin)
     return admin
 
 
