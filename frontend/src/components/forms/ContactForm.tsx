@@ -19,7 +19,13 @@ export function ContactForm({ t }: { t: any }) {
     e.preventDefault();
     setStatus('loading');
     try {
-      await submitContactMessage(formData);
+      await submitContactMessage({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        subject: formData.projectType || undefined,
+        message: formData.message
+      });
       setStatus('success');
     } catch {
       setStatus('error');
@@ -49,8 +55,8 @@ export function ContactForm({ t }: { t: any }) {
       </div>
       
       <div className="space-y-2">
-         <label className="text-sm font-bold text-gray-200">{t('البريد الإلكتروني', 'אימייל')}</label>
-         <input type="email" name="email" value={formData.email} onChange={handleChange} dir="ltr" className="w-full h-12 px-4 bg-white/5 border border-white/10 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition-colors text-right text-white rounded" />
+         <label className="text-sm font-bold text-gray-200">{t('البريد الإلكتروني ', 'אימייל ')}<span className="text-red-500">*</span></label>
+         <input required type="email" name="email" value={formData.email} onChange={handleChange} dir="ltr" className="w-full h-12 px-4 bg-white/5 border border-white/10 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition-colors text-right text-white rounded" />
       </div>
       
       <div className="space-y-2">
@@ -69,8 +75,14 @@ export function ContactForm({ t }: { t: any }) {
          <textarea required name="message" value={formData.message} onChange={handleChange} rows={5} className="w-full p-4 bg-white/5 border border-white/10 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition-colors resize-none text-white rounded"></textarea>
       </div>
       
-      <button 
-        type="submit" 
+      {status === 'error' && (
+        <div className="bg-red-500/10 border border-red-500/20 text-red-300 p-4 rounded text-center text-sm">
+          {t('تعذر إرسال الرسالة. يرجى المحاولة مرة أخرى.', 'שליחת ההודעה נכשלה. נסה שוב.')}
+        </div>
+      )}
+
+      <button
+        type="submit"
         disabled={status === 'loading'}
         className="w-full h-12 bg-brand-gold text-white font-bold rounded hover:bg-[#b8962e] transition-colors disabled:opacity-50"
       >

@@ -1,18 +1,32 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { SectionHeader } from '@/components/common/SectionHeader';
-import { partners } from '@/data/partners';
+import { getPartners } from '@/lib/api';
+import type { Partner } from '@/types';
 import { useLanguage } from '@/i18n';
 
 export function SuccessPartners() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const autoplayInterval = 6000;
-  
+
+  const [partners, setPartners] = useState<Partner[]>([]);
+
+  useEffect(() => {
+    getPartners(language)
+      .then((data) => setPartners(data))
+      .catch(() => setPartners([]));
+  }, [language]);
+
   const totalItems = partners.length;
   // We triplicate the items to create a seamless infinite loop track
   const trackItems = [...partners, ...partners, ...partners];
 
   const [currentIndex, setCurrentIndex] = useState(totalItems); // Start at the middle block
   const [isTransitioning, setIsTransitioning] = useState(true);
+
+  // Recenter the track on the middle block once partners load from the API
+  useEffect(() => {
+    if (totalItems > 0) setCurrentIndex(totalItems);
+  }, [totalItems]);
   const [itemsPerView, setItemsPerView] = useState(5);
   const [isHovered, setIsHovered] = useState(false);
   

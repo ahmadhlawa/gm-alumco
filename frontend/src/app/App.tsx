@@ -15,6 +15,7 @@ import { LanguageProvider, useLanguage } from '@/i18n';
 
 // Admin imports
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { RequireAuth } from '@/components/admin/RequireAuth';
 import { Dashboard } from '@/app/admin/Dashboard';
 import { AdminProjects } from '@/app/admin/AdminProjects';
 import { ProjectFormPage } from '@/app/admin/ProjectFormPage';
@@ -77,7 +78,7 @@ function AppContent() {
         <Routes>
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin" element={<RequireAuth><AdminLayout /></RequireAuth>}>
              <Route index element={<Dashboard />} />
              <Route path="website" element={<AdminWebsite />} />
              <Route path="website/hero" element={<AdminWebsiteHero />} />

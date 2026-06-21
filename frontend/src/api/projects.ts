@@ -1,0 +1,10 @@
+import { apiRequest } from './client'; import type { ProjectDetailDto, ProjectDto, ProjectImageDto } from './types';
+export const listProjects = () => apiRequest<ProjectDto[]>('/projects');
+export const getProject = (id: number | string) => apiRequest<ProjectDetailDto>(`/projects/${id}`);
+export const listAdminProjects = () => apiRequest<ProjectDto[]>('/admin/projects', { authenticated: true });
+export const getAdminProject = (id: number | string) => apiRequest<ProjectDetailDto>(`/admin/projects/${id}`, { authenticated: true });
+export const createProject = (data: Partial<ProjectDto>) => apiRequest<ProjectDto>('/admin/projects', { method: 'POST', body: JSON.stringify(data), authenticated: true });
+export const updateProject = (id: number | string, data: Partial<ProjectDto>) => apiRequest<ProjectDto>(`/admin/projects/${id}`, { method: 'PUT', body: JSON.stringify(data), authenticated: true });
+export const deleteProject = (id: number | string) => apiRequest<void>(`/admin/projects/${id}`, { method: 'DELETE', authenticated: true });
+export const addProjectImage = (id: number | string, data: Partial<ProjectImageDto>) => apiRequest<ProjectImageDto>(`/admin/projects/${id}/images`, { method: 'POST', body: JSON.stringify(data), authenticated: true });
+export const deleteProjectImage = (id: number | string) => apiRequest<void>(`/admin/project-images/${id}`, { method: 'DELETE', authenticated: true });

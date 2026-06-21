@@ -5,7 +5,7 @@ import { FileUploadPlaceholder } from "../common/FileUploadPlaceholder";
 
 interface ProjectFormProps {
   initialData?: Project;
-  onSubmit: (data: Partial<Project>) => void;
+  onSubmit: (data: Partial<Project>) => void | Promise<void>;
 }
 
 export function ProjectForm({ initialData, onSubmit }: ProjectFormProps) {
@@ -22,19 +22,30 @@ export function ProjectForm({ initialData, onSubmit }: ProjectFormProps) {
   });
 
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
-    setSuccess(true);
-    setTimeout(() => setSuccess(false), 3000);
+    setError(false);
+    try {
+      await onSubmit(formData);
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } catch {
+      setError(true);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
       {success && (
         <div className="p-4 bg-green-500/10 border border-green-500/20 text-green-400 rounded-md">
-           تم الحفظ بنجاح (محاكاة فقط).
+           تم حفظ المشروع بنجاح.
+        </div>
+      )}
+      {error && (
+        <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-300 rounded-md">
+           تعذر حفظ المشروع. يرجى المحاولة مرة أخرى.
         </div>
       )}
 
