@@ -11,6 +11,7 @@ from app.api.v1.endpoints import (
     quote_requests,
     services,
     site_content,
+    site_settings,
     testimonials,
 )
 
@@ -70,7 +71,26 @@ api_router.include_router(
     prefix="/admin/testimonials",
     tags=["admin: testimonials"],
 )
-api_router.include_router(site_content.router, prefix="/site-content", tags=["site-content"])
+api_router.include_router(
+    site_content.public_router,
+    prefix="/site-content",
+    tags=["site content"],
+)
+api_router.include_router(
+    site_content.admin_router,
+    prefix="/admin/site-content",
+    tags=["admin: site content"],
+)
+api_router.include_router(
+    site_settings.public_router,
+    prefix="/site-settings",
+    tags=["site settings"],
+)
+api_router.include_router(
+    site_settings.admin_router,
+    prefix="/admin/site-settings",
+    tags=["admin: site settings"],
+)
 api_router.include_router(
     messages.public_router,
     prefix="/contact/messages",
