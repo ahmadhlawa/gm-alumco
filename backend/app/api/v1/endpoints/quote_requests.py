@@ -1,3 +1,78 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, Response, status
+from sqlalchemy.orm import Session
 
-router = APIRouter()
+from app.api.dependencies import require_admin
+from app.db.database import get_db
+from app.models.admin import Admin
+from app.models.message import QuoteRequest
+from app.schemas.message import (
+    QuoteRequestCreate,
+    QuoteRequestRead,
+    QuoteRequestStatusUpdate,
+)
+from app.services.crud import create_entity
+from app.services.inbox_service import (
+    delete_inbox_record,
+    get_inbox_record_or_404,
+    list_inbox_records,
+    update_inbox_status,
+)
+
+
+public_router = APIRouter()
+admin_router = APIRouter()
+
+
+@public_router.post(
+    "",
+    response_model=QuoteRequestRead,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_quote_request(
+    data: QuoteRequestCreate,
+    db: Session = Depends(get_db),
+) -> QuoteRequest:
+    return create_entity(db, QuoteRequest, data)
+
+
+@admin_router.get("", response_model=list[QuoteRequestRead])
+def read_quote_requests(
+    db: Session = Depends(get_db),
+    _: Admin = Depends(require_admin),
+) -> list[QuoteRequest]:
+    return list_inbox_records(db, QuoteRequest)
+
+
+@admin_router.get("/{request_id}", response_model=QuoteRequestRead)
+def read_quote_request(
+    request_id: int,
+    db: Session = Depends(get_db),
+    _: Admin = Depends(require_admin),
+) -> QuoteRequest:
+    return get_inbox_record_or_404(db, QuoteRequest, request_id, label="Quote request")
+
+
+@admin_router.patch("/{request_id}/status", response_model=QuoteRequestRead)
+def update_quote_request_status(
+    request_id: int,
+    data: QuoteRequestStatusUpdate,
+    db: Session = Depends(get_db),
+    _: Admin = Depends(require_admin),
+) -> QuoteRequest:
+    request = get_inbox_record_or_404(
+        db, QuoteRequest, request_id, label="Quote request"
+    )
+    return update_inbox_status(db, request, data.status)
+
+
+@admin_router.delete("/{request_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_quote_request(
+    request_id: int,
+    db: Session = Depends(get_db),
+    _: Admin = Depends(require_admin),
+) -> Response:
+    request = get_inbox_record_or_404(
+        db, QuoteRequest, request_id, label="Quote request"
+    )
+    delete_inbox_record(db, request)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

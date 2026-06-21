@@ -71,9 +71,23 @@ api_router.include_router(
     tags=["admin: testimonials"],
 )
 api_router.include_router(site_content.router, prefix="/site-content", tags=["site-content"])
-api_router.include_router(messages.router, prefix="/messages", tags=["messages"])
 api_router.include_router(
-    quote_requests.router,
+    messages.public_router,
+    prefix="/contact/messages",
+    tags=["contact messages"],
+)
+api_router.include_router(
+    messages.admin_router,
+    prefix="/admin/contact-messages",
+    tags=["admin: contact messages"],
+)
+api_router.include_router(
+    quote_requests.public_router,
     prefix="/quote-requests",
     tags=["quote-requests"],
+)
+api_router.include_router(
+    quote_requests.admin_router,
+    prefix="/admin/quote-requests",
+    tags=["admin: quote requests"],
 )
