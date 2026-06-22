@@ -3,6 +3,7 @@ import { SectionHeader } from '@/components/common/SectionHeader';
 import { getPartners } from '@/lib/api';
 import type { Partner } from '@/types';
 import { useLanguage } from '@/i18n';
+import { handleImageError, normalizeImageUrl } from '@/lib/utils';
 
 export function SuccessPartners() {
   const { t, language } = useLanguage();
@@ -176,9 +177,10 @@ export function SuccessPartners() {
                   <div className="group flex flex-col items-center justify-center p-8 aspect-square bg-[#112240] border border-white/5 rounded-xl hover:border-brand-gold/30 hover:bg-white/5 hover:shadow-[0_0_20px_rgba(212,175,55,0.1)] hover:-translate-y-2 transition-all duration-300">
                     <div className="w-full flex flex-col items-center justify-center text-center">
                       {partner.logo ? (
-                        <img 
-                          src={partner.logo} 
-                          alt={partner.name} 
+                        <img
+                          src={normalizeImageUrl(partner.logo)}
+                          onError={handleImageError}
+                          alt={partner.name}
                           className="max-h-full max-w-full object-contain grayscale scale-95 opacity-50 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 drop-shadow-md"
                           draggable="false"
                           loading="lazy"

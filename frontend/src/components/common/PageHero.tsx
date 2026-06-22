@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { useLanguage } from '@/i18n';
+import { handleImageError, normalizeImageUrl } from '@/lib/utils';
 
 interface PageHeroProps {
   title: string;
@@ -21,9 +22,10 @@ export function PageHero({
   return (
     <section className="relative h-[60vh] min-h-[400px] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 bg-brand-navy z-0">
-        <img 
-          src={image} 
-          alt={title} 
+        <img
+          src={normalizeImageUrl(image)}
+          onError={handleImageError}
+          alt={title}
           className="w-full h-full object-cover opacity-30 mix-blend-luminosity"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/50 to-transparent" />

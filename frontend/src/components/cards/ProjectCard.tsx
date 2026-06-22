@@ -3,6 +3,7 @@ import { Project } from '@/types';
 import { motion } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/i18n';
+import { handleImageError, normalizeImageUrl } from '@/lib/utils';
 
 interface ProjectCardProps {
   project: Project;
@@ -17,8 +18,9 @@ export function ProjectCard({ project, index = 0, disableLink }: ProjectCardProp
     <>
       <div className="relative aspect-[4/3] overflow-hidden">
         <div className="absolute inset-0 bg-brand-navy/20 group-hover:bg-transparent transition-colors z-10" />
-        <img 
-          src={project.mainImage} 
+        <img
+          src={normalizeImageUrl(project.mainImage)}
+          onError={handleImageError}
           alt={project.title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />

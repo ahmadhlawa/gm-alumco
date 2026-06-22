@@ -3,6 +3,7 @@ import { Service } from '@/types';
 import { motion } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/i18n';
+import { handleImageError, normalizeImageUrl } from '@/lib/utils';
 
 interface ServiceCardProps {
   service: Service;
@@ -17,8 +18,9 @@ export function ServiceCard({ service, index = 0, disableLink }: ServiceCardProp
     <>
       <div className="relative h-64 overflow-hidden">
         <div className="absolute inset-0 bg-brand-navy/40 group-hover:bg-brand-navy/10 transition-colors z-10" />
-        <img 
-          src={service.image} 
+        <img
+          src={normalizeImageUrl(service.image)}
+          onError={handleImageError}
           alt={service.title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />

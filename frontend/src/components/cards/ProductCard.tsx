@@ -3,6 +3,7 @@ import { Product } from '@/types';
 import { motion } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/i18n';
+import { handleImageError, normalizeImageUrl } from '@/lib/utils';
 
 interface ProductCardProps {
   product: Product;
@@ -16,8 +17,9 @@ export function ProductCard({ product, index = 0, disableLink }: ProductCardProp
   const content = (
     <>
       <div className="relative aspect-square overflow-hidden bg-white/5 mb-4">
-        <img 
-          src={product.image} 
+        <img
+          src={normalizeImageUrl(product.image)}
+          onError={handleImageError}
           alt={product.title}
           className="w-full h-full object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
         />
