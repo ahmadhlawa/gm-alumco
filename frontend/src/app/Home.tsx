@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Button } from '@/components/common/Button';
 import { SectionHeader } from '@/components/common/SectionHeader';
 import { CTASection } from '@/components/common/CTASection';
 import { ServiceCard } from '@/components/cards/ServiceCard';
-import { ProjectCard } from '@/components/cards/ProjectCard';
 import { TestimonialCard } from '@/components/cards/TestimonialCard';
 import { ProductCard } from '@/components/cards/ProductCard';
 import { SuccessPartners } from '@/components/sections/SuccessPartners';
+import { FeaturedProjectsShowcase } from '@/components/sections/FeaturedProjectsShowcase';
 import { GeometricHero } from '@/components/sections/GeometricHero';
 import { getServices, getProjects, getProducts, getTestimonials } from '@/lib/api';
 import { useLanguage } from '@/i18n';
@@ -18,6 +19,7 @@ import { loadSiteContent } from '@/data/siteContent';
 
 export function Home() {
   const { t, language } = useLanguage();
+  const location = useLocation();
   const [content] = useState(() => loadSiteContent());
   const [services, setServices] = useState<Service[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -49,6 +51,17 @@ export function Home() {
       setTestimonials([]);
     }).finally(() => setLoading(false));
   }, [language]);
+
+  // When the navbar sends us here to view projects, scroll once content is ready.
+  const scrollTarget = (location.state as { scrollTo?: string } | null)?.scrollTo;
+  useEffect(() => {
+    if (loading || scrollTarget !== 'projects') return;
+    const el = document.getElementById('projects');
+    if (!el) return;
+    requestAnimationFrame(() => el.scrollIntoView({ behavior: 'smooth' }));
+    // Clear the navigation state so the scroll does not repeat on refresh/back.
+    window.history.replaceState({}, '');
+  }, [loading, scrollTarget]);
 
   if (loading) {
     return (
@@ -130,25 +143,7 @@ export function Home() {
       </section>
 
       {/* Featured Projects */}
-      <section className="py-24 bg-brand-surface">
-        <div className="container mx-auto px-4">
-          <SectionHeader 
-            title={t(content.projects.title.ar, content.projects.title.he, content.projects.title.en)} 
-            subtitle={t(content.projects.subtitle.ar, content.projects.subtitle.he, content.projects.subtitle.en)}
-            centered
-          />
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.slice(0, 6).map((project, idx) => (
-              <ProjectCard key={project.id} project={project} index={idx} />
-            ))}
-          </div>
-          <div className="mt-12 text-center">
-            <Button href="/projects" variant="primary" size="lg">
-              {t('تصفح معرض المشاريع', 'עיין בגלריית הפרויקטים')}
-            </Button>
-          </div>
-        </div>
-      </section>
+      <FeaturedProjectsShowcase projects={projects} />
 
       {/* Process / Why Choose Us */}
       <section className="py-24 bg-brand-navy text-white relative overflow-hidden">

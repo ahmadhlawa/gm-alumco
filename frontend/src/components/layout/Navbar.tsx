@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect, type MouseEvent } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '../common/Button';
@@ -10,6 +10,7 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { t, language, setLanguage } = useLanguage();
 
   useEffect(() => {
@@ -25,14 +26,28 @@ export function Navbar() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const navLinks = [
+  const navLinks: { name: string; path: string; scrollTarget?: string }[] = [
     { name: t('الرئيسية', 'דף הבית'), path: '/' },
     { name: t('من نحن', 'עלינו'), path: '/about' },
     { name: t('خدماتنا', 'שירותים'), path: '/services' },
     { name: t('المنتجات', 'מוצרים'), path: '/products' },
-    { name: t('مشاريعنا', 'פרויקטים'), path: '/projects' },
+    // "مشاريعنا" scrolls to the Featured Projects section on the homepage
+    // instead of navigating to a separate Projects page.
+    { name: t('مشاريعنا', 'פרויקטים'), path: '/', scrollTarget: 'projects' },
     { name: t('اتصل بنا', 'צור קשר'), path: '/contact' },
   ];
+
+  const handleNavClick = (event: MouseEvent<HTMLAnchorElement>, link: (typeof navLinks)[number]) => {
+    if (!link.scrollTarget) return;
+    event.preventDefault();
+    setIsMobileMenuOpen(false);
+    if (location.pathname === '/') {
+      document.getElementById(link.scrollTarget)?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // Go home first, then let the homepage scroll to the section once loaded.
+      navigate('/', { state: { scrollTo: link.scrollTarget } });
+    }
+  };
 
   const toggleLanguage = () => {
     setLanguage(language === 'ar' ? 'he' : 'ar');
@@ -64,26 +79,30 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
             <ul className="flex items-center gap-6">
-              {navLinks.map((link) => (
-                <li key={link.path}>
-                  <Link 
+              {navLinks.map((link) => {
+                const isActive = !link.scrollTarget && location.pathname === link.path;
+                return (
+                <li key={link.name}>
+                  <Link
                     to={link.path}
+                    onClick={(event) => handleNavClick(event, link)}
                     className={cn(
                       "text-sm font-medium transition-colors hover:text-brand-gold relative py-2",
                       isScrolled ? "text-gray-200" : "text-gray-200 hover:text-white",
-                      location.pathname === link.path && (isScrolled ? "text-white" : "text-white")
+                      isActive && (isScrolled ? "text-white" : "text-white")
                     )}
                   >
                     {link.name}
-                    {location.pathname === link.path && (
-                      <motion.div 
+                    {isActive && (
+                      <motion.div
                         layoutId="activeNav"
                         className="absolute bottom-0 inset-x-0 h-0.5 bg-brand-gold"
                       />
                     )}
                   </Link>
                 </li>
-              ))}
+                );
+              })}
             </ul>
 
             <div className="flex items-center gap-4 border-r border-gray-300/30 pr-4">
@@ -129,12 +148,13 @@ export function Navbar() {
             <div className="flex flex-col p-6 gap-6">
               <ul className="flex flex-col gap-4">
                 {navLinks.map((link) => (
-                  <li key={link.path} className="border-b border-white/5 pb-2">
-                    <Link 
+                  <li key={link.name} className="border-b border-white/5 pb-2">
+                    <Link
                       to={link.path}
+                      onClick={(event) => handleNavClick(event, link)}
                       className={cn(
                         "text-lg font-medium block",
-                        location.pathname === link.path ? "text-brand-gold" : "text-white"
+                        !link.scrollTarget && location.pathname === link.path ? "text-brand-gold" : "text-white"
                       )}
                     >
                       {link.name}
