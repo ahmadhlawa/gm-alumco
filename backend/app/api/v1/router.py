@@ -2,7 +2,9 @@ from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
     admins,
+    audit_logs,
     auth,
+    dashboard,
     gallery,
     messages,
     partners,
@@ -26,6 +28,16 @@ def health_check() -> dict[str, str]:
 
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
 api_router.include_router(admins.router, prefix="/admin/admins", tags=["admin: admins"])
+api_router.include_router(
+    dashboard.router,
+    prefix="/admin/dashboard",
+    tags=["admin: dashboard"],
+)
+api_router.include_router(
+    audit_logs.router,
+    prefix="/admin/audit-logs",
+    tags=["admin: audit logs"],
+)
 api_router.include_router(projects.public_router, prefix="/projects", tags=["projects"])
 api_router.include_router(
     projects.admin_router,

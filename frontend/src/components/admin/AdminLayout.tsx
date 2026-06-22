@@ -1,25 +1,25 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '@/api/auth';
-import { 
-  LayoutDashboard, 
-  Briefcase, 
-  Image as ImageIcon, 
-  Layers, 
-  Package, 
-  MessageSquare, 
-  Settings, 
-  LogOut, 
+import {
+  LayoutDashboard,
+  Briefcase,
+  Image as ImageIcon,
+  Layers,
+  Package,
+  MessageSquare,
+  Settings,
+  LogOut,
   Menu,
   X,
   ExternalLink,
   Globe,
   PanelBottom,
   Handshake,
-  Quote
+  Quote,
+  Users
 } from 'lucide-react';
 import { useState } from 'react';
-
-// Mock admin layout only. Real authentication and authorization will be added in backend phase.
+import { useAdminAuth } from '@/components/admin/AdminAuthProvider';
 
 const navItems = [
   { path: '/admin', label: 'لوحة التحكم', icon: LayoutDashboard },
@@ -35,10 +35,21 @@ const navItems = [
   { path: '/admin/settings', label: 'الإعدادات', icon: Settings },
 ];
 
+const superAdminNavItem = { path: '/admin/admins', label: 'إدارة المدراء', icon: Users };
+
+function initials(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  return ((parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '')).toUpperCase() || 'AD';
+}
+
 export function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { admin } = useAdminAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const items =
+    admin?.role === 'super_admin' ? [...navItems, superAdminNavItem] : navItems;
 
   const handleLogout = () => {
     logout();
@@ -63,12 +74,12 @@ export function AdminLayout() {
       {/* Sidebar */}
       <aside className={`fixed lg:sticky top-0 h-screen w-64 bg-brand-navy border-l border-white/10 shrink-0 z-40 transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
         <div className="p-6 border-b border-white/10 flex items-center gap-3">
-           <div className="w-8 h-8 bg-brand-gold flex items-center justify-center font-bold text-white">AL</div>
-           <span className="font-bold text-xl text-white">إدارة أفق</span>
+           <div className="w-8 h-8 bg-brand-gold flex items-center justify-center font-bold text-white">GM</div>
+           <span className="font-bold text-xl text-white">GM Alomco</span>
         </div>
-        
+
         <nav className="p-4 space-y-2">
-          {navItems.map((item) => {
+          {items.map((item) => {
             const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/admin');
             return (
               <Link 
@@ -103,11 +114,11 @@ export function AdminLayout() {
           <h1 className="text-2xl font-bold text-white">اللوحة الرئيسية</h1>
           <div className="flex items-center gap-4">
              <div className="text-right hidden sm:block">
-               <p className="text-sm font-bold text-white">المدير العام</p>
-               <p className="text-xs text-brand-silver">admin@alu-horizon.com</p>
+               <p className="text-sm font-bold text-white">{admin?.full_name ?? '—'}</p>
+               <p className="text-xs text-brand-silver" dir="ltr">{admin?.email ?? ''}</p>
              </div>
              <div className="w-10 h-10 rounded bg-white/10 flex items-center justify-center font-bold text-white">
-                AD
+                {admin ? initials(admin.full_name) : 'AD'}
              </div>
           </div>
         </header>

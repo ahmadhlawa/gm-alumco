@@ -1,87 +1,161 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ImageIcon, LayoutTemplate } from 'lucide-react';
-import { getProducts, getProjects, getServices } from '@/lib/api';
-import type { Product, Project, Service } from '@/types';
-import { initialSiteContent } from '@/data/siteContent';
+import {
+  Briefcase,
+  Layers,
+  Package,
+  Image as ImageIcon,
+  MessageSquare,
+  FileText,
+  Plus,
+  Users,
+  ArrowLeft,
+} from 'lucide-react';
+import { getDashboardStats, type DashboardStats } from '@/api/dashboard';
+import { listContactMessages, listQuoteRequests } from '@/api/messages';
+import type { ContactMessageDto, QuoteRequestDto } from '@/api/types';
+import { useIsSuperAdmin } from '@/components/admin/AdminAuthProvider';
+import { AdminStatCard } from '@/components/admin/AdminStatCard';
 import { LoadingState } from '@/components/common/LoadingState';
-import { ServiceCard } from '@/components/cards/ServiceCard';
-import { ProjectCard } from '@/components/cards/ProjectCard';
-import { ProductCard } from '@/components/cards/ProductCard';
+import { ErrorState } from '@/components/common/ErrorState';
+
+const byNewest = <T extends { created_at: string }>(items: T[]) =>
+  [...items].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 5);
 
 export function Dashboard() {
-  const [content, setContent] = useState<{ services: Service[]; projects: Project[]; products: Product[] }>();
+  const isSuperAdmin = useIsSuperAdmin();
+  const [stats, setStats] = useState<DashboardStats>();
+  const [messages, setMessages] = useState<ContactMessageDto[]>([]);
+  const [quotes, setQuotes] = useState<QuoteRequestDto[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    Promise.all([getServices(), getProjects(), getProducts()]).then(([services, projects, products]) => {
-      setContent({ services, projects, products });
-    });
+    Promise.all([getDashboardStats(), listContactMessages(), listQuoteRequests()])
+      .then(([s, m, q]) => {
+        setStats(s);
+        setMessages(byNewest(m));
+        setQuotes(byNewest(q));
+      })
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (!content) return <LoadingState message="جاري تحميل لوحة التحكم..." />;
+  if (loading) return <LoadingState message="جاري تحميل لوحة التحكم..." />;
+  if (error || !stats) return <ErrorState />;
 
-  const emptyPreview = (
-    <div className="flex h-64 items-center justify-center bg-brand-surface text-sm text-brand-silver">
-      لا يوجد محتوى بعد
-    </div>
-  );
+  const newMessages = stats.contact_messages.new ?? 0;
+  const newQuotes = stats.quote_requests.new ?? 0;
 
-  const sections = [
-    { label: 'الخدمات', path: '/admin/services', item: content.services[0] ? <ServiceCard service={content.services[0]} disableLink /> : emptyPreview },
-    { label: 'المشاريع', path: '/admin/projects', item: content.projects[0] ? <ProjectCard project={content.projects[0]} disableLink /> : emptyPreview },
-    { label: 'المنتجات', path: '/admin/products', item: content.products[0] ? <ProductCard product={content.products[0]} disableLink /> : emptyPreview }
+  const statCards = [
+    { title: 'المشاريع', value: stats.projects, icon: Briefcase },
+    { title: 'الخدمات', value: stats.services, icon: Layers },
+    { title: 'المنتجات', value: stats.products, icon: Package },
+    { title: 'المعرض', value: stats.gallery, icon: ImageIcon },
+    { title: 'رسائل جديدة', value: newMessages, icon: MessageSquare },
+    { title: 'طلبات عروض جديدة', value: newQuotes, icon: FileText },
+  ];
+
+  const quickActions = [
+    { label: 'مشروع جديد', to: '/admin/projects/new', icon: Plus },
+    { label: 'إدارة الخدمات', to: '/admin/services', icon: Layers },
+    { label: 'عرض الرسائل', to: '/admin/messages', icon: MessageSquare },
+    ...(isSuperAdmin ? [{ label: 'إدارة المدراء', to: '/admin/admins', icon: Users }] : []),
   ];
 
   return (
     <div className="space-y-8">
-      <div className="rounded-xl border border-brand-gold/20 bg-gradient-to-l from-brand-gold/10 via-brand-navy to-brand-navy p-6">
-        <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
-          <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-brand-gold">Visual CMS Baseline</span>
-            <h2 className="mt-2 text-3xl font-bold text-white">حرر الموقع من خلال ما تراه</h2>
-            <p className="mt-2 max-w-2xl text-brand-silver">كل شاشة محتوى تعرض نفس البطاقات والأقسام المستخدمة في الموقع العام، مع تعديلات محلية فقط.</p>
-          </div>
-          <Link to="/admin/website/hero" className="flex items-center justify-center gap-2 rounded bg-brand-gold px-5 py-3 font-bold text-white hover:bg-[#b8962e]">
-            <LayoutTemplate className="h-5 w-5" />
-            فتح محرر الواجهة
-          </Link>
-        </div>
-      </div>
-
-      <Link to="/admin/website/hero" className="group block overflow-hidden rounded-xl border border-white/5 bg-brand-navy hover:border-brand-gold/50">
-        <div className="grid min-h-72 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="flex flex-col justify-center p-8">
-            <span className="mb-3 text-xs font-bold text-brand-gold">معاينة Hero</span>
-            <h3 className="text-3xl font-bold leading-tight text-white">{initialSiteContent.hero.headline.ar}</h3>
-            <p className="mt-4 text-brand-silver">{initialSiteContent.hero.subtitle.ar}</p>
-            <span className="mt-6 flex items-center gap-2 font-bold text-brand-gold">تحرير هذا القسم <ArrowLeft className="h-4 w-4" /></span>
-          </div>
-          <img src={initialSiteContent.hero.backgroundImage} alt="Hero preview" className="h-full min-h-64 w-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105" />
-        </div>
-      </Link>
-
-      <div className="grid gap-6 lg:grid-cols-3">
-        {sections.map((section) => (
-          <Link key={section.path} to={section.path} className="group relative block overflow-hidden rounded-xl border border-white/5 hover:border-brand-gold/50">
-            <div className="pointer-events-none">{section.item}</div>
-            <div className="absolute inset-x-0 bottom-0 z-20 flex items-center justify-between bg-brand-navy/95 px-4 py-3 text-sm font-bold text-white backdrop-blur">
-              إدارة {section.label}
-              <ArrowLeft className="h-4 w-4 text-brand-gold" />
-            </div>
-          </Link>
+      {/* Stat cards */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        {statCards.map((card) => (
+          <AdminStatCard key={card.title} title={card.title} value={card.value} icon={card.icon} />
         ))}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Link to="/admin/gallery" className="flex items-center gap-4 rounded-lg border border-white/5 bg-brand-navy p-5 text-white hover:border-brand-gold/40">
-          <ImageIcon className="h-8 w-8 text-brand-gold" />
-          <div><h3 className="font-bold">المعرض المرئي</h3><p className="text-sm text-brand-silver">تحرير الصور والعناوين ضمن شبكة العرض.</p></div>
-        </Link>
-        <Link to="/admin/footer" className="flex items-center gap-4 rounded-lg border border-white/5 bg-brand-navy p-5 text-white hover:border-brand-gold/40">
-          <LayoutTemplate className="h-8 w-8 text-brand-gold" />
-          <div><h3 className="font-bold">تذييل الموقع</h3><p className="text-sm text-brand-silver">معاينة وتعديل بيانات التواصل والحقوق.</p></div>
+      {/* Quick actions */}
+      <div>
+        <h2 className="mb-3 text-lg font-bold text-white">إجراءات سريعة</h2>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {quickActions.map((action) => (
+            <Link
+              key={action.to}
+              to={action.to}
+              className="flex items-center gap-3 rounded-lg border border-white/5 bg-brand-navy p-4 text-white transition-colors hover:border-brand-gold/40"
+            >
+              <action.icon className="h-6 w-6 text-brand-gold" />
+              <span className="font-bold">{action.label}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent activity */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <RecentList
+          title="أحدث الرسائل"
+          to="/admin/messages"
+          empty="لا توجد رسائل."
+          items={messages.map((m) => ({
+            id: m.id,
+            primary: m.name,
+            secondary: m.subject || m.message,
+            isNew: m.status === 'new',
+            created_at: m.created_at,
+          }))}
+        />
+        <RecentList
+          title="أحدث طلبات العروض"
+          to="/admin/messages"
+          empty="لا توجد طلبات."
+          items={quotes.map((q) => ({
+            id: q.id,
+            primary: q.name,
+            secondary: q.service_type || q.message || '—',
+            isNew: q.status === 'new',
+            created_at: q.created_at,
+          }))}
+        />
+      </div>
+    </div>
+  );
+}
+
+interface RecentItem {
+  id: number;
+  primary: string;
+  secondary: string | null;
+  isNew: boolean;
+  created_at: string;
+}
+
+function RecentList({ title, to, empty, items }: { title: string; to: string; empty: string; items: RecentItem[] }) {
+  return (
+    <div className="rounded-xl border border-white/5 bg-brand-navy p-6">
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="font-bold text-white">{title}</h3>
+        <Link to={to} className="flex items-center gap-1 text-sm font-bold text-brand-gold">
+          عرض الكل <ArrowLeft className="h-4 w-4" />
         </Link>
       </div>
+      {items.length === 0 ? (
+        <p className="py-6 text-center text-sm text-brand-silver">{empty}</p>
+      ) : (
+        <ul className="divide-y divide-white/5">
+          {items.map((item) => (
+            <li key={item.id} className="flex items-center justify-between gap-3 py-3">
+              <div className="min-w-0">
+                <p className="truncate font-bold text-white">{item.primary}</p>
+                <p className="truncate text-sm text-brand-silver">{item.secondary}</p>
+              </div>
+              {item.isNew && (
+                <span className="shrink-0 rounded bg-brand-gold/10 px-2 py-1 text-xs font-bold text-brand-gold">
+                  جديد
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

@@ -1,62 +1,114 @@
 import { useEffect, useState } from 'react';
-import { getProjects } from '@/lib/api';
-import type { CmsLocale, LocalizedFields, Project } from '@/types';
-import { localize, translated } from '@/lib/cms';
+import { Link, useNavigate } from 'react-router-dom';
+import { Plus, ImageOff } from 'lucide-react';
+import { deleteProject, listAdminProjects } from '@/api/projects';
+import { ApiError } from '@/api/client';
+import type { ProjectDto } from '@/api/types';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
-import { AdminVisualGrid } from '@/components/admin/AdminVisualGrid';
-import { EditableBlock } from '@/components/admin/EditableBlock';
-import { VisualCmsToolbar } from '@/components/admin/VisualCmsToolbar';
-import { ProjectCard } from '@/components/cards/ProjectCard';
+import { AdminActionButtons } from '@/components/admin/AdminActionButtons';
+import { AdminStatusBadge } from '@/components/admin/AdminStatusBadge';
+import { LoadingState } from '@/components/common/LoadingState';
+import { ErrorState } from '@/components/common/ErrorState';
 
-type CmsProject = LocalizedFields<Project, 'title' | 'category' | 'location' | 'shortDescription'>;
-
-const fields = [
-  { key: 'title', label: 'اسم المشروع', localized: true },
-  { key: 'category', label: 'تصنيف المشروع', localized: true },
-  { key: 'location', label: 'موقع المشروع', localized: true },
-  { key: 'year', label: 'سنة التنفيذ' },
-  { key: 'shortDescription', label: 'الوصف المختصر', type: 'textarea' as const, localized: true },
-  { key: 'mainImage', label: 'رابط الصورة الرئيسية', type: 'url' as const }
-];
+const CATEGORY_LABELS: Record<ProjectDto['category'], string> = {
+  local: 'محلي',
+  abroad: 'خارجي',
+  featured: 'مميز',
+};
 
 export function AdminProjects() {
-  const [locale, setLocale] = useState<CmsLocale>('ar');
-  const [projects, setProjects] = useState<CmsProject[]>([]);
+  const navigate = useNavigate();
+  const [projects, setProjects] = useState<ProjectDto[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
-  useEffect(() => {
-    getProjects().then((items) => setProjects(items.map((item) => ({
-      ...item,
-      title: localize(item.title),
-      category: localize(item.category),
-      location: localize(item.location),
-      shortDescription: localize(item.shortDescription ?? '')
-    }))));
-  }, []);
+  const load = () => {
+    setLoading(true);
+    setError(false);
+    listAdminProjects()
+      .then(setProjects)
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
+  };
 
-  const update = (id: string, value: CmsProject) => {
-    setProjects((items) => items.map((item) => item.id === id ? value : item));
+  useEffect(load, []);
+
+  const handleDelete = async (project: ProjectDto) => {
+    if (!window.confirm(`هل تريد حذف المشروع "${project.title_ar}"؟`)) return;
+    setActionError(null);
+    try {
+      await deleteProject(project.id);
+      load();
+    } catch (e) {
+      setActionError(e instanceof ApiError ? e.message : 'تعذر حذف المشروع.');
+    }
   };
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader title="إدارة المشاريع بصرياً" description="تم استبدال الجدول بمعاينة بطاقات المشاريع الفعلية." />
-      <VisualCmsToolbar locale={locale} onLocaleChange={setLocale} />
-      <AdminVisualGrid>
-        {projects.map((project, index) => {
-          const preview: Project = {
-            ...project,
-            title: translated(project.title, locale),
-            category: translated(project.category, locale),
-            location: translated(project.location, locale),
-            shortDescription: translated(project.shortDescription, locale)
-          };
-          return (
-            <EditableBlock key={project.id} title="تعديل المشروع" type="fields" value={project} fields={fields} onSave={(value) => update(project.id, value)}>
-              <ProjectCard project={preview} index={index} disableLink />
-            </EditableBlock>
-          );
-        })}
-      </AdminVisualGrid>
+      <AdminPageHeader
+        title="إدارة المشاريع"
+        description="إضافة وتعديل وحذف مشاريع GM Alomco بثلاث لغات."
+        action={
+          <Link
+            to="/admin/projects/new"
+            className="flex items-center gap-2 rounded bg-brand-gold px-5 py-2.5 font-bold text-white hover:bg-[#b8962e]"
+          >
+            <Plus className="h-5 w-5" />
+            مشروع جديد
+          </Link>
+        }
+      />
+
+      {actionError && (
+        <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-300 rounded text-sm">{actionError}</div>
+      )}
+
+      {loading ? (
+        <LoadingState message="جاري تحميل المشاريع..." />
+      ) : error ? (
+        <ErrorState />
+      ) : projects.length === 0 ? (
+        <div className="rounded-xl border border-white/5 bg-brand-navy py-20 text-center text-brand-silver">
+          لا توجد مشاريع بعد. ابدأ بإضافة مشروع جديد.
+        </div>
+      ) : (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {projects.map((project) => (
+            <div key={project.id} className="overflow-hidden rounded-xl border border-white/5 bg-brand-navy">
+              <div className="relative h-40 bg-brand-surface">
+                {project.main_image_url ? (
+                  <img src={project.main_image_url} alt={project.title_ar} className="h-full w-full object-cover" />
+                ) : (
+                  <div className="flex h-full items-center justify-center text-brand-silver">
+                    <ImageOff className="h-8 w-8" />
+                  </div>
+                )}
+                <span className="absolute top-3 right-3 rounded bg-brand-navy/90 px-2 py-1 text-xs font-bold text-brand-gold">
+                  {CATEGORY_LABELS[project.category]}
+                </span>
+              </div>
+              <div className="p-4 space-y-3">
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="font-bold text-white line-clamp-1">{project.title_ar}</h3>
+                  <AdminStatusBadge status={project.is_active} activeLabel="منشور" inactiveLabel="مخفي" />
+                </div>
+                <p className="text-sm text-brand-silver line-clamp-2 min-h-[2.5rem]">
+                  {project.description_ar ?? '—'}
+                </p>
+                <div className="flex items-center justify-between border-t border-white/5 pt-3">
+                  <span className="text-xs text-brand-silver">ترتيب: {project.sort_order}</span>
+                  <AdminActionButtons
+                    onEdit={() => navigate(`/admin/projects/${project.id}/edit`)}
+                    onDelete={() => handleDelete(project)}
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

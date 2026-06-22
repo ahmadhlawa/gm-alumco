@@ -16,8 +16,10 @@ import { LanguageProvider, useLanguage } from '@/i18n';
 // Admin imports
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { RequireAuth } from '@/components/admin/RequireAuth';
+import { AdminAuthProvider } from '@/components/admin/AdminAuthProvider';
 import { Dashboard } from '@/app/admin/Dashboard';
 import { AdminProjects } from '@/app/admin/AdminProjects';
+import { AdminAdmins } from '@/app/admin/AdminAdmins';
 import { ProjectFormPage } from '@/app/admin/ProjectFormPage';
 import { AdminServices } from '@/app/admin/AdminServices';
 import { AdminProducts } from '@/app/admin/AdminProducts';
@@ -78,7 +80,7 @@ function AppContent() {
         <Routes>
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<RequireAuth><AdminLayout /></RequireAuth>}>
+          <Route path="/admin" element={<RequireAuth><AdminAuthProvider><AdminLayout /></AdminAuthProvider></RequireAuth>}>
              <Route index element={<Dashboard />} />
              <Route path="website" element={<AdminWebsite />} />
              <Route path="website/hero" element={<AdminWebsiteHero />} />
@@ -95,6 +97,7 @@ function AppContent() {
              <Route path="blog" element={<AdminBlog />} />
              <Route path="clients" element={<AdminClients />} />
              <Route path="messages" element={<AdminMessages />} />
+             <Route path="admins" element={<AdminAdmins />} />
              <Route path="settings" element={<AdminSettings />} />
           </Route>
 

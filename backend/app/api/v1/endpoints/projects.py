@@ -21,6 +21,7 @@ from app.services.crud import (
     soft_delete_entity,
     update_entity,
 )
+from app.services.audit_service import record_audit
 from app.services.project_service import (
     add_project_image,
     delete_project_image,
@@ -72,9 +73,17 @@ def read_admin_project(
 def create_project(
     data: ProjectCreate,
     db: Session = Depends(get_db),
-    _: Admin = Depends(require_admin),
+    current_admin: Admin = Depends(require_admin),
 ) -> Project:
-    return create_entity(db, Project, data)
+    project = create_entity(db, Project, data)
+    record_audit(
+        db,
+        admin_id=current_admin.id,
+        action="create",
+        entity_type="project",
+        entity_id=project.id,
+    )
+    return project
 
 
 @admin_router.put("/{project_id}", response_model=ProjectRead)
@@ -82,18 +91,33 @@ def update_project(
     project_id: int,
     data: ProjectUpdate,
     db: Session = Depends(get_db),
-    _: Admin = Depends(require_admin),
+    current_admin: Admin = Depends(require_admin),
 ) -> Project:
-    return update_entity(db, get_entity_or_404(db, Project, project_id), data)
+    project = update_entity(db, get_entity_or_404(db, Project, project_id), data)
+    record_audit(
+        db,
+        admin_id=current_admin.id,
+        action="update",
+        entity_type="project",
+        entity_id=project.id,
+    )
+    return project
 
 
 @admin_router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_project(
     project_id: int,
     db: Session = Depends(get_db),
-    _: Admin = Depends(require_admin),
+    current_admin: Admin = Depends(require_admin),
 ) -> Response:
     soft_delete_entity(db, get_entity_or_404(db, Project, project_id))
+    record_audit(
+        db,
+        admin_id=current_admin.id,
+        action="delete",
+        entity_type="project",
+        entity_id=project_id,
+    )
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -106,16 +130,32 @@ def create_project_image(
     project_id: int,
     data: ProjectImageCreate,
     db: Session = Depends(get_db),
-    _: Admin = Depends(require_admin),
+    current_admin: Admin = Depends(require_admin),
 ) -> ProjectImage:
-    return add_project_image(db, get_project_or_404(db, project_id), data)
+    image = add_project_image(db, get_project_or_404(db, project_id), data)
+    record_audit(
+        db,
+        admin_id=current_admin.id,
+        action="add_image",
+        entity_type="project",
+        entity_id=project_id,
+        details={"image_id": image.id},
+    )
+    return image
 
 
 @admin_image_router.delete("/{image_id}", status_code=status.HTTP_204_NO_CONTENT)
 def remove_project_image(
     image_id: int,
     db: Session = Depends(get_db),
-    _: Admin = Depends(require_admin),
+    current_admin: Admin = Depends(require_admin),
 ) -> Response:
     delete_project_image(db, image_id)
+    record_audit(
+        db,
+        admin_id=current_admin.id,
+        action="delete_image",
+        entity_type="project_image",
+        entity_id=image_id,
+    )
     return Response(status_code=status.HTTP_204_NO_CONTENT)

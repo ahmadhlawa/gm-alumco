@@ -5,6 +5,7 @@ from app.api.dependencies import require_super_admin
 from app.db.database import get_db
 from app.models.admin import Admin
 from app.schemas.admin import AdminCreate, AdminRead, AdminUpdate
+from app.services.audit_service import record_audit
 from app.services.admin_service import (
     create_admin,
     deactivate_admin,
@@ -37,9 +38,17 @@ def read_admin(
 def add_admin(
     data: AdminCreate,
     db: Session = Depends(get_db),
-    _: Admin = Depends(require_super_admin),
+    current_admin: Admin = Depends(require_super_admin),
 ) -> Admin:
-    return create_admin(db, data)
+    admin = create_admin(db, data)
+    record_audit(
+        db,
+        admin_id=current_admin.id,
+        action="create",
+        entity_type="admin",
+        entity_id=admin.id,
+    )
+    return admin
 
 
 @router.put("/{admin_id}", response_model=AdminRead)
@@ -49,7 +58,15 @@ def edit_admin(
     db: Session = Depends(get_db),
     current_admin: Admin = Depends(require_super_admin),
 ) -> Admin:
-    return update_admin(db, get_admin_or_404(db, admin_id), data, current_admin)
+    admin = update_admin(db, get_admin_or_404(db, admin_id), data, current_admin)
+    record_audit(
+        db,
+        admin_id=current_admin.id,
+        action="update",
+        entity_type="admin",
+        entity_id=admin.id,
+    )
+    return admin
 
 
 @router.delete("/{admin_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -59,4 +76,11 @@ def remove_admin(
     current_admin: Admin = Depends(require_super_admin),
 ) -> Response:
     deactivate_admin(db, get_admin_or_404(db, admin_id), current_admin)
+    record_audit(
+        db,
+        admin_id=current_admin.id,
+        action="deactivate",
+        entity_type="admin",
+        entity_id=admin_id,
+    )
     return Response(status_code=status.HTTP_204_NO_CONTENT)

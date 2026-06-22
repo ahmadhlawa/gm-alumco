@@ -7,6 +7,7 @@ from app.db.database import get_db
 from app.models.admin import Admin
 from app.schemas.admin import AdminRead
 from app.schemas.auth import LoginRequest, Token
+from app.services.audit_service import record_audit
 from app.services.auth_service import authenticate_admin, issue_admin_token
 
 
@@ -39,6 +40,7 @@ def login(
         )
 
     login_rate_limiter.reset(client_key)
+    record_audit(db, admin_id=admin.id, action="login")
     return Token(access_token=issue_admin_token(admin))
 
 
