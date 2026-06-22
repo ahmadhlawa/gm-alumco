@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import field_validator
+from pydantic import ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -16,6 +16,25 @@ _PLACEHOLDER_JWT_SECRETS = {
 }
 # Hard floor; >= 32 chars is recommended (see .env.example / README).
 _MIN_JWT_SECRET_LENGTH = 16
+
+# Passwords that must never seed the first super admin outside development.
+_PLACEHOLDER_SUPERADMIN_PASSWORDS = {
+    "",
+    "changeme123!",  # the value shipped as the development default
+    "changeme",
+    "change-me",
+    "password",
+    "password123",
+    "admin",
+    "admin123",
+    "superadmin",
+    "secret",
+    "placeholder",
+}
+# Hard floor; >= 16 chars is recommended (see .env.example / README).
+_MIN_SUPERADMIN_PASSWORD_LENGTH = 12
+# Environments where the relaxed shipped default password is tolerated.
+_RELAXED_ENVIRONMENTS = {"development", "dev", "local", "test", "testing"}
 
 
 class Settings(BaseSettings):
@@ -59,6 +78,32 @@ class Settings(BaseSettings):
                 f"JWT_SECRET_KEY is too weak (minimum {_MIN_JWT_SECRET_LENGTH} "
                 "characters; >= 32 recommended). Generate one with: "
                 'python -c "import secrets; print(secrets.token_urlsafe(48))"'
+            )
+        return value
+
+    @field_validator("first_superadmin_password")
+    @classmethod
+    def _validate_first_superadmin_password(cls, value: str, info: ValidationInfo) -> str:
+        # `environment` is declared before this field, so it is already validated
+        # and available in `info.data`. Outside development we refuse to seed the
+        # first super admin with a default/placeholder/weak password.
+        environment = str(info.data.get("environment", "development")).strip().lower()
+        if environment in _RELAXED_ENVIRONMENTS:
+            return value
+
+        candidate = (value or "").strip()
+        if candidate.lower() in _PLACEHOLDER_SUPERADMIN_PASSWORDS:
+            raise ValueError(
+                "FIRST_SUPERADMIN_PASSWORD is missing or set to a default/placeholder "
+                f"value while ENVIRONMENT={environment!r}. Set a strong, unique password "
+                "via the FIRST_SUPERADMIN_PASSWORD environment variable "
+                "(>= 16 characters recommended)."
+            )
+        if len(candidate) < _MIN_SUPERADMIN_PASSWORD_LENGTH:
+            raise ValueError(
+                f"FIRST_SUPERADMIN_PASSWORD is too weak (minimum "
+                f"{_MIN_SUPERADMIN_PASSWORD_LENGTH} characters; >= 16 recommended) "
+                f"while ENVIRONMENT={environment!r}."
             )
         return value
 

@@ -66,6 +66,11 @@ python -m app.utils.seed_admin
 
 Credentials come from `.env` (`FIRST_SUPERADMIN_*` variables). There is no public registration endpoint.
 
+> **Production/staging:** `FIRST_SUPERADMIN_PASSWORD` must be a strong, unique value.
+> When `ENVIRONMENT` is not one of `development`/`dev`/`local`/`test`/`testing`, the app
+> refuses to start if the password is missing, a known placeholder (e.g. `ChangeMe123!`),
+> or shorter than 12 characters (>= 16 recommended). In development a relaxed default is tolerated.
+
 ## 6. Run the development server
 
 ```bash
