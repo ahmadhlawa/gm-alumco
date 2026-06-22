@@ -20,10 +20,16 @@ export function Dashboard() {
 
   if (!content) return <LoadingState message="جاري تحميل لوحة التحكم..." />;
 
+  const emptyPreview = (
+    <div className="flex h-64 items-center justify-center bg-brand-surface text-sm text-brand-silver">
+      لا يوجد محتوى بعد
+    </div>
+  );
+
   const sections = [
-    { label: 'الخدمات', path: '/admin/services', item: <ServiceCard service={content.services[0]} disableLink /> },
-    { label: 'المشاريع', path: '/admin/projects', item: <ProjectCard project={content.projects[0]} disableLink /> },
-    { label: 'المنتجات', path: '/admin/products', item: <ProductCard product={content.products[0]} disableLink /> }
+    { label: 'الخدمات', path: '/admin/services', item: content.services[0] ? <ServiceCard service={content.services[0]} disableLink /> : emptyPreview },
+    { label: 'المشاريع', path: '/admin/projects', item: content.projects[0] ? <ProjectCard project={content.projects[0]} disableLink /> : emptyPreview },
+    { label: 'المنتجات', path: '/admin/products', item: content.products[0] ? <ProductCard product={content.products[0]} disableLink /> : emptyPreview }
   ];
 
   return (
