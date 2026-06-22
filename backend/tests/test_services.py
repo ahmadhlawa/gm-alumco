@@ -13,6 +13,7 @@ def service_payload(**overrides) -> dict:
         "description_en": "Description",
         "description_he": None,
         "image_url": "https://drive.google.com/service.jpg",
+        "starting_price": "1250.00",
         "sort_order": 1,
         "is_active": True,
     }
@@ -42,6 +43,7 @@ def test_admin_can_crud_service_and_read_inactive(client: TestClient, auth_heade
         json=service_payload(is_active=False),
     )
     assert created.status_code == 201
+    assert created.json()["starting_price"] == "1250.00"
     service_id = created.json()["id"]
     assert client.get("/api/v1/admin/services", headers=headers).status_code == 200
     assert client.get(f"/api/v1/admin/services/{service_id}", headers=headers).status_code == 200

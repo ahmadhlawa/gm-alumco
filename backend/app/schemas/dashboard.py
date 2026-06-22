@@ -9,6 +9,9 @@ class DashboardStats(BaseModel):
     """
 
     projects: int
+    local_projects: int
+    international_projects: int
+    featured_projects: int
     services: int
     products: int
     gallery: int

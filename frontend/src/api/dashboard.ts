@@ -2,11 +2,11 @@ import { apiRequest } from './client';
 
 export interface DashboardStats {
   projects: number;
+  local_projects: number;
+  international_projects: number;
+  featured_projects: number;
   services: number;
-  products: number;
-  gallery: number;
   partners: number;
-  testimonials: number;
   contact_messages: Record<string, number>;
   quote_requests: Record<string, number>;
 }

@@ -1,41 +1,9 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '@/api/auth';
-import {
-  LayoutDashboard,
-  Briefcase,
-  Image as ImageIcon,
-  Layers,
-  Package,
-  MessageSquare,
-  Settings,
-  LogOut,
-  Menu,
-  X,
-  ExternalLink,
-  Globe,
-  PanelBottom,
-  Handshake,
-  Quote,
-  Users
-} from 'lucide-react';
+import { LogOut, Menu, X, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 import { useAdminAuth } from '@/components/admin/AdminAuthProvider';
-
-const navItems = [
-  { path: '/admin', label: 'لوحة التحكم', icon: LayoutDashboard },
-  { path: '/admin/website', label: 'محرر الموقع المرئي', icon: Globe },
-  { path: '/admin/projects', label: 'المشاريع', icon: Briefcase },
-  { path: '/admin/gallery', label: 'المعرض', icon: ImageIcon },
-  { path: '/admin/services', label: 'الخدمات', icon: Layers },
-  { path: '/admin/products', label: 'المنتجات', icon: Package },
-  { path: '/admin/partners', label: 'شركاء النجاح', icon: Handshake },
-  { path: '/admin/testimonials', label: 'آراء العملاء', icon: Quote },
-  { path: '/admin/footer', label: 'تذييل الموقع', icon: PanelBottom },
-  { path: '/admin/messages', label: 'الرسائل', icon: MessageSquare },
-  { path: '/admin/settings', label: 'الإعدادات', icon: Settings },
-];
-
-const superAdminNavItem = { path: '/admin/admins', label: 'إدارة المدراء', icon: Users };
+import { getAdminNavigation } from '@/components/admin/adminNavigation';
 
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -48,8 +16,7 @@ export function AdminLayout() {
   const { admin } = useAdminAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const items =
-    admin?.role === 'super_admin' ? [...navItems, superAdminNavItem] : navItems;
+  const items = getAdminNavigation(admin?.role ?? 'admin');
 
   const handleLogout = () => {
     logout();

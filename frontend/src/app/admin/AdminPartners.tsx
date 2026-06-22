@@ -1,43 +1,31 @@
-import { useState } from 'react';
-import { partners as initialPartners } from '@/data/partners';
-import type { CmsLocale, LocalizedFields, Partner } from '@/types';
-import { localize, translated } from '@/lib/cms';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ExternalLink, Plus } from 'lucide-react';
+import { deletePartner, listAdminPartners } from '@/api/partners';
+import type { PartnerDto } from '@/api/types';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
-import { AdminVisualGrid } from '@/components/admin/AdminVisualGrid';
-import { EditableBlock } from '@/components/admin/EditableBlock';
-import { VisualCmsToolbar } from '@/components/admin/VisualCmsToolbar';
-
-type CmsPartner = LocalizedFields<Partner, 'name'>;
-
-const fields = [
-  { key: 'name', label: 'اسم الشريك', localized: true },
-  { key: 'logo', label: 'رابط الشعار', type: 'url' as const }
-];
+import { AdminActionButtons } from '@/components/admin/AdminActionButtons';
+import { AdminStatusBadge } from '@/components/admin/AdminStatusBadge';
+import { LoadingState } from '@/components/common/LoadingState';
+import { ErrorState } from '@/components/common/ErrorState';
+import { EmptyState } from '@/components/common/EmptyState';
+import { handleImageError, normalizeImageUrl } from '@/lib/utils';
 
 export function AdminPartners() {
-  const [locale, setLocale] = useState<CmsLocale>('ar');
-  const [partners, setPartners] = useState<CmsPartner[]>(() => initialPartners.map((item) => ({ ...item, name: localize(item.name) })));
+  const navigate = useNavigate();
+  const [items, setItems] = useState<PartnerDto[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const load = () => { setLoading(true); listAdminPartners().then(setItems).catch(() => setError(true)).finally(() => setLoading(false)); };
+  useEffect(load, []);
+  const deactivate = async (item: PartnerDto) => { if (!window.confirm(`تعطيل الشريك "${item.name_ar}"؟`)) return; await deletePartner(item.id); load(); };
 
-  const update = (id: string, value: CmsPartner) => {
-    setPartners((items) => items.map((item) => item.id === id ? value : item));
-  };
-
-  return (
-    <div className="space-y-6">
-      <AdminPageHeader title="إدارة شركاء النجاح بصرياً" description="معاينة الشعارات والأسماء ضمن شبكة شركاء الموقع." />
-      <VisualCmsToolbar locale={locale} onLocaleChange={setLocale} />
-      <AdminVisualGrid>
-        {partners.map((partner) => (
-          <EditableBlock key={partner.id} title="تعديل الشريك" type="fields" value={partner} fields={fields} onSave={(value) => update(partner.id, value)}>
-            <div className="flex min-h-64 flex-col items-center justify-center border border-white/5 bg-brand-surface p-8 text-center">
-              <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full border border-white/10 bg-brand-navy shadow-inner">
-                {partner.logo ? <img src={partner.logo} alt={translated(partner.name, locale)} className="max-h-full max-w-full object-contain p-2" /> : <span className="text-2xl font-bold text-brand-silver">{translated(partner.name, locale).slice(0, 2)}</span>}
-              </div>
-              <h3 className="font-bold text-white">{translated(partner.name, locale)}</h3>
-            </div>
-          </EditableBlock>
-        ))}
-      </AdminVisualGrid>
-    </div>
-  );
+  return <div className="space-y-6">
+    <AdminPageHeader title="الشركاء" description="إدارة شعارات وروابط شركاء GM Alomco." action={<Link to="/admin/partners/new" className="flex items-center gap-2 rounded bg-brand-gold px-5 py-2.5 font-bold text-white"><Plus className="h-5 w-5" />إضافة شريك</Link>} />
+    {loading ? <LoadingState /> : error ? <ErrorState /> : items.length === 0 ? <EmptyState message="لا يوجد شركاء بعد." /> : <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{items.map((item) => <article key={item.id} className="flex items-center gap-4 rounded-lg border border-white/10 bg-brand-navy p-5">
+      <div className="flex h-16 w-20 shrink-0 items-center justify-center bg-white p-2"><img src={normalizeImageUrl(item.logo_url)} onError={handleImageError} alt={item.name_ar} className="max-h-full max-w-full object-contain" /></div>
+      <div className="min-w-0 flex-1"><h3 className="truncate font-bold text-white">{item.name_ar}</h3><div className="mt-2 flex items-center gap-2"><AdminStatusBadge status={item.is_active} /><span className="text-xs text-brand-silver">ترتيب {item.sort_order}</span>{item.website_url && <a href={item.website_url} target="_blank" rel="noreferrer" className="text-brand-gold"><ExternalLink className="h-4 w-4" /></a>}</div></div>
+      <AdminActionButtons onEdit={() => navigate(`/admin/partners/${item.id}/edit`)} onDelete={() => void deactivate(item)} />
+    </article>)}</div>}
+  </div>;
 }

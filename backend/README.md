@@ -92,6 +92,20 @@ uvicorn app.main:app --reload
 
 Send the returned token as `Authorization: Bearer <token>` on protected endpoints.
 
+## Local uploads on Hostinger VPS/KVM
+
+Uploaded images are stored only under `backend/uploads/` and served by FastAPI from `/uploads/...`; they are not copied into the frontend build or stored in MySQL.
+
+On the Hostinger VPS, `backend/uploads` must be persistent and writable by the account running FastAPI. Create the folders during initial provisioning:
+
+```bash
+mkdir -p backend/uploads/{projects,services,partners,gallery}
+chown -R <app-user>:<app-group> backend/uploads
+chmod -R u+rwX backend/uploads
+```
+
+Deployment and restart scripts must preserve this directory. Do not replace, clean, or include `backend/uploads` in an `rsync --delete` target; deploy application code around it or mount/link a persistent directory at this path.
+
 ## Admin roles
 
 | Role | Permissions |

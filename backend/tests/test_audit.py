@@ -51,4 +51,9 @@ def test_audit_logs_endpoint_requires_super_admin(
     assert allowed.status_code == 200
     # newest first; the two logins above are present
     assert {item["action"] for item in allowed.json()} == {"login"}
+    assert all(item["actor_name"] == "Test Admin" for item in allowed.json())
+    assert {item["actor_email"] for item in allowed.json()} == {
+        "admin@example.com",
+        "super_admin@example.com",
+    }
     assert anonymous.status_code == 401

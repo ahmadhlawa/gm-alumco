@@ -15,7 +15,7 @@ class ContactMessage(Base):
     phone: Mapped[str | None] = mapped_column(String(50), nullable=True)
     subject: Mapped[str | None] = mapped_column(String(255), nullable=True)
     message: Mapped[str] = mapped_column(Text)
-    status: Mapped[str] = mapped_column(String(50), default="new", index=True)
+    status: Mapped[str] = mapped_column(String(50), default="NEW", index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
@@ -24,11 +24,11 @@ class QuoteRequest(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(180))
-    email: Mapped[str] = mapped_column(String(255), index=True)
+    email: Mapped[str | None] = mapped_column(String(255), nullable=True, index=True)
     phone: Mapped[str] = mapped_column(String(50))
     service_type: Mapped[str | None] = mapped_column(String(180), nullable=True)
     message: Mapped[str | None] = mapped_column(Text, nullable=True)
-    status: Mapped[str] = mapped_column(String(50), default="new", index=True)
+    status: Mapped[str] = mapped_column(String(50), default="NEW", index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now(), onupdate=func.now()

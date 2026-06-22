@@ -36,7 +36,7 @@ export function Footer({ cmsContent, previewLocale }: FooterProps = {}) {
                 <span className="text-brand-gold font-bold text-xl">AL</span>
               </div>
               <span className="font-bold text-xl tracking-tight text-white">
-                {cmsText(cmsContent?.logoText, 'أفق الألمنيوم', 'אופק אלומיניום')}
+                {cmsText(cmsContent?.logoText, 'GM Alomco', 'GM Alomco')}
               </span>
             </Link>
             <p className="text-gray-400 mb-6 leading-relaxed">
@@ -105,7 +105,7 @@ export function Footer({ cmsContent, previewLocale }: FooterProps = {}) {
 
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-right">
           <p className="text-brand-silver text-sm">
-            &copy; {currentYear} {cmsText(cmsContent?.copyright, 'شركة أفق الألمنيوم. جميع الحقوق محفوظة.', 'אופק אלומיניום. כל הזכויות שמורות.')}
+            &copy; {currentYear} {cmsText(cmsContent?.copyright, 'شركة GM Alomco. جميع الحقوق محفوظة.', 'GM Alomco. כל הזכויות שמורות.')}
           </p>
           <div className="flex gap-4 text-sm text-brand-silver">
             <Link to="/admin/login" className="hover:text-brand-gold transition-colors">{t('تسجيل دخول الإدارة', 'התחברות מנהל')}</Link>

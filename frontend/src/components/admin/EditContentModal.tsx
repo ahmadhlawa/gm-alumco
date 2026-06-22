@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle, X } from 'lucide-react';
 import type { LocalizedText } from '@/types';
+import { handleImageError, normalizeImageUrl } from '@/lib/utils';
 
 export type EditFieldType = 'text' | 'textarea' | 'image' | 'stat' | 'button' | 'fields';
 export type CmsInputType = 'text' | 'textarea' | 'number' | 'url';
@@ -181,7 +182,7 @@ export function EditContentModal({
                     onChange={(event) => setDraft(event.target.value)}
                     className="w-full rounded border border-white/10 bg-brand-surface-alt px-4 py-3 text-left text-white outline-none focus:border-brand-gold"
                   />
-                  {draft && <img src={draft} alt="Preview" className="mt-4 aspect-video w-full rounded object-cover" />}
+                  {draft && <img src={normalizeImageUrl(draft)} onError={handleImageError} alt="Preview" className="mt-4 aspect-video w-full rounded object-cover" />}
                 </label>
               )}
 

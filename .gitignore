@@ -5,5 +5,7 @@ coverage/
 .worktrees/
 .DS_Store
 *.log
+backend/uploads/*
+!backend/uploads/.gitkeep
 .env*
 !.env.example

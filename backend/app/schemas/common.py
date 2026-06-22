@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import PurePosixPath
 from typing import Annotated
 from urllib.parse import urlsplit
 
@@ -13,6 +14,26 @@ def validate_http_url(value: str) -> str:
 
 
 HttpUrlString = Annotated[str, AfterValidator(validate_http_url)]
+
+
+def validate_image_url(value: str) -> str:
+    parsed = urlsplit(value)
+    parts = PurePosixPath(parsed.path).parts
+    if (
+        not parsed.scheme
+        and not parsed.netloc
+        and not parsed.query
+        and not parsed.fragment
+        and len(parts) >= 4
+        and parts[1] == "uploads"
+        and ".." not in parts
+        and "\\" not in value
+    ):
+        return value
+    return validate_http_url(value)
+
+
+ImageUrlString = Annotated[str, AfterValidator(validate_image_url)]
 
 
 class LocalizedText(BaseModel):

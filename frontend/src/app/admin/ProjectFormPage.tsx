@@ -13,6 +13,8 @@ import type { ProjectDetailDto, ProjectDto, ProjectImageDto } from '@/api/types'
 import { EMPTY_PROJECT, ProjectForm, type ProjectFormValues } from '@/components/forms/ProjectForm';
 import { LoadingState } from '@/components/common/LoadingState';
 import { ErrorState } from '@/components/common/ErrorState';
+import { handleImageError, normalizeImageUrl } from '@/lib/utils';
+import { ImageUploadField } from '@/components/forms/ImageUploadField';
 
 function toValues(dto: ProjectDetailDto): ProjectFormValues {
   return {
@@ -50,14 +52,18 @@ function ProjectImagesManager({ projectId, initialImages }: { projectId: number;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const storeImage = async (imageUrl: string) => {
+    const image = await addProjectImage(projectId, { image_url: imageUrl });
+    setImages((prev) => [...prev, image]);
+    setUrl('');
+  };
+
   const add = async () => {
     if (!url.trim()) return;
     setBusy(true);
     setError(null);
     try {
-      const image = await addProjectImage(projectId, { image_url: url.trim() });
-      setImages((prev) => [...prev, image]);
-      setUrl('');
+      await storeImage(url.trim());
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'تعذر إضافة الصورة.');
     } finally {
@@ -81,23 +87,34 @@ function ProjectImagesManager({ projectId, initialImages }: { projectId: number;
       {error && (
         <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-300 rounded text-sm">{error}</div>
       )}
-      <div className="flex gap-3 mb-6">
-        <input
-          type="url"
-          dir="ltr"
-          placeholder="https://drive.google.com/image.jpg"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          className="flex-1 h-12 px-4 bg-brand-navy border border-white/10 rounded text-white text-left focus:outline-none focus:border-brand-gold"
+      <div className="mb-6 space-y-3">
+        <ImageUploadField
+          label="رفع صورة إلى معرض المشروع"
+          folder="projects"
+          onUploaded={storeImage}
         />
-        <button
-          type="button"
-          onClick={add}
-          disabled={busy}
-          className="px-6 bg-brand-gold text-white font-bold rounded hover:bg-[#b8962e] disabled:opacity-60"
-        >
-          إضافة
-        </button>
+        <details className="rounded border border-white/10 p-3">
+          <summary className="cursor-pointer text-sm text-brand-silver">خيار متقدم: إضافة رابط صورة يدوي</summary>
+          <div className="mt-3 flex gap-3">
+            <input
+              type="text"
+              inputMode="url"
+              dir="ltr"
+              placeholder="https://drive.google.com/image.jpg"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              className="h-12 flex-1 rounded border border-white/10 bg-brand-navy px-4 text-left text-white focus:border-brand-gold focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={add}
+              disabled={busy}
+              className="rounded bg-brand-gold px-6 font-bold text-white hover:bg-[#b8962e] disabled:opacity-60"
+            >
+              إضافة
+            </button>
+          </div>
+        </details>
       </div>
       {images.length === 0 ? (
         <p className="text-brand-silver text-sm">لا توجد صور بعد.</p>
@@ -105,7 +122,7 @@ function ProjectImagesManager({ projectId, initialImages }: { projectId: number;
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {images.map((img) => (
             <div key={img.id} className="relative group rounded overflow-hidden border border-white/10">
-              <img src={img.image_url} alt={img.alt_text_ar ?? ''} className="h-32 w-full object-cover" />
+              <img src={normalizeImageUrl(img.image_url)} onError={handleImageError} alt={img.alt_text_ar ?? ''} className="h-32 w-full object-cover" />
               <button
                 type="button"
                 onClick={() => remove(img.id)}

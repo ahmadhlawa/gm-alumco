@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react';
+import { ImageUploadField } from './ImageUploadField';
 
 export interface ProjectFormValues {
   title_ar: string;
@@ -7,7 +8,7 @@ export interface ProjectFormValues {
   description_ar: string;
   description_en: string;
   description_he: string;
-  category: 'local' | 'abroad' | 'featured';
+  category: 'LOCAL' | 'INTERNATIONAL' | 'FEATURED';
   main_image_url: string;
   is_active: boolean;
   sort_order: number;
@@ -20,7 +21,7 @@ export const EMPTY_PROJECT: ProjectFormValues = {
   description_ar: '',
   description_en: '',
   description_he: '',
-  category: 'local',
+  category: 'LOCAL',
   main_image_url: '',
   is_active: true,
   sort_order: 0,
@@ -33,9 +34,9 @@ const LANGS = [
 ] as const;
 
 const CATEGORIES = [
-  { value: 'local', label: 'محلي' },
-  { value: 'abroad', label: 'خارجي' },
-  { value: 'featured', label: 'مميز' },
+  { value: 'LOCAL', label: 'داخل البلاد' },
+  { value: 'INTERNATIONAL', label: 'خارج البلاد' },
+  { value: 'FEATURED', label: 'مميز' },
 ] as const;
 
 type Lang = (typeof LANGS)[number]['key'];
@@ -147,16 +148,24 @@ export function ProjectForm({ initialValues, submitting, error, onSubmit }: Prop
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-bold text-gray-200">رابط الصورة الرئيسية (URL)</label>
-        <input
-          type="url"
-          dir="ltr"
-          placeholder="https://drive.google.com/..."
+        <ImageUploadField
+          label="الصورة الرئيسية للمشروع"
+          folder="projects"
           value={values.main_image_url}
-          onChange={(e) => set('main_image_url', e.target.value)}
-          className={`${inputClass} text-left`}
+          onUploaded={(url) => set('main_image_url', url)}
         />
-        <p className="text-xs text-brand-silver">يتم لصق رابط الصورة مباشرة (لا يوجد رفع ملفات).</p>
+        <details className="rounded border border-white/10 p-3">
+          <summary className="cursor-pointer text-sm text-brand-silver">خيار متقدم: استخدام رابط صورة يدوي</summary>
+          <input
+            type="text"
+            inputMode="url"
+            dir="ltr"
+            placeholder="https://drive.google.com/..."
+            value={values.main_image_url}
+            onChange={(e) => set('main_image_url', e.target.value)}
+            className={`${inputClass} mt-3 text-left`}
+          />
+        </details>
       </div>
 
       <div className="flex items-center gap-3 py-2">

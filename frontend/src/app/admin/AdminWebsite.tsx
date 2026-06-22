@@ -5,6 +5,7 @@ import {
   ChevronLeft,
   MousePointerClick
 } from 'lucide-react';
+import { handleImageError, normalizeImageUrl } from '@/lib/utils';
 
 interface SectionCMSCard {
   id: string;
@@ -130,7 +131,7 @@ export function AdminWebsite() {
             'photo-1600607687931-ce8e7784f183',
             'photo-1549294413-26f195200c16'
           ].map((photo) => (
-            <img key={photo} src={`https://images.unsplash.com/${photo}?auto=format&fit=crop&q=60`} alt="" className="h-full w-full object-cover opacity-80" />
+            <img key={photo} src={normalizeImageUrl(`https://images.unsplash.com/${photo}?auto=format&fit=crop&q=60`)} onError={handleImageError} alt="" className="h-full w-full object-cover opacity-80" />
           ))}
         </div>
       )
@@ -165,7 +166,7 @@ export function AdminWebsite() {
       preview: (
         <div className="h-28 bg-[#112240] border border-white/5 rounded p-3 flex flex-col justify-between">
           <span className="text-[10px] text-brand-gold">⭐⭐⭐⭐⭐</span>
-          <p className="text-[8px] text-brand-silver line-clamp-2">"الالتزام بالرفع المساحي الدقيق وضمان الـ ٥ سنوات يجعل أفق شريكاً حقيقياً..."</p>
+          <p className="text-[8px] text-brand-silver line-clamp-2">"الالتزام بالرفع المساحي الدقيق وضمان الـ ٥ سنوات يجعل GM Alomco شريكاً حقيقياً..."</p>
           <span className="text-[8px] text-white block text-left">- م. خالد الهاشم</span>
         </div>
       )
@@ -180,7 +181,7 @@ export function AdminWebsite() {
       status: 'active',
       preview: (
         <div className="h-28 bg-[#112240] border border-white/5 rounded p-3 flex flex-col justify-between text-right text-[10px] text-brand-silver">
-          <div className="text-white font-bold text-xs">أفق للألمنيوم والزجاج</div>
+          <div className="text-white font-bold text-xs">GM Alomco للألمنيوم والزجاج</div>
           <span>المعرض: شارع الملك فيصل، مكة</span>
           <span>الهاتف: +٩٦٦ ٥٠٠٠٠٠٠٠٠</span>
           <div className="text-center font-serif text-[8px] border-t border-white/5 pt-1">جميع الحقوق محفوظة © ٢٠٢٦</div>

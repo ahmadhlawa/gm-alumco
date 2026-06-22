@@ -38,7 +38,7 @@ export function AdminLogin() {
              </svg>
            </div>
            <h2 className="text-2xl font-bold text-white">تسجيل الدخول للإدارة</h2>
-           <p className="text-gray-400 mt-2 text-sm">لوحة تحكم أفق الألمنيوم</p>
+           <p className="text-gray-400 mt-2 text-sm">لوحة تحكم GM Alomco</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">

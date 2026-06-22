@@ -2,11 +2,11 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from app.schemas.common import HttpUrlString, ORMModel
+from app.schemas.common import ImageUrlString, ORMModel
 
 
 class GalleryBase(BaseModel):
-    image_url: HttpUrlString
+    image_url: ImageUrlString
     title_ar: str | None = None
     title_en: str | None = None
     title_he: str | None = None
@@ -23,7 +23,7 @@ class GalleryCreate(GalleryBase):
 
 
 class GalleryUpdate(BaseModel):
-    image_url: HttpUrlString | None = None
+    image_url: ImageUrlString | None = None
     title_ar: str | None = None
     title_en: str | None = None
     title_he: str | None = None

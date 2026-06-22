@@ -35,7 +35,7 @@ def test_public_contact_submission_creates_new_message(
     response = client.post("/api/v1/contact/messages", json=contact_payload())
 
     assert response.status_code == 201
-    assert response.json()["status"] == "new"
+    assert response.json()["status"] == "NEW"
     stored = db.scalar(select(ContactMessage))
     assert stored is not None
     assert stored.email == "visitor@example.com"
@@ -55,24 +55,29 @@ def test_public_quote_submission_creates_new_request(
     response = client.post("/api/v1/quote-requests", json=quote_payload())
 
     assert response.status_code == 201
-    assert response.json()["status"] == "new"
+    assert response.json()["status"] == "NEW"
     stored = db.scalar(select(QuoteRequest))
     assert stored is not None
     assert stored.phone == "+970598000000"
 
 
-def test_public_quote_submission_requires_valid_email_and_phone(
+def test_public_quote_submission_allows_missing_email_but_requires_valid_supplied_email_and_phone(
     client: TestClient,
 ) -> None:
     invalid_email = client.post(
         "/api/v1/quote-requests",
         json=quote_payload(email="invalid-email"),
     )
+    without_email = quote_payload()
+    without_email.pop("email")
+    no_email = client.post("/api/v1/quote-requests", json=without_email)
     missing_phone = quote_payload()
     missing_phone.pop("phone")
     no_phone = client.post("/api/v1/quote-requests", json=missing_phone)
 
     assert invalid_email.status_code == 422
+    assert no_email.status_code == 201
+    assert no_email.json()["email"] is None
     assert no_phone.status_code == 422
 
 
@@ -99,12 +104,12 @@ def test_admin_manages_contact_messages(client: TestClient, auth_headers) -> Non
     updated = client.patch(
         f"/api/v1/admin/contact-messages/{first['id']}/status",
         headers=headers,
-        json={"status": "read"},
+        json={"status": "READ"},
     )
     invalid = client.patch(
         f"/api/v1/admin/contact-messages/{first['id']}/status",
         headers=headers,
-        json={"status": "in_progress"},
+        json={"status": "IN_PROGRESS"},
     )
     deleted = client.delete(
         f"/api/v1/admin/contact-messages/{first['id']}", headers=headers
@@ -113,7 +118,7 @@ def test_admin_manages_contact_messages(client: TestClient, auth_headers) -> Non
     assert listing.status_code == 200
     assert [item["id"] for item in listing.json()] == [second["id"], first["id"]]
     assert detail.status_code == 200
-    assert updated.status_code == 200 and updated.json()["status"] == "read"
+    assert updated.status_code == 200 and updated.json()["status"] == "READ"
     assert invalid.status_code == 422
     assert deleted.status_code == 204
     assert client.get(
@@ -132,12 +137,12 @@ def test_admin_manages_quote_requests(client: TestClient, auth_headers) -> None:
     updated = client.patch(
         f"/api/v1/admin/quote-requests/{created['id']}/status",
         headers=headers,
-        json={"status": "in_progress"},
+        json={"status": "IN_PROGRESS"},
     )
     invalid = client.patch(
         f"/api/v1/admin/quote-requests/{created['id']}/status",
         headers=headers,
-        json={"status": "read"},
+        json={"status": "READ"},
     )
     deleted = client.delete(
         f"/api/v1/admin/quote-requests/{created['id']}", headers=headers
@@ -145,11 +150,11 @@ def test_admin_manages_quote_requests(client: TestClient, auth_headers) -> None:
 
     assert listing.status_code == 200 and len(listing.json()) == 1
     assert detail.status_code == 200
-    assert updated.status_code == 200 and updated.json()["status"] == "in_progress"
+    assert updated.status_code == 200 and updated.json()["status"] == "IN_PROGRESS"
     assert invalid.status_code == 422
     assert deleted.status_code == 204
     assert client.patch(
         "/api/v1/admin/quote-requests/999/status",
         headers=headers,
-        json={"status": "completed"},
+        json={"status": "DONE"},
     ).status_code == 404

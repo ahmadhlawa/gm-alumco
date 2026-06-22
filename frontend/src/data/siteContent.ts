@@ -78,9 +78,9 @@ export interface SiteContent {
 export const initialSiteContent: SiteContent = {
   hero: {
     logoText: {
-      ar: "أفق الألمنيوم",
-      en: "Ofok Aluminum",
-      he: "אופק אלומיניום"
+      ar: "GM Alomco",
+      en: "GM Alomco",
+      he: "GM Alomco"
     },
     badge: {
       ar: "ريادة هندسية منذ ٢٠١٤",
@@ -169,14 +169,14 @@ export const initialSiteContent: SiteContent = {
       he: "אנחנו עושים את ההבדל בכל פרט"
     },
     subtitle: {
-      ar: "نحن شركة أفق الألمنيوم، نجمع بين الخبرة العريقة وأحدث التقنيات لتقديم حلول معمارية مستدامة.",
-      en: "We are Ofok Aluminum, combining rich experience and latest technologies to deliver sustainable architectural solutions.",
-      he: "אנחנו אופק אלומיניום, משלבים ניסיון עשיר וטכנולוגיות מתקדמות כדי לספק פתרונות אדריכליים בני קיימא."
+      ar: "نحن شركة GM Alomco، نجمع بين الخبرة العريقة وأحدث التقنيات لتقديم حلول معمارية مستدامة.",
+      en: "We are GM Aluminum Manufacturing & Trading Co., combining rich experience and modern technologies to deliver sustainable architectural solutions.",
+      he: "אנחנו GM Alomco, משלבים ניסיון עשיר וטכנולוגיות מתקדמות כדי לספק פתרונות אדריכליים בני קיימא."
     },
     description: {
-      ar: "على مدار أكثر من عقد من الزمان، التزمنا في أفق الألمنيوم بتقديم حلول زجاجية وألمنيوم تتجاوز التوقعات. رؤيتنا لا تقتصر على التركيب، بل تمتد لتكون شراكة في بناء معالم معمارية تصمد أمام اختبار الزمن.",
-      en: "For over a decade, we at Ofok Aluminum have been committed to delivering glass and aluminum solutions that exceed expectations. Our vision is not just active installation, but a partnership in building architectural landmarks that stand the test of time.",
-      he: "מזה למעלה מעשור, אנו באופק אלומיניום מחויבים לספק פתרונות זכוכית ואלומיניום העולים על הציפיות. החזון שלנו אינו רק התקנה, אלא שותפות בבניית נקודות ציון ארכיטקטוניות העומדות במבחן הזמן."
+      ar: "على مدار أكثر من عقد من الزمان، التزمنا في GM Alomco بتقديم حلول زجاجية وألمنيوم تتجاوز التوقعات. رؤيتنا لا تقتصر على التركيب، بل تمتد لتكون شراكة في بناء معالم معمارية تصمد أمام اختبار الزمن.",
+      en: "For over a decade, GM Alomco has delivered glass and aluminum solutions that exceed expectations. Our vision extends beyond installation to long-term architectural partnership.",
+      he: "מזה למעלה מעשור, GM Alomco מספקת פתרונות זכוכית ואלומיניום העולים על הציפיות, מתוך שותפות ארוכת טווח בבנייה אדריכלית."
     },
     buttonText: {
       ar: "تعرف علينا أكثر",
@@ -320,9 +320,9 @@ export const initialSiteContent: SiteContent = {
       he: "חברה מובילה המתמחה בתכנון, ייצור והתקנה של מערכות אלומיניום וזכוכית מתקדמות לפרויקטים למגורים ומסחר עם טביעת אצבע אדריכלית ייחודית."
     },
     copyright: {
-      ar: "شركة أفق الألمنيوم. جميع الحقوق محفوظة.",
-      en: "Ofok Aluminum Company. All rights reserved.",
-      he: "חברת אופק אלומיניום. כל הזכויות שמורות."
+      ar: "شركة GM Alomco. جميع الحقوق محفوظة.",
+      en: "GM Aluminum Manufacturing & Trading Co. All rights reserved.",
+      he: "GM Alomco. כל הזכויות שמורות."
     }
   }
 };
@@ -335,7 +335,7 @@ export const getCompanyStats = (translate: (ar: string, he?: string, en?: string
 ];
 
 // TODO(backend): Replace preview storage with versioned draft and publish APIs.
-const STORAGE_KEY = "ofok_site_content";
+const STORAGE_KEY = "gm_alomco_site_content";
 
 export function loadSiteContent(): SiteContent {
   const saved = localStorage.getItem(STORAGE_KEY);

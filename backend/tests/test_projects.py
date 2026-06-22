@@ -12,7 +12,7 @@ def project_payload(**overrides) -> dict:
         "description_ar": None,
         "description_en": "Description",
         "description_he": None,
-        "category": "local",
+        "category": "LOCAL",
         "main_image_url": "https://drive.google.com/project.jpg",
         "sort_order": 2,
         "is_active": True,
@@ -32,12 +32,12 @@ def add_project(db: Session, **overrides) -> Project:
 def test_public_projects_are_active_sorted_and_filterable(
     client: TestClient, db: Session
 ) -> None:
-    abroad = add_project(db, title_en="Abroad", category="abroad", sort_order=2)
-    local = add_project(db, title_en="Local", category="local", sort_order=1)
+    abroad = add_project(db, title_en="Abroad", category="INTERNATIONAL", sort_order=2)
+    local = add_project(db, title_en="Local", category="LOCAL", sort_order=1)
     add_project(db, title_en="Hidden", is_active=False, sort_order=0)
 
     response = client.get("/api/v1/projects")
-    filtered = client.get("/api/v1/projects?category=abroad")
+    filtered = client.get("/api/v1/projects?category=INTERNATIONAL")
 
     assert response.status_code == 200
     assert [item["id"] for item in response.json()] == [local.id, abroad.id]

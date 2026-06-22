@@ -22,16 +22,16 @@ type Row =
   | { kind: 'quote'; data: QuoteRequestDto };
 
 const CONTACT_STATUS_LABELS: Record<ContactStatus, string> = {
-  new: 'جديد',
-  read: 'مقروء',
-  archived: 'مؤرشف'
+  NEW: 'جديد',
+  READ: 'مقروء',
+  ARCHIVED: 'مؤرشف'
 };
 
 const QUOTE_STATUS_LABELS: Record<QuoteStatus, string> = {
-  new: 'جديد',
-  in_progress: 'قيد المعالجة',
-  completed: 'مكتمل',
-  archived: 'مؤرشف'
+  NEW: 'جديد',
+  IN_PROGRESS: 'قيد المعالجة',
+  DONE: 'مكتمل',
+  ARCHIVED: 'مؤرشف'
 };
 
 function formatDate(value: string): string {

@@ -63,7 +63,7 @@ export function AdminWebsiteHero() {
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
             خصائص وتصميم القسم الرئيسي (Hero Section)
           </h2>
-          <p className="text-xs text-brand-silver mt-1">تعديل العناوين والشارات والأجهزة الترويجية التي تشكّل الانطباع الأول لشركة أفق الألمنيوم.</p>
+          <p className="text-xs text-brand-silver mt-1">تعديل العناوين والشارات والأجهزة الترويجية التي تشكّل الانطباع الأول لشركة GM Alomco.</p>
         </div>
 
         {/* Action Buttons */}

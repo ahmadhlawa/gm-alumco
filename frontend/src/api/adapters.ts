@@ -13,7 +13,7 @@ export const toServiceView = (item: ServiceDto, locale: Locale): Service => ({
 export const toProjectView = (item: ProjectDto, locale: Locale): Project => ({
   id: String(item.id), slug: String(item.id), title: pick(locale, item.title_ar, item.title_en, item.title_he), category: item.category,
   location: '', year: '', shortDescription: pick(locale, item.description_ar, item.description_en, item.description_he),
-  description: pick(locale, item.description_ar, item.description_en, item.description_he), mainImage: item.main_image_url ?? '', images: [], featured: item.category === 'featured', tags: [],
+  description: pick(locale, item.description_ar, item.description_en, item.description_he), mainImage: item.main_image_url ?? '', images: [], featured: item.category === 'FEATURED', tags: [],
 });
 export const toProductView = (item: ProductDto, locale: Locale): Product => ({
   id: String(item.id), slug: String(item.id), title: pick(locale, item.title_ar, item.title_en, item.title_he), category: '', image: item.image_url ?? '', gallery: [],
@@ -29,7 +29,7 @@ export const toTestimonialView = (item: TestimonialDto, locale: Locale): Testimo
   content: pick(locale, item.message_ar, item.message_en, item.message_he), rating: undefined,
 });
 
-const PROJECT_CATEGORIES: ProjectDto['category'][] = ['local', 'abroad', 'featured'];
+const PROJECT_CATEGORIES: ProjectDto['category'][] = ['LOCAL', 'INTERNATIONAL', 'FEATURED'];
 
 // Maps the single-language admin form view-model back to the backend DTO.
 // The admin form currently exposes one language input, so the entered title/
@@ -39,10 +39,10 @@ export function toProjectDto(view: Partial<Project>): Partial<ProjectDto> {
   const title = view.title ?? '';
   const description = view.description || view.shortDescription || '';
   const category: ProjectDto['category'] = view.featured
-    ? 'featured'
+    ? 'FEATURED'
     : PROJECT_CATEGORIES.includes(view.category as ProjectDto['category'])
       ? (view.category as ProjectDto['category'])
-      : 'local';
+      : 'LOCAL';
 
   const dto: Partial<ProjectDto> = {
     title_ar: title,

@@ -1,161 +1,62 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Briefcase,
-  Layers,
-  Package,
-  Image as ImageIcon,
-  MessageSquare,
-  FileText,
-  Plus,
-  Users,
-  ArrowLeft,
-} from 'lucide-react';
+import { Briefcase, ClipboardList, Globe2, Handshake, Layers, MessageSquare, Plus, Star, Users } from 'lucide-react';
 import { getDashboardStats, type DashboardStats } from '@/api/dashboard';
 import { listContactMessages, listQuoteRequests } from '@/api/messages';
-import type { ContactMessageDto, QuoteRequestDto } from '@/api/types';
-import { useIsSuperAdmin } from '@/components/admin/AdminAuthProvider';
+import { listAuditLogs } from '@/api/auditLogs';
+import type { AuditLogDto, ContactMessageDto, QuoteRequestDto } from '@/api/types';
+import { useAdminAuth } from '@/components/admin/AdminAuthProvider';
 import { AdminStatCard } from '@/components/admin/AdminStatCard';
 import { LoadingState } from '@/components/common/LoadingState';
 import { ErrorState } from '@/components/common/ErrorState';
 
-const byNewest = <T extends { created_at: string }>(items: T[]) =>
-  [...items].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 5);
+const newest = <T extends { created_at: string }>(items: T[]) => [...items].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 5);
+const countStatuses = (values: Record<string, number>) => Object.values(values).reduce((total, value) => total + value, 0);
 
 export function Dashboard() {
-  const isSuperAdmin = useIsSuperAdmin();
+  const { admin, loading: authLoading } = useAdminAuth();
+  const isSuperAdmin = admin?.role === 'super_admin';
   const [stats, setStats] = useState<DashboardStats>();
   const [messages, setMessages] = useState<ContactMessageDto[]>([]);
   const [quotes, setQuotes] = useState<QuoteRequestDto[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [logs, setLogs] = useState<AuditLogDto[]>([]);
+  const [loading, setLoading] = useState(true); const [error, setError] = useState(false);
 
   useEffect(() => {
-    Promise.all([getDashboardStats(), listContactMessages(), listQuoteRequests()])
-      .then(([s, m, q]) => {
-        setStats(s);
-        setMessages(byNewest(m));
-        setQuotes(byNewest(q));
-      })
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, []);
+    if (authLoading) return;
+    setLoading(true); setError(false);
+    const activity = isSuperAdmin ? listAuditLogs(8).then((data) => setLogs(newest(data))) : Promise.all([listContactMessages(), listQuoteRequests()]).then(([m, q]) => { setMessages(newest(m)); setQuotes(newest(q)); });
+    Promise.all([getDashboardStats(), activity]).then(([data]) => setStats(data)).catch(() => setError(true)).finally(() => setLoading(false));
+  }, [authLoading, isSuperAdmin]);
 
-  if (loading) return <LoadingState message="جاري تحميل لوحة التحكم..." />;
+  if (authLoading || loading) return <LoadingState message="جارٍ تحميل لوحة التحكم..." />;
   if (error || !stats) return <ErrorState />;
 
-  const newMessages = stats.contact_messages.new ?? 0;
-  const newQuotes = stats.quote_requests.new ?? 0;
-
-  const statCards = [
-    { title: 'المشاريع', value: stats.projects, icon: Briefcase },
-    { title: 'الخدمات', value: stats.services, icon: Layers },
-    { title: 'المنتجات', value: stats.products, icon: Package },
-    { title: 'المعرض', value: stats.gallery, icon: ImageIcon },
-    { title: 'رسائل جديدة', value: newMessages, icon: MessageSquare },
-    { title: 'طلبات عروض جديدة', value: newQuotes, icon: FileText },
+  const cards = [
+    { title: 'إجمالي المشاريع النشطة', value: stats.projects, icon: Briefcase },
+    { title: 'مشاريع داخل البلاد', value: stats.local_projects, icon: Briefcase },
+    { title: 'مشاريع خارج البلاد', value: stats.international_projects, icon: Globe2 },
+    { title: 'المشاريع المميزة', value: stats.featured_projects, icon: Star },
+    { title: 'الخدمات النشطة', value: stats.services, icon: Layers },
+    { title: 'الشركاء النشطون', value: stats.partners, icon: Handshake },
+    { title: 'رسائل غير مؤرشفة', value: countStatuses(stats.contact_messages), icon: MessageSquare },
+    { title: 'طلبات عروض غير مؤرشفة', value: countStatuses(stats.quote_requests), icon: ClipboardList },
   ];
-
-  const quickActions = [
-    { label: 'مشروع جديد', to: '/admin/projects/new', icon: Plus },
-    { label: 'إدارة الخدمات', to: '/admin/services', icon: Layers },
-    { label: 'عرض الرسائل', to: '/admin/messages', icon: MessageSquare },
+  const actions = [
+    { label: 'إضافة مشروع', to: '/admin/projects/new', icon: Plus },
+    { label: 'إضافة خدمة', to: '/admin/services/new', icon: Layers },
+    { label: 'إضافة شريك', to: '/admin/partners/new', icon: Handshake },
+    { label: 'عرض الرسائل', to: '/admin/contact-messages', icon: MessageSquare },
     ...(isSuperAdmin ? [{ label: 'إدارة المدراء', to: '/admin/admins', icon: Users }] : []),
   ];
 
-  return (
-    <div className="space-y-8">
-      {/* Stat cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        {statCards.map((card) => (
-          <AdminStatCard key={card.title} title={card.title} value={card.value} icon={card.icon} />
-        ))}
-      </div>
-
-      {/* Quick actions */}
-      <div>
-        <h2 className="mb-3 text-lg font-bold text-white">إجراءات سريعة</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {quickActions.map((action) => (
-            <Link
-              key={action.to}
-              to={action.to}
-              className="flex items-center gap-3 rounded-lg border border-white/5 bg-brand-navy p-4 text-white transition-colors hover:border-brand-gold/40"
-            >
-              <action.icon className="h-6 w-6 text-brand-gold" />
-              <span className="font-bold">{action.label}</span>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Recent activity */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <RecentList
-          title="أحدث الرسائل"
-          to="/admin/messages"
-          empty="لا توجد رسائل."
-          items={messages.map((m) => ({
-            id: m.id,
-            primary: m.name,
-            secondary: m.subject || m.message,
-            isNew: m.status === 'new',
-            created_at: m.created_at,
-          }))}
-        />
-        <RecentList
-          title="أحدث طلبات العروض"
-          to="/admin/messages"
-          empty="لا توجد طلبات."
-          items={quotes.map((q) => ({
-            id: q.id,
-            primary: q.name,
-            secondary: q.service_type || q.message || '—',
-            isNew: q.status === 'new',
-            created_at: q.created_at,
-          }))}
-        />
-      </div>
-    </div>
-  );
+  return <div className="space-y-8">
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{cards.map((card) => <AdminStatCard key={card.title} {...card} />)}</div>
+    <section><h2 className="mb-3 text-lg font-bold text-white">إجراءات سريعة</h2><div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">{actions.map((action) => <Link key={action.to} to={action.to} className="flex items-center gap-3 rounded border border-white/10 bg-brand-navy p-4 font-bold text-white hover:border-brand-gold/50"><action.icon className="h-5 w-5 text-brand-gold" />{action.label}</Link>)}</div></section>
+    {isSuperAdmin ? <ActivityTable title="أحدث النشاطات" rows={logs.map((log) => ({ id: log.id, primary: log.actor_name || 'مدير سابق', secondary: `${log.action} · ${log.entity_type || 'system'}`, date: log.created_at }))} /> : <div className="grid gap-6 xl:grid-cols-2"><ActivityTable title="أحدث رسائل التواصل" rows={messages.map((item) => ({ id: item.id, primary: item.name, secondary: item.message, date: item.created_at }))} /><ActivityTable title="أحدث طلبات الأسعار" rows={quotes.map((item) => ({ id: item.id, primary: item.name, secondary: item.service_type || item.message || '—', date: item.created_at }))} /></div>}
+  </div>;
 }
 
-interface RecentItem {
-  id: number;
-  primary: string;
-  secondary: string | null;
-  isNew: boolean;
-  created_at: string;
-}
-
-function RecentList({ title, to, empty, items }: { title: string; to: string; empty: string; items: RecentItem[] }) {
-  return (
-    <div className="rounded-xl border border-white/5 bg-brand-navy p-6">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="font-bold text-white">{title}</h3>
-        <Link to={to} className="flex items-center gap-1 text-sm font-bold text-brand-gold">
-          عرض الكل <ArrowLeft className="h-4 w-4" />
-        </Link>
-      </div>
-      {items.length === 0 ? (
-        <p className="py-6 text-center text-sm text-brand-silver">{empty}</p>
-      ) : (
-        <ul className="divide-y divide-white/5">
-          {items.map((item) => (
-            <li key={item.id} className="flex items-center justify-between gap-3 py-3">
-              <div className="min-w-0">
-                <p className="truncate font-bold text-white">{item.primary}</p>
-                <p className="truncate text-sm text-brand-silver">{item.secondary}</p>
-              </div>
-              {item.isNew && (
-                <span className="shrink-0 rounded bg-brand-gold/10 px-2 py-1 text-xs font-bold text-brand-gold">
-                  جديد
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
+function ActivityTable({ title, rows }: { title: string; rows: Array<{ id: number; primary: string; secondary: string; date: string }> }) {
+  return <section><h2 className="mb-3 text-lg font-bold text-white">{title}</h2><div className="overflow-hidden rounded-lg border border-white/10 bg-brand-navy">{rows.length === 0 ? <p className="p-8 text-center text-brand-silver">لا توجد بيانات حديثة.</p> : <ul className="divide-y divide-white/5">{rows.map((row) => <li key={row.id} className="flex items-center justify-between gap-4 px-5 py-4"><div className="min-w-0"><p className="font-bold text-white">{row.primary}</p><p className="truncate text-sm text-brand-silver">{row.secondary}</p></div><time className="shrink-0 text-xs text-brand-silver">{new Date(row.date).toLocaleDateString('ar-EG')}</time></li>)}</ul>}</div></section>;
 }

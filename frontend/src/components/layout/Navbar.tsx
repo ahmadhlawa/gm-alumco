@@ -57,7 +57,7 @@ export function Navbar() {
               "font-bold text-xl tracking-tight transition-colors",
               isScrolled ? "text-white" : "text-white lg:text-white"
             )}>
-              {t('أفق الألمنيوم', 'אופק אלומיניום')}
+              {t('GM Alomco', 'GM Alomco')}
             </span>
           </Link>
 

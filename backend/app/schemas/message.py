@@ -6,8 +6,8 @@ from pydantic import BaseModel, EmailStr, Field
 from app.schemas.common import ORMModel
 
 
-ContactMessageStatus = Literal["new", "read", "archived"]
-QuoteRequestStatus = Literal["new", "in_progress", "completed", "archived"]
+ContactMessageStatus = Literal["NEW", "READ", "ARCHIVED"]
+QuoteRequestStatus = Literal["NEW", "IN_PROGRESS", "DONE", "ARCHIVED"]
 
 
 class ContactMessageCreate(BaseModel):
@@ -30,7 +30,7 @@ class ContactMessageStatusUpdate(BaseModel):
 
 class QuoteRequestCreate(BaseModel):
     name: str = Field(min_length=1, max_length=180)
-    email: EmailStr
+    email: EmailStr | None = None
     phone: str = Field(min_length=1, max_length=50)
     service_type: str | None = Field(default=None, max_length=180)
     message: str | None = None

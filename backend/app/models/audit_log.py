@@ -22,5 +22,13 @@ class AuditLog(Base):
 
     admin: Mapped["Admin | None"] = relationship(back_populates="audit_logs")
 
+    @property
+    def actor_name(self) -> str | None:
+        return self.admin.full_name if self.admin else None
+
+    @property
+    def actor_email(self) -> str | None:
+        return self.admin.email if self.admin else None
+
 
 from app.models.admin import Admin  # noqa: E402

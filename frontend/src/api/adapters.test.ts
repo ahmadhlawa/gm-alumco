@@ -7,14 +7,14 @@ describe('API adapters', () => {
       id: 4,
       title_ar: 'خدمة', title_en: 'Service', title_he: 'שירות',
       description_ar: 'وصف', description_en: 'Description', description_he: 'תיאור',
-      image_url: null, is_active: true, sort_order: 0,
+      image_url: null, starting_price: null, is_active: true, sort_order: 0,
       created_at: '', updated_at: '',
     }, 'en');
     const project = toProjectView({
       id: 5,
       title_ar: 'مشروع', title_en: 'Project', title_he: 'פרויקט',
       description_ar: null, description_en: null, description_he: null,
-      category: 'featured', main_image_url: null, is_active: true, sort_order: 0,
+      category: 'FEATURED', main_image_url: null, is_active: true, sort_order: 0,
       created_at: '', updated_at: '',
     }, 'en');
     const testimonial = toTestimonialView({
@@ -32,10 +32,10 @@ describe('API adapters', () => {
 
   it('assembles section content from active section/content rows', () => {
     const result = assembleSiteContent([
-      { id: 1, section: 'hero', key: 'content', value: { headline: { ar: 'أفق', en: 'Ofok', he: 'אופק' } }, content_type: 'json', is_active: true, created_at: '', updated_at: '' },
+      { id: 1, section: 'hero', key: 'content', value: { headline: { ar: 'GM Alomco', en: 'GM Alomco', he: 'GM Alomco' } }, content_type: 'json', is_active: true, created_at: '', updated_at: '' },
       { id: 2, section: 'hero', key: 'ignored', value: 'x', content_type: 'text', is_active: true, created_at: '', updated_at: '' },
     ]);
 
-    expect(result.hero).toEqual({ headline: { ar: 'أفق', en: 'Ofok', he: 'אופק' } });
+    expect(result.hero).toEqual({ headline: { ar: 'GM Alomco', en: 'GM Alomco', he: 'GM Alomco' } });
   });
 });

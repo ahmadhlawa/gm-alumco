@@ -1,6 +1,6 @@
-# Ofok Aluminum Corporate Website and Visual CMS
+# GM Alomco Corporate Website
 
-Frontend baseline for the Ofok Aluminum corporate website and its visual CMS administration dashboard. The project preserves the premium dark visual identity and provides public marketing pages, reusable content cards, multilingual content structures, and local-only visual editing previews.
+Frontend for the GM Aluminum Manufacturing & Trading Co. corporate website and its focused Arabic RTL administration panel.
 
 This checkpoint is frontend-only. It does not include a backend, database, real authentication, or persistent CMS publishing.
 

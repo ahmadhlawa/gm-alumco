@@ -7,6 +7,8 @@ from app.schemas.common import ORMModel
 class AuditLogRead(ORMModel):
     id: int
     admin_id: int | None = None
+    actor_name: str | None = None
+    actor_email: str | None = None
     action: str
     entity_type: str | None = None
     entity_id: str | None = None

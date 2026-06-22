@@ -8,10 +8,10 @@ export interface LocalizedTitle {
   description_ar: string | null; description_en: string | null; description_he: string | null;
 }
 
-export interface ServiceDto extends Timestamped, ActiveSortable, LocalizedTitle { id: number; image_url: string | null }
+export interface ServiceDto extends Timestamped, ActiveSortable, LocalizedTitle { id: number; image_url: string | null; starting_price: string | null }
 export interface ProductDto extends Timestamped, ActiveSortable, LocalizedTitle { id: number; image_url: string | null }
 export interface ProjectDto extends Timestamped, ActiveSortable, LocalizedTitle {
-  id: number; category: 'local' | 'abroad' | 'featured'; main_image_url: string | null;
+  id: number; category: 'LOCAL' | 'INTERNATIONAL' | 'FEATURED'; main_image_url: string | null;
 }
 export interface ProjectImageDto { id: number; project_id: number; image_url: string; alt_text_ar: string | null; alt_text_en: string | null; alt_text_he: string | null; sort_order: number; created_at: string }
 export interface ProjectDetailDto extends ProjectDto { images: ProjectImageDto[] }
@@ -28,7 +28,8 @@ export interface TestimonialDto extends Timestamped, ActiveSortable {
 export interface AdminDto extends Timestamped { id: number; full_name: string; email: string; role: 'admin' | 'super_admin'; is_active: boolean; last_login_at: string | null }
 export interface SiteContentDto extends Timestamped { id: number; section: string; key: string; value: JsonValue; content_type: string; is_active: boolean }
 export interface SiteSettingDto extends Timestamped { id: number; key: string; value: JsonValue }
-export type ContactStatus = 'new' | 'read' | 'archived';
-export type QuoteStatus = 'new' | 'in_progress' | 'completed' | 'archived';
+export type ContactStatus = 'NEW' | 'READ' | 'ARCHIVED';
+export type QuoteStatus = 'NEW' | 'IN_PROGRESS' | 'DONE' | 'ARCHIVED';
 export interface ContactMessageDto { id: number; name: string; email: string; phone: string | null; subject: string | null; message: string; status: ContactStatus; created_at: string }
-export interface QuoteRequestDto extends Timestamped { id: number; name: string; email: string; phone: string; service_type: string | null; message: string | null; status: QuoteStatus }
+export interface QuoteRequestDto extends Timestamped { id: number; name: string; email: string | null; phone: string; service_type: string | null; message: string | null; status: QuoteStatus }
+export interface AuditLogDto { id: number; admin_id: number | null; actor_name: string | null; actor_email: string | null; action: string; entity_type: string | null; entity_id: string | null; created_at: string }

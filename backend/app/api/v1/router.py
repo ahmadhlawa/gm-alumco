@@ -15,6 +15,7 @@ from app.api.v1.endpoints import (
     site_content,
     site_settings,
     testimonials,
+    uploads,
 )
 
 
@@ -27,6 +28,11 @@ def health_check() -> dict[str, str]:
 
 
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
+api_router.include_router(
+    uploads.router,
+    prefix="/admin/uploads",
+    tags=["admin: uploads"],
+)
 api_router.include_router(admins.router, prefix="/admin/admins", tags=["admin: admins"])
 api_router.include_router(
     dashboard.router,

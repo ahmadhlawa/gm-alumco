@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useParams } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Routes, Route, useParams } from 'react-router-dom';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { WhatsAppButton } from '@/components/layout/WhatsAppButton';
@@ -16,25 +16,20 @@ import { LanguageProvider, useLanguage } from '@/i18n';
 // Admin imports
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { RequireAuth } from '@/components/admin/RequireAuth';
+import { RequireSuperAdmin } from '@/components/admin/RequireSuperAdmin';
 import { AdminAuthProvider } from '@/components/admin/AdminAuthProvider';
 import { Dashboard } from '@/app/admin/Dashboard';
 import { AdminProjects } from '@/app/admin/AdminProjects';
 import { AdminAdmins } from '@/app/admin/AdminAdmins';
 import { ProjectFormPage } from '@/app/admin/ProjectFormPage';
 import { AdminServices } from '@/app/admin/AdminServices';
-import { AdminProducts } from '@/app/admin/AdminProducts';
-import { AdminGallery } from '@/app/admin/AdminGallery';
-import { AdminMessages } from '@/app/admin/AdminMessages';
-import { AdminSettings } from '@/app/admin/AdminSettings';
+import { ServiceFormPage } from '@/app/admin/ServiceFormPage';
 import { AdminLogin } from '@/app/admin/AdminLogin';
 import { AdminPartners } from '@/app/admin/AdminPartners';
-import { AdminTestimonials } from '@/app/admin/AdminTestimonials';
-import { AdminBlog } from '@/app/admin/AdminBlog';
-import { AdminClients } from '@/app/admin/AdminClients';
-import { AdminWebsite } from '@/app/admin/AdminWebsite';
-import { AdminWebsiteHero } from '@/app/admin/AdminWebsiteHero';
-import { AdminWebsiteSections } from '@/app/admin/AdminWebsiteSections';
-import { AdminFooter } from '@/app/admin/AdminFooter';
+import { PartnerFormPage } from '@/app/admin/PartnerFormPage';
+import { AdminContactMessages } from '@/app/admin/AdminContactMessages';
+import { AdminQuoteRequests } from '@/app/admin/AdminQuoteRequests';
+import { AdminAuditLogs } from '@/app/admin/AdminAuditLogs';
 
 // Dynamic Placeholder
 const DynamicDetailsPage = ({ basePath, baseTitle }: { basePath: string, baseTitle: string }) => {
@@ -82,23 +77,21 @@ function AppContent() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<RequireAuth><AdminAuthProvider><AdminLayout /></AdminAuthProvider></RequireAuth>}>
              <Route index element={<Dashboard />} />
-             <Route path="website" element={<AdminWebsite />} />
-             <Route path="website/hero" element={<AdminWebsiteHero />} />
-             <Route path="website/sections" element={<AdminWebsiteSections />} />
              <Route path="projects" element={<AdminProjects />} />
              <Route path="projects/new" element={<ProjectFormPage />} />
              <Route path="projects/:id/edit" element={<ProjectFormPage />} />
-             <Route path="gallery" element={<AdminGallery />} />
              <Route path="services" element={<AdminServices />} />
-             <Route path="products" element={<AdminProducts />} />
+             <Route path="services/new" element={<ServiceFormPage />} />
+             <Route path="services/:id/edit" element={<ServiceFormPage />} />
              <Route path="partners" element={<AdminPartners />} />
-             <Route path="testimonials" element={<AdminTestimonials />} />
-             <Route path="footer" element={<AdminFooter />} />
-             <Route path="blog" element={<AdminBlog />} />
-             <Route path="clients" element={<AdminClients />} />
-             <Route path="messages" element={<AdminMessages />} />
-             <Route path="admins" element={<AdminAdmins />} />
-             <Route path="settings" element={<AdminSettings />} />
+             <Route path="partners/new" element={<PartnerFormPage />} />
+             <Route path="partners/:id/edit" element={<PartnerFormPage />} />
+             <Route path="contact-messages" element={<AdminContactMessages />} />
+             <Route path="quote-requests" element={<AdminQuoteRequests />} />
+             <Route path="messages" element={<Navigate to="/admin/contact-messages" replace />} />
+             <Route path="admins" element={<RequireSuperAdmin><AdminAdmins /></RequireSuperAdmin>} />
+             <Route path="audit-logs" element={<RequireSuperAdmin><AdminAuditLogs /></RequireSuperAdmin>} />
+             <Route path="*" element={<Navigate to="/admin" replace />} />
           </Route>
 
           {/* Public Routes */}

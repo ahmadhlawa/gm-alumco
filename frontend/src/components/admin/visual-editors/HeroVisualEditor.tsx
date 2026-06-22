@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { EditableBlock } from '@/components/admin/EditableBlock';
 import { SiteContent } from '@/data/siteContent';
 import { Globe, ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { handleImageError, normalizeImageUrl } from '@/lib/utils';
 
 interface HeroVisualEditorProps {
   content: SiteContent['hero'];
@@ -88,7 +89,7 @@ export function HeroVisualEditor({ content, onChange }: HeroVisualEditorProps) {
           
           {/* Background image editable block wrapper */}
           <div className="absolute inset-0 z-0 pointer-events-none lg:hidden">
-            <img src={content.backgroundImage} className="w-full h-full object-cover opacity-20" alt="Background inline" />
+            <img src={normalizeImageUrl(content.backgroundImage)} onError={handleImageError} className="w-full h-full object-cover opacity-20" alt="Background inline" />
           </div>
 
           <div className="lg:w-[55%] p-6 lg:p-12 flex flex-col justify-center relative z-10">
@@ -192,7 +193,7 @@ export function HeroVisualEditor({ content, onChange }: HeroVisualEditorProps) {
             {/* Visual CMS Background image edit action panel */}
             <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-brand-navy/30 to-brand-navy z-10 pointer-events-none"></div>
             
-            <img src={content.backgroundImage} className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10s] group-hover/feature:scale-105" alt="Hero representation background" />
+            <img src={normalizeImageUrl(content.backgroundImage)} onError={handleImageError} className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10s] group-hover/feature:scale-105" alt="Hero representation background" />
 
             <div className="absolute top-4 left-4 z-20">
               <EditableBlock

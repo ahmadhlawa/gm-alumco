@@ -16,7 +16,7 @@ class Project(Base):
     description_ar: Mapped[str | None] = mapped_column(String(2000), nullable=True)
     description_en: Mapped[str | None] = mapped_column(String(2000), nullable=True)
     description_he: Mapped[str | None] = mapped_column(String(2000), nullable=True)
-    category: Mapped[str] = mapped_column(String(50), default="local", index=True)
+    category: Mapped[str] = mapped_column(String(50), default="LOCAL", index=True)
     main_image_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     sort_order: Mapped[int] = mapped_column(Integer, default=0)

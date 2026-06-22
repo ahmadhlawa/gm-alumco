@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, ImageOff } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { deleteProject, listAdminProjects } from '@/api/projects';
 import { ApiError } from '@/api/client';
 import type { ProjectDto } from '@/api/types';
@@ -9,12 +9,8 @@ import { AdminActionButtons } from '@/components/admin/AdminActionButtons';
 import { AdminStatusBadge } from '@/components/admin/AdminStatusBadge';
 import { LoadingState } from '@/components/common/LoadingState';
 import { ErrorState } from '@/components/common/ErrorState';
-
-const CATEGORY_LABELS: Record<ProjectDto['category'], string> = {
-  local: 'محلي',
-  abroad: 'خارجي',
-  featured: 'مميز',
-};
+import { PROJECT_CATEGORY_LABELS } from './adminMappers';
+import { handleImageError, normalizeImageUrl } from '@/lib/utils';
 
 export function AdminProjects() {
   const navigate = useNavigate();
@@ -78,15 +74,9 @@ export function AdminProjects() {
           {projects.map((project) => (
             <div key={project.id} className="overflow-hidden rounded-xl border border-white/5 bg-brand-navy">
               <div className="relative h-40 bg-brand-surface">
-                {project.main_image_url ? (
-                  <img src={project.main_image_url} alt={project.title_ar} className="h-full w-full object-cover" />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-brand-silver">
-                    <ImageOff className="h-8 w-8" />
-                  </div>
-                )}
+                <img src={normalizeImageUrl(project.main_image_url)} onError={handleImageError} alt={project.title_ar} className="h-full w-full object-cover" />
                 <span className="absolute top-3 right-3 rounded bg-brand-navy/90 px-2 py-1 text-xs font-bold text-brand-gold">
-                  {CATEGORY_LABELS[project.category]}
+                  {PROJECT_CATEGORY_LABELS[project.category]}
                 </span>
               </div>
               <div className="p-4 space-y-3">
