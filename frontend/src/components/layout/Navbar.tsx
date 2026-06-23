@@ -65,14 +65,16 @@ export function Navbar() {
           
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-brand-gold/10 border border-brand-gold/30 rounded flex items-center justify-center transform group-hover:rotate-12 transition-transform">
-              <span className="text-brand-gold font-bold text-xl">AL</span>
-            </div>
+            <img
+              src="/images/logo-TAS-navbar.png"
+              alt="T.A.S"
+              className="w-10 h-10 object-contain transform group-hover:rotate-12 transition-transform"
+            />
             <span className={cn(
               "font-bold text-xl tracking-tight transition-colors",
               isScrolled ? "text-white" : "text-white lg:text-white"
             )}>
-              {t('GM Alomco', 'GM Alomco')}
+              {t('T.A.S', 'T.A.S')}
             </span>
           </Link>
 

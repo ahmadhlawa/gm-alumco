@@ -1,4 +1,4 @@
-const TOKEN_KEY = 'gm_alomco_admin_token';
+const TOKEN_KEY = 'tas_admin_token';
 
 export function getAccessToken(): string | null {
   return sessionStorage.getItem(TOKEN_KEY);

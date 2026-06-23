@@ -1,6 +1,6 @@
-# GM Alomco FastAPI Backend
+# T.A.S FastAPI Backend
 
-FastAPI + MySQL backend for the GM Alomco website. Provides a REST API for the admin CMS and public-facing content endpoints.
+FastAPI + MySQL backend for the T.A.S website. Provides a REST API for the admin CMS and public-facing content endpoints.
 
 ## Requirements
 

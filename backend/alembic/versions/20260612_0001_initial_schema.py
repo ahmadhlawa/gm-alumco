@@ -1,4 +1,4 @@
-"""Create initial schema for GM Alomco.
+"""Create initial schema for T.A.S.
 
 Revision ID: 20260612_0001
 Revises:

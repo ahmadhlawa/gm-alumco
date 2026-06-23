@@ -78,9 +78,9 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
     'Some of the work we are proud of',
   );
   const subtitle = t(
-    'مجموعة مختارة من مشاريع GM Alomco التي تعكس التزامنا بالجودة والدقة والابتكار.',
-    'מבחר פרויקטים של GM Alomco המשקפים את המחויבות שלנו לאיכות, לדיוק ולחדשנות.',
-    'A curated selection of GM Alomco projects reflecting our commitment to quality, precision and innovation.',
+    'مجموعة مختارة من مشاريع T.A.S التي تعكس التزامنا بالجودة والدقة والابتكار.',
+    'מבחר פרויקטים של T.A.S המשקפים את המחויבות שלנו לאיכות, לדיוק ולחדשנות.',
+    'A curated selection of T.A.S projects reflecting our commitment to quality, precision and innovation.',
   );
   const fallbackChips = [
     t('واجهات زجاجية', 'חזיתות זכוכית', 'Glass facades'),
@@ -144,7 +144,7 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
         {/* Section header */}
         <div className="mx-auto mb-16 max-w-3xl text-center">
           <span className="mb-4 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.3em] text-brand-gold">
-            <span className="h-px w-8 bg-brand-gold" /> GM Alomco
+            <span className="h-px w-8 bg-brand-gold" /> T.A.S
           </span>
           <h2 className="text-3xl font-black leading-tight text-white md:text-4xl lg:text-5xl">{title}</h2>
           <p className="mt-5 text-lg leading-8 text-brand-silver">{subtitle}</p>

@@ -45,7 +45,7 @@ export function AdminProjects() {
     <div className="space-y-6">
       <AdminPageHeader
         title="إدارة المشاريع"
-        description="إضافة وتعديل وحذف مشاريع GM Alomco بثلاث لغات."
+        description="إضافة وتعديل وحذف مشاريع T.A.S بثلاث لغات."
         action={
           <Link
             to="/admin/projects/new"

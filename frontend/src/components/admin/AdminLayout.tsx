@@ -41,8 +41,8 @@ export function AdminLayout() {
       {/* Sidebar */}
       <aside className={`fixed lg:sticky top-0 h-screen w-64 bg-brand-navy border-l border-white/10 shrink-0 z-40 transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
         <div className="p-6 border-b border-white/10 flex items-center gap-3">
-           <div className="w-8 h-8 bg-brand-gold flex items-center justify-center font-bold text-white">GM</div>
-           <span className="font-bold text-xl text-white">GM Alomco</span>
+           <img src="/images/logo-TAS-navbar.png" alt="T.A.S" className="w-8 h-8 object-contain" />
+           <span className="font-bold text-xl text-white">T.A.S</span>
         </div>
 
         <nav className="p-4 space-y-2">

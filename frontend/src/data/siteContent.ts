@@ -78,9 +78,9 @@ export interface SiteContent {
 export const initialSiteContent: SiteContent = {
   hero: {
     logoText: {
-      ar: "GM Alomco",
-      en: "GM Alomco",
-      he: "GM Alomco"
+      ar: "T.A.S",
+      en: "T.A.S",
+      he: "T.A.S"
     },
     badge: {
       ar: "ريادة هندسية منذ ٢٠١٤",
@@ -169,14 +169,14 @@ export const initialSiteContent: SiteContent = {
       he: "אנחנו עושים את ההבדל בכל פרט"
     },
     subtitle: {
-      ar: "نحن شركة GM Alomco، نجمع بين الخبرة العريقة وأحدث التقنيات لتقديم حلول معمارية مستدامة.",
+      ar: "نحن شركة T.A.S، نجمع بين الخبرة العريقة وأحدث التقنيات لتقديم حلول معمارية مستدامة.",
       en: "We are GM Aluminum Manufacturing & Trading Co., combining rich experience and modern technologies to deliver sustainable architectural solutions.",
-      he: "אנחנו GM Alomco, משלבים ניסיון עשיר וטכנולוגיות מתקדמות כדי לספק פתרונות אדריכליים בני קיימא."
+      he: "אנחנו T.A.S, משלבים ניסיון עשיר וטכנולוגיות מתקדמות כדי לספק פתרונות אדריכליים בני קיימא."
     },
     description: {
-      ar: "على مدار أكثر من عقد من الزمان، التزمنا في GM Alomco بتقديم حلول زجاجية وألمنيوم تتجاوز التوقعات. رؤيتنا لا تقتصر على التركيب، بل تمتد لتكون شراكة في بناء معالم معمارية تصمد أمام اختبار الزمن.",
-      en: "For over a decade, GM Alomco has delivered glass and aluminum solutions that exceed expectations. Our vision extends beyond installation to long-term architectural partnership.",
-      he: "מזה למעלה מעשור, GM Alomco מספקת פתרונות זכוכית ואלומיניום העולים על הציפיות, מתוך שותפות ארוכת טווח בבנייה אדריכלית."
+      ar: "على مدار أكثر من عقد من الزمان، التزمنا في T.A.S بتقديم حلول زجاجية وألمنيوم تتجاوز التوقعات. رؤيتنا لا تقتصر على التركيب، بل تمتد لتكون شراكة في بناء معالم معمارية تصمد أمام اختبار الزمن.",
+      en: "For over a decade, T.A.S has delivered glass and aluminum solutions that exceed expectations. Our vision extends beyond installation to long-term architectural partnership.",
+      he: "מזה למעלה מעשור, T.A.S מספקת פתרונות זכוכית ואלומיניום העולים על הציפיות, מתוך שותפות ארוכת טווח בבנייה אדריכלית."
     },
     buttonText: {
       ar: "تعرف علينا أكثر",
@@ -320,9 +320,9 @@ export const initialSiteContent: SiteContent = {
       he: "חברה מובילה המתמחה בתכנון, ייצור והתקנה של מערכות אלומיניום וזכוכית מתקדמות לפרויקטים למגורים ומסחר עם טביעת אצבע אדריכלית ייחודית."
     },
     copyright: {
-      ar: "شركة GM Alomco. جميع الحقوق محفوظة.",
+      ar: "شركة T.A.S. جميع الحقوق محفوظة.",
       en: "GM Aluminum Manufacturing & Trading Co. All rights reserved.",
-      he: "GM Alomco. כל הזכויות שמורות."
+      he: "T.A.S. כל הזכויות שמורות."
     }
   }
 };
@@ -335,7 +335,7 @@ export const getCompanyStats = (translate: (ar: string, he?: string, en?: string
 ];
 
 // TODO(backend): Replace preview storage with versioned draft and publish APIs.
-const STORAGE_KEY = "gm_alomco_site_content";
+const STORAGE_KEY = "tas_site_content";
 
 export function loadSiteContent(): SiteContent {
   const saved = localStorage.getItem(STORAGE_KEY);

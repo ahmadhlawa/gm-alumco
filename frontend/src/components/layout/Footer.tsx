@@ -32,11 +32,13 @@ export function Footer({ cmsContent, previewLocale }: FooterProps = {}) {
           {/* Company Info */}
           <div>
             <Link to="/" className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-brand-gold/10 border border-brand-gold/30 rounded flex items-center justify-center">
-                <span className="text-brand-gold font-bold text-xl">AL</span>
-              </div>
+              <img
+                src="/images/logo-TAS-footer.png"
+                alt="T.A.S"
+                className="w-10 h-10 object-contain"
+              />
               <span className="font-bold text-xl tracking-tight text-white">
-                {cmsText(cmsContent?.logoText, 'GM Alomco', 'GM Alomco')}
+                {cmsText(cmsContent?.logoText, 'T.A.S', 'T.A.S')}
               </span>
             </Link>
             <p className="text-gray-400 mb-6 leading-relaxed">
@@ -105,7 +107,7 @@ export function Footer({ cmsContent, previewLocale }: FooterProps = {}) {
 
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-right">
           <p className="text-brand-silver text-sm">
-            &copy; {currentYear} {cmsText(cmsContent?.copyright, 'شركة GM Alomco. جميع الحقوق محفوظة.', 'GM Alomco. כל הזכויות שמורות.')}
+            &copy; {currentYear} {cmsText(cmsContent?.copyright, 'شركة T.A.S. جميع الحقوق محفوظة.', 'T.A.S. כל הזכויות שמורות.')}
           </p>
           <div className="flex gap-4 text-sm text-brand-silver">
             <Link to="/admin/login" className="hover:text-brand-gold transition-colors">{t('تسجيل دخول الإدارة', 'התחברות מנהל')}</Link>

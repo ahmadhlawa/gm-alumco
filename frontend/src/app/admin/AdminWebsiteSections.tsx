@@ -328,7 +328,7 @@ export function AdminWebsiteSections() {
                 </EditableBlock>
 
                 <EditableBlock
-                  title="تعديل البريد الإلكتروني الرسمي لشركة GM Alomco"
+                  title="تعديل البريد الإلكتروني الرسمي لشركة T.A.S"
                   type="text"
                   value={{ ar: siteContent.contact.email, en: siteContent.contact.email, he: siteContent.contact.email }}
                   onSave={(val: any) => updateContactField('email', typeof val === 'string' ? val : val.ar)}

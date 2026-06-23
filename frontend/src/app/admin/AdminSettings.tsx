@@ -36,7 +36,7 @@ export function AdminSettings() {
              <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                    <label className="text-sm text-brand-silver">اسم الشركة (عربي)</label>
-                   <input type="text" defaultValue="GM Alomco" className="w-full h-12 px-4 bg-[#0A192F] border border-white/10 rounded focus:border-brand-gold text-white outline-none" />
+                   <input type="text" defaultValue="T.A.S" className="w-full h-12 px-4 bg-[#0A192F] border border-white/10 rounded focus:border-brand-gold text-white outline-none" />
                 </div>
                 <div className="space-y-2">
                    <label className="text-sm text-brand-silver">اسم الشركة (انجليزي)</label>
@@ -70,7 +70,7 @@ export function AdminSettings() {
              <div className="space-y-6">
                 <div className="space-y-2">
                    <label className="text-sm text-brand-silver">وصف الموقع الافتراضي</label>
-                   <textarea rows={3} defaultValue="شركة GM Alomco الرائدة في مجال الألمنيوم والزجاج..." className="w-full p-4 bg-[#0A192F] border border-white/10 rounded focus:border-brand-gold text-white outline-none resize-none" />
+                   <textarea rows={3} defaultValue="شركة T.A.S الرائدة في مجال الألمنيوم والزجاج..." className="w-full p-4 bg-[#0A192F] border border-white/10 rounded focus:border-brand-gold text-white outline-none resize-none" />
                 </div>
              </div>
            </div>

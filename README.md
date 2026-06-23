@@ -1,6 +1,6 @@
-# Ofok Aluminum Workspace
+# T.A.S Workspace
 
-This repository is organized as a frontend/backend workspace for the Ofok Aluminum corporate website and Visual CMS.
+This repository is organized as a frontend/backend workspace for the T.A.S corporate website and Visual CMS.
 
 ```text
 project-root/

@@ -32,10 +32,10 @@ describe('API adapters', () => {
 
   it('assembles section content from active section/content rows', () => {
     const result = assembleSiteContent([
-      { id: 1, section: 'hero', key: 'content', value: { headline: { ar: 'GM Alomco', en: 'GM Alomco', he: 'GM Alomco' } }, content_type: 'json', is_active: true, created_at: '', updated_at: '' },
+      { id: 1, section: 'hero', key: 'content', value: { headline: { ar: 'T.A.S', en: 'T.A.S', he: 'T.A.S' } }, content_type: 'json', is_active: true, created_at: '', updated_at: '' },
       { id: 2, section: 'hero', key: 'ignored', value: 'x', content_type: 'text', is_active: true, created_at: '', updated_at: '' },
     ]);
 
-    expect(result.hero).toEqual({ headline: { ar: 'GM Alomco', en: 'GM Alomco', he: 'GM Alomco' } });
+    expect(result.hero).toEqual({ headline: { ar: 'T.A.S', en: 'T.A.S', he: 'T.A.S' } });
   });
 });

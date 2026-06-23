@@ -1,4 +1,4 @@
-# GM Alomco Corporate Website
+# T.A.S Corporate Website
 
 Frontend for the GM Aluminum Manufacturing & Trading Co. corporate website and its focused Arabic RTL administration panel.
 

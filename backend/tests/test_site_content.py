@@ -47,7 +47,7 @@ def test_public_site_settings_returns_all_json_values(
 ) -> None:
     db.add_all(
         [
-            SiteSettings(key="seo", value={"title": "GM Alomco"}),
+            SiteSettings(key="seo", value={"title": "T.A.S"}),
             SiteSettings(key="social_links", value=["https://example.com"]),
         ]
     )

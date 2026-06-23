@@ -166,7 +166,7 @@ export function AdminWebsite() {
       preview: (
         <div className="h-28 bg-[#112240] border border-white/5 rounded p-3 flex flex-col justify-between">
           <span className="text-[10px] text-brand-gold">⭐⭐⭐⭐⭐</span>
-          <p className="text-[8px] text-brand-silver line-clamp-2">"الالتزام بالرفع المساحي الدقيق وضمان الـ ٥ سنوات يجعل GM Alomco شريكاً حقيقياً..."</p>
+          <p className="text-[8px] text-brand-silver line-clamp-2">"الالتزام بالرفع المساحي الدقيق وضمان الـ ٥ سنوات يجعل T.A.S شريكاً حقيقياً..."</p>
           <span className="text-[8px] text-white block text-left">- م. خالد الهاشم</span>
         </div>
       )
@@ -181,7 +181,7 @@ export function AdminWebsite() {
       status: 'active',
       preview: (
         <div className="h-28 bg-[#112240] border border-white/5 rounded p-3 flex flex-col justify-between text-right text-[10px] text-brand-silver">
-          <div className="text-white font-bold text-xs">GM Alomco للألمنيوم والزجاج</div>
+          <div className="text-white font-bold text-xs">T.A.S للألمنيوم والزجاج</div>
           <span>المعرض: شارع الملك فيصل، مكة</span>
           <span>الهاتف: +٩٦٦ ٥٠٠٠٠٠٠٠٠</span>
           <div className="text-center font-serif text-[8px] border-t border-white/5 pt-1">جميع الحقوق محفوظة © ٢٠٢٦</div>

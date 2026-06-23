@@ -25,7 +25,7 @@ export function GeometricHero() {
     <section
       dir="rtl"
       className="relative isolate flex min-h-screen overflow-hidden bg-brand-navy text-brand-text"
-      aria-label="GM Alomco"
+      aria-label="T.A.S"
     >
       <img
         src="/images/main.jpeg"
@@ -77,7 +77,7 @@ export function GeometricHero() {
           </div>
 
           <p className="mb-4 text-xl font-bold tracking-normal text-brand-gold md:text-2xl">
-            GM Alomco
+            T.A.S
           </p>
 
           <h1 className="max-w-4xl text-4xl font-black leading-tight text-white sm:text-5xl lg:text-7xl">

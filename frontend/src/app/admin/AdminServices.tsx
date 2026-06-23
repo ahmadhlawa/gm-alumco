@@ -30,7 +30,7 @@ export function AdminServices() {
   };
 
   return <div className="space-y-6">
-    <AdminPageHeader title="الخدمات" description="إدارة خدمات GM Alomco المعروضة في الموقع." action={
+    <AdminPageHeader title="الخدمات" description="إدارة خدمات T.A.S المعروضة في الموقع." action={
       <Link to="/admin/services/new" className="flex items-center gap-2 rounded bg-brand-gold px-5 py-2.5 font-bold text-white"><Plus className="h-5 w-5" />إضافة خدمة</Link>
     } />
     {loading ? <LoadingState /> : error ? <ErrorState /> : items.length === 0 ? <EmptyState message="لا توجد خدمات بعد." /> :

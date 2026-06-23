@@ -38,7 +38,7 @@ _RELAXED_ENVIRONMENTS = {"development", "dev", "local", "test", "testing"}
 
 
 class Settings(BaseSettings):
-    app_name: str = "GM Alomco API"
+    app_name: str = "T.A.S API"
     environment: str = "development"
     api_prefix: str = "/api/v1"
 
