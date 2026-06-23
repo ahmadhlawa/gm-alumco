@@ -4,18 +4,23 @@ import { motion } from 'motion/react';
 import { Button } from '@/components/common/Button';
 import { SectionHeader } from '@/components/common/SectionHeader';
 import { CTASection } from '@/components/common/CTASection';
-import { ServiceCard } from '@/components/cards/ServiceCard';
 import { TestimonialCard } from '@/components/cards/TestimonialCard';
 import { ProductCard } from '@/components/cards/ProductCard';
 import { SuccessPartners } from '@/components/sections/SuccessPartners';
 import { FeaturedProjectsShowcase } from '@/components/sections/FeaturedProjectsShowcase';
 import { GeometricHero } from '@/components/sections/GeometricHero';
+import { ServicesShowcase } from '@/components/sections/ServicesShowcase';
 import { getServices, getProjects, getProducts, getTestimonials } from '@/lib/api';
 import { useLanguage } from '@/i18n';
 import { ShieldCheck, Ruler, Clock, LayoutTemplate } from 'lucide-react';
 import { LoadingState } from '@/components/common/LoadingState';
 import { Service, Project, Product, Testimonial } from '@/types';
 import { loadSiteContent } from '@/data/siteContent';
+import {
+  HOME_SECTION_IDS,
+  scrollToHomeSection,
+  type HomeSectionId,
+} from '@/lib/homeNavigation';
 
 export function Home() {
   const { t, language } = useLanguage();
@@ -52,13 +57,11 @@ export function Home() {
     }).finally(() => setLoading(false));
   }, [language]);
 
-  // When the navbar sends us here to view projects, scroll once content is ready.
+  // Cross-route navbar clicks scroll after API-backed homepage sections render.
   const scrollTarget = (location.state as { scrollTo?: string } | null)?.scrollTo;
   useEffect(() => {
-    if (loading || scrollTarget !== 'projects') return;
-    const el = document.getElementById('projects');
-    if (!el) return;
-    requestAnimationFrame(() => el.scrollIntoView({ behavior: 'smooth' }));
+    if (loading || !HOME_SECTION_IDS.includes(scrollTarget as HomeSectionId)) return;
+    requestAnimationFrame(() => scrollToHomeSection(scrollTarget as HomeSectionId));
     // Clear the navigation state so the scroll does not repeat on refresh/back.
     window.history.replaceState({}, '');
   }, [loading, scrollTarget]);
@@ -76,7 +79,7 @@ export function Home() {
       <GeometricHero />
 
       {/* About Preview */}
-      <section className="py-24 bg-brand-surface">
+      <section id="about" className="scroll-mt-24 py-24 bg-brand-surface">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -115,32 +118,13 @@ export function Home() {
         </div>
       </section>
 
-      {/* Services Preview */}
-      <section className="py-24 bg-brand-navy">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-end mb-12">
-            <SectionHeader 
-              title={t(content.services.title.ar, content.services.title.he, content.services.title.en)} 
-              subtitle={t(content.services.subtitle.ar, content.services.subtitle.he, content.services.subtitle.en)}
-              className="mb-0"
-            />
-            <Button href="/services" variant="ghost" className="hidden md:flex">
-              {t('عرض كل الخدمات', 'הצג את כל השירותים')}
-            </Button>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.slice(0, 3).map((service, idx) => (
-              <ServiceCard key={service.id} service={service} index={idx} />
-            ))}
-          </div>
-          <div className="mt-8 text-center md:hidden">
-            <Button href="/services" variant="outline" className="w-full">
-              {t('عرض كل الخدمات', 'הצג את כל השירותים')}
-            </Button>
-          </div>
-        </div>
-      </section>
+      <ServicesShowcase
+        services={services}
+        title={t(content.services.title.ar, content.services.title.he, content.services.title.en)}
+        subtitle={t(content.services.subtitle.ar, content.services.subtitle.he, content.services.subtitle.en)}
+        emptyMessage={t('لا توجد خدمات متاحة حالياً.', 'אין שירותים זמינים כרגע.')}
+        actionLabel={t('اطلب استشارة', 'בקש ייעוץ')}
+      />
 
       {/* Featured Projects */}
       <FeaturedProjectsShowcase projects={projects} />

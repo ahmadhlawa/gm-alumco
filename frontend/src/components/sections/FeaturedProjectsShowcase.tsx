@@ -125,7 +125,7 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
   }
 
   return (
-    <section id="projects" dir={dir} className="relative isolate overflow-hidden bg-brand-navy py-24">
+    <section id="projects" dir={dir} className="relative isolate scroll-mt-24 overflow-hidden bg-brand-navy py-24">
       {/* Soft gold glow accents */}
       <motion.div
         aria-hidden

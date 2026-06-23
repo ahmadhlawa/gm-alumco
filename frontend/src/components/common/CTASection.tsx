@@ -2,6 +2,8 @@ import { motion } from "motion/react";
 import { Button } from "./Button";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/i18n";
+import { MessageCircle } from "lucide-react";
+import { WHATSAPP_URL } from "./ContactActions";
 
 interface CTASectionProps {
   title?: string;
@@ -55,6 +57,15 @@ export function CTASection({
             <Button href="/contact" variant="outline" size="lg" className="min-w-[200px] border-white/20 text-white hover:bg-white/5">
               {t('اتصل بنا', 'צור קשר')}
             </Button>
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-12 min-w-[200px] items-center justify-center gap-2 border border-brand-gold/60 px-6 py-3 font-bold text-brand-gold transition-colors hover:bg-brand-gold hover:text-brand-navy focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold"
+            >
+              <MessageCircle className="h-5 w-5" aria-hidden="true" />
+              <span>WhatsApp</span>
+            </a>
           </div>
         </motion.div>
       </div>

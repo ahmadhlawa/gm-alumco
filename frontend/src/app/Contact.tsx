@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { useLanguage } from '@/i18n';
 import { ContactForm } from '@/components/forms/ContactForm';
+import { ContactActions } from '@/components/common/ContactActions';
 
 export function Contact() {
   const { t } = useLanguage();
@@ -29,6 +30,11 @@ export function Contact() {
               <p className="text-brand-silver mb-12 text-lg">
                 {t('نسعد بتواصلكم معنا في أي وقت. يمكنكم زيارة مقر الشركة أو مراسلتنا عبر القنوات التالية.', 'אנו נשמח להיות אתכם בקשר בכל עת. אתם מוזמנים לבקר במטה החברה או ליצור קשר דרך הערוצים הבאים.')}
               </p>
+
+              <ContactActions
+                title={t('تواصل معنا مباشرة', 'צרו איתנו קשר ישירות')}
+                className="mb-12"
+              />
               
               <div className="space-y-8">
                 <div className="flex items-start gap-6 group">
@@ -47,8 +53,7 @@ export function Contact() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-white mb-2">{t('الهاتف', 'טֵלֵפוֹן')}</h3>
-                    <p className="text-brand-silver" dir="ltr">+966 50 123 4567</p>
-                    <p className="text-brand-silver" dir="ltr">+966 11 234 5678</p>
+                    <p className="text-brand-silver" dir="ltr">+972525808988</p>
                   </div>
                 </div>
                 
@@ -58,8 +63,7 @@ export function Contact() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-white mb-2">{t('البريد الإلكتروني', 'אימייל')}</h3>
-                    <p className="text-brand-silver">info@alu-horizon.com</p>
-                    <p className="text-brand-silver">sales@alu-horizon.com</p>
+                    <p className="text-brand-silver" dir="ltr">Mina@techno-alum.com</p>
                   </div>
                 </div>
               </div>

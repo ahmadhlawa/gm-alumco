@@ -128,7 +128,7 @@ export function SuccessPartners() {
   const trackTransform = `translateX(calc(${-currentIndex * itemPercentage}% + ${dragOffset}px))`;
 
   return (
-    <section className="py-24 bg-[#0A192F] relative overflow-hidden shadow-inner">
+    <section id="partners" className="scroll-mt-24 py-24 bg-[#0A192F] relative overflow-hidden shadow-inner">
       <div className="absolute inset-0 bg-[#0A192F] opacity-50" />
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80')] opacity-[0.02] bg-cover bg-center" />
       

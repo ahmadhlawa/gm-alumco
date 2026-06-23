@@ -2,6 +2,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.api.v1.endpoints import quote_requests as quote_requests_endpoint
 from app.models.message import ContactMessage, QuoteRequest
 
 
@@ -59,6 +60,34 @@ def test_public_quote_submission_creates_new_request(
     stored = db.scalar(select(QuoteRequest))
     assert stored is not None
     assert stored.phone == "+970598000000"
+
+
+def test_public_quote_submission_stays_successful_when_email_fails(
+    client: TestClient,
+    db: Session,
+    monkeypatch,
+) -> None:
+    delivery_attempt: dict = {}
+
+    def fail_delivery(request: QuoteRequest) -> None:
+        delivery_attempt["id"] = request.id
+        delivery_attempt["created_at"] = request.created_at
+        raise RuntimeError("internal SMTP detail")
+
+    monkeypatch.setattr(
+        quote_requests_endpoint.email_service,
+        "send_quote_request_notification",
+        fail_delivery,
+    )
+
+    response = client.post("/api/v1/quote-requests", json=quote_payload())
+
+    assert response.status_code == 201
+    assert delivery_attempt["id"] is not None
+    assert delivery_attempt["created_at"] is not None
+    stored = db.scalar(select(QuoteRequest))
+    assert stored is not None
+    assert stored.name == "Quote Customer"
 
 
 def test_public_quote_submission_allows_missing_email_but_requires_valid_supplied_email_and_phone(

@@ -3,6 +3,7 @@ import { SectionHeader } from '@/components/common/SectionHeader';
 import { motion } from 'motion/react';
 import { useLanguage } from '@/i18n';
 import { QuoteRequestForm } from '@/components/forms/QuoteRequestForm';
+import { ContactActions } from '@/components/common/ContactActions';
 
 export function RequestQuote() {
   const { t } = useLanguage();
@@ -27,6 +28,11 @@ export function RequestQuote() {
               <SectionHeader title={t("تفاصيل المشروع", "פרטי פרויקט")} centered className="mb-10" />
               <QuoteRequestForm />
             </motion.div>
+            <ContactActions
+              title={t('هل تحتاج إلى مساعدة فورية؟', 'זקוקים לעזרה מיידית?')}
+              compact
+              className="mt-6"
+            />
           </div>
         </div>
       </section>

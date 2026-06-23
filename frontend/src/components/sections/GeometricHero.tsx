@@ -23,8 +23,9 @@ const shapes = [
 export function GeometricHero() {
   return (
     <section
+      id="home"
       dir="rtl"
-      className="relative isolate flex min-h-screen overflow-hidden bg-brand-navy text-brand-text"
+      className="relative isolate flex min-h-screen scroll-mt-24 overflow-hidden bg-brand-navy text-brand-text"
       aria-label="T.A.S"
     >
       <img

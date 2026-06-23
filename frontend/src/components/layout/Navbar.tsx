@@ -5,6 +5,17 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '../common/Button';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/i18n';
+import {
+  getHomeNavigationAction,
+  scrollToHomeSection,
+  type HomeSectionId,
+} from '@/lib/homeNavigation';
+
+type NavLink = {
+  name: string;
+  path: string;
+  scrollTarget?: HomeSectionId;
+};
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -26,27 +37,22 @@ export function Navbar() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const navLinks: { name: string; path: string; scrollTarget?: string }[] = [
-    { name: t('الرئيسية', 'דף הבית'), path: '/' },
-    { name: t('من نحن', 'עלינו'), path: '/about' },
-    { name: t('خدماتنا', 'שירותים'), path: '/services' },
-    { name: t('المنتجات', 'מוצרים'), path: '/products' },
-    // "مشاريعنا" scrolls to the Featured Projects section on the homepage
-    // instead of navigating to a separate Projects page.
+  const navLinks: NavLink[] = [
+    { name: t('الرئيسية', 'דף הבית'), path: '/', scrollTarget: 'home' },
+    { name: t('من نحن', 'עלינו'), path: '/', scrollTarget: 'about' },
+    { name: t('خدماتنا', 'שירותים'), path: '/', scrollTarget: 'services' },
     { name: t('مشاريعنا', 'פרויקטים'), path: '/', scrollTarget: 'projects' },
+    { name: t('شركاؤنا', 'השותפים שלנו'), path: '/', scrollTarget: 'partners' },
     { name: t('اتصل بنا', 'צור קשר'), path: '/contact' },
   ];
 
-  const handleNavClick = (event: MouseEvent<HTMLAnchorElement>, link: (typeof navLinks)[number]) => {
+  const handleNavClick = (event: MouseEvent<HTMLAnchorElement>, link: NavLink) => {
     if (!link.scrollTarget) return;
     event.preventDefault();
     setIsMobileMenuOpen(false);
-    if (location.pathname === '/') {
-      document.getElementById(link.scrollTarget)?.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      // Go home first, then let the homepage scroll to the section once loaded.
-      navigate('/', { state: { scrollTo: link.scrollTarget } });
-    }
+    const action = getHomeNavigationAction(location.pathname, link.scrollTarget);
+    if (action.type === 'scroll') scrollToHomeSection(action.target);
+    else navigate(action.to, { state: action.state });
   };
 
   const toggleLanguage = () => {
@@ -82,7 +88,9 @@ export function Navbar() {
           <nav className="hidden lg:flex items-center gap-8">
             <ul className="flex items-center gap-6">
               {navLinks.map((link) => {
-                const isActive = !link.scrollTarget && location.pathname === link.path;
+                const isActive = link.scrollTarget === 'home'
+                  ? location.pathname === '/'
+                  : !link.scrollTarget && location.pathname === link.path;
                 return (
                 <li key={link.name}>
                   <Link
@@ -156,7 +164,10 @@ export function Navbar() {
                       onClick={(event) => handleNavClick(event, link)}
                       className={cn(
                         "text-lg font-medium block",
-                        !link.scrollTarget && location.pathname === link.path ? "text-brand-gold" : "text-white"
+                        ((link.scrollTarget === 'home' && location.pathname === '/') ||
+                          (!link.scrollTarget && location.pathname === link.path))
+                          ? "text-brand-gold"
+                          : "text-white"
                       )}
                     >
                       {link.name}

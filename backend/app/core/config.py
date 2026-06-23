@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import ValidationInfo, field_validator
+from pydantic import SecretStr, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -51,6 +51,14 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 30
 
     frontend_url: str = "http://localhost:5173"
+
+    smtp_host: str | None = None
+    smtp_port: int = 587
+    smtp_username: str | None = None
+    smtp_password: SecretStr | None = None
+    smtp_from_email: str | None = None
+    smtp_from_name: str = "T.A.S"
+    quote_request_recipient_email: str | None = None
 
     first_superadmin_name: str = "Super Admin"
     first_superadmin_email: str = "admin@gm-alomco.local"

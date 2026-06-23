@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
@@ -11,6 +13,7 @@ from app.schemas.message import (
     QuoteRequestStatusUpdate,
 )
 from app.services.crud import create_entity
+from app.services.email_service import email_service
 from app.services.inbox_service import (
     delete_inbox_record,
     get_inbox_record_or_404,
@@ -21,6 +24,7 @@ from app.services.inbox_service import (
 
 public_router = APIRouter()
 admin_router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 @public_router.post(
@@ -32,7 +36,16 @@ def create_quote_request(
     data: QuoteRequestCreate,
     db: Session = Depends(get_db),
 ) -> QuoteRequest:
-    return create_entity(db, QuoteRequest, data)
+    request = create_entity(db, QuoteRequest, data)
+    try:
+        email_service.send_quote_request_notification(request)
+    except Exception as exc:
+        logger.error(
+            "Unexpected quote notification failure after request %s was saved (%s).",
+            request.id,
+            type(exc).__name__,
+        )
+    return request
 
 
 @admin_router.get("", response_model=list[QuoteRequestRead])
