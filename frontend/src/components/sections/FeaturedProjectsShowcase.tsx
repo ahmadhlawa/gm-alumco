@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
-import { Building2, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion, type Variants } from 'motion/react';
+import { Building2, Calendar, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import type { Project } from '@/types';
 import { useLanguage } from '@/i18n';
 import { cn, handleImageError, normalizeImageUrl } from '@/lib/utils';
@@ -11,17 +11,19 @@ interface FeaturedProjectsShowcaseProps {
 
 const AUTOPLAY_MS = 5500;
 
-// Responsive horizontal gap between the stacked images (adapted from the
-// reference CircularTestimonials component).
-function calculateGap(width: number) {
-  const minWidth = 1024;
-  const maxWidth = 1456;
-  const minGap = 48;
-  const maxGap = 72;
-  if (width <= minWidth) return minGap;
-  if (width >= maxWidth) return maxGap;
-  return minGap + (maxGap - minGap) * ((width - minWidth) / (maxWidth - minWidth));
-}
+// Cinematic easing reused across the staged reveal.
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+// The image leads the sequence; content waits, then reveals one layer at a time.
+const contentStagger: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12, delayChildren: 0.3 } },
+};
+
+const layerReveal: Variants = {
+  hidden: { opacity: 0, y: 26, filter: 'blur(6px)' },
+  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.55, ease: EASE } },
+};
 
 export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseProps) {
   const { t, dir } = useLanguage();
@@ -35,22 +37,10 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
   const total = showcase.length;
   const [active, setActive] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [containerWidth, setContainerWidth] = useState(1200);
-  const imageStackRef = useRef<HTMLDivElement>(null);
 
   // Keep the active index valid when the dataset changes (e.g. language switch).
   useEffect(() => {
     setActive((current) => (total === 0 ? 0 : current % total));
-  }, [total]);
-
-  // Track the image stack width for the responsive gap calculation.
-  useEffect(() => {
-    const handleResize = () => {
-      if (imageStackRef.current) setContainerWidth(imageStackRef.current.offsetWidth);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
   }, [total]);
 
   const goTo = useCallback(
@@ -90,42 +80,14 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
 
   const current = showcase[active] ?? showcase[0];
   const chips = current?.tags && current.tags.length > 0 ? current.tags : fallbackChips;
-  const meta = current ? [current.location, current.year].filter(Boolean).join(' • ') : '';
-  const description = current ? current.description || current.shortDescription || '' : '';
-
-  // Layered 3D positions: active (front), one to each side, the rest hidden.
-  function getImageStyle(index: number): CSSProperties {
-    const gap = calculateGap(containerWidth);
-    const lift = gap * 0.55;
-    const isActive = index === active;
-    const isLeft = (active - 1 + total) % total === index;
-    const isRight = (active + 1) % total === index;
-    const transition = 'all 0.8s cubic-bezier(.4,2,.3,1)';
-
-    if (isActive) {
-      return { zIndex: 3, opacity: 1, transform: 'translateX(0px) translateY(0px) scale(1) rotateY(0deg)', transition };
-    }
-    if (isLeft) {
-      return {
-        zIndex: 2,
-        opacity: 0.7,
-        transform: `translateX(-${gap}px) translateY(-${lift}px) scale(0.85) rotateY(15deg)`,
-        transition,
-      };
-    }
-    if (isRight) {
-      return {
-        zIndex: 2,
-        opacity: 0.7,
-        transform: `translateX(${gap}px) translateY(-${lift}px) scale(0.85) rotateY(-15deg)`,
-        transition,
-      };
-    }
-    return { zIndex: 1, opacity: 0, transform: 'scale(0.8)', transition };
-  }
+  const description = current ? current.shortDescription || current.description || '' : '';
 
   return (
-    <section id="projects" dir={dir} className="relative isolate scroll-mt-24 overflow-hidden bg-brand-navy py-24">
+    <section
+      id="projects"
+      dir={dir}
+      className="relative isolate flex min-h-[92vh] scroll-mt-24 flex-col justify-center overflow-hidden bg-brand-navy py-16 lg:py-20"
+    >
       {/* Soft gold glow accents */}
       <motion.div
         aria-hidden
@@ -141,13 +103,13 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
       />
 
       <div className="container relative z-10 mx-auto px-4">
-        {/* Section header */}
-        <div className="mx-auto mb-16 max-w-3xl text-center">
+        {/* Section header — tightened to keep the showcase immersive */}
+        <div className="mx-auto mb-10 max-w-3xl text-center lg:mb-12">
           <span className="mb-4 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.3em] text-brand-gold">
             <span className="h-px w-8 bg-brand-gold" /> T.A.S
           </span>
           <h2 className="text-3xl font-black leading-tight text-white md:text-4xl lg:text-5xl">{title}</h2>
-          <p className="mt-5 text-lg leading-8 text-brand-silver">{subtitle}</p>
+          <p className="mt-4 text-lg leading-8 text-brand-silver">{subtitle}</p>
         </div>
 
         {total === 0 || !current ? (
@@ -161,121 +123,142 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
           </div>
         ) : (
           <div
-            className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16"
+            className="grid items-center gap-8 lg:grid-cols-[1.85fr_1fr] lg:gap-12 xl:gap-16"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            {/* Layered rotating image stack */}
-            <div
-              ref={imageStackRef}
-              className="relative mx-auto h-72 w-full max-w-xl sm:h-80 md:h-[26rem]"
-              style={{ perspective: '1000px' }}
-            >
-              {showcase.map((project, index) => (
-                <img
-                  key={project.id}
-                  src={normalizeImageUrl(project.mainImage)}
-                  onError={handleImageError}
-                  alt={project.title}
-                  draggable={false}
-                  className="absolute inset-0 h-full w-full rounded-2xl border border-white/10 object-cover shadow-2xl shadow-black/40"
-                  style={getImageStyle(index)}
-                />
-              ))}
-              {/* gentle gold halo behind the stack */}
-              <div className="absolute -inset-4 -z-10 rounded-[2rem] bg-brand-gold/10 blur-2xl" />
-              {current.category && (
-                <span className="absolute top-4 z-[4] bg-brand-gold px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-navy ltr:left-4 rtl:right-4">
-                  {current.category}
-                </span>
-              )}
+            {/* Hero showcase image — the dominant visual element */}
+            <div className="relative">
+              {/* gold halo bloom behind the frame */}
+              <div className="absolute -inset-6 -z-10 rounded-[2.5rem] bg-brand-gold/10 blur-3xl" />
+
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[1.75rem] border border-white/10 shadow-2xl shadow-black/60 ring-1 ring-white/5 sm:aspect-[16/10] lg:aspect-auto lg:h-[70vh]">
+                <AnimatePresence mode="popLayout">
+                  <motion.img
+                    key={current.id}
+                    src={normalizeImageUrl(current.mainImage)}
+                    onError={handleImageError}
+                    alt={current.title}
+                    draggable={false}
+                    initial={{ opacity: 0, scale: 1.1, clipPath: 'inset(10% 0% 0% 0%)' }}
+                    animate={{ opacity: 1, scale: 1, clipPath: 'inset(0% 0% 0% 0%)' }}
+                    exit={{ opacity: 0, scale: 1.04 }}
+                    transition={{ duration: 0.95, ease: EASE }}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                </AnimatePresence>
+
+                {/* cinematic gradient overlay for depth + legibility */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-navy/70 via-brand-navy/5 to-transparent" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand-gold/5 via-transparent to-transparent" />
+
+                {/* Category badge */}
+                {current.category && (
+                  <motion.span
+                    key={`cat-${current.id}`}
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.35, ease: EASE }}
+                    className="absolute top-5 z-[4] rounded-full bg-brand-gold px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-brand-navy shadow-lg shadow-black/30 ltr:left-5 rtl:right-5"
+                  >
+                    {current.category}
+                  </motion.span>
+                )}
+
+                {/* Slide counter */}
+                {total > 1 && (
+                  <div className="absolute bottom-5 z-[4] flex items-baseline gap-1 text-white ltr:right-6 rtl:left-6">
+                    <span className="text-2xl font-black leading-none">{String(active + 1).padStart(2, '0')}</span>
+                    <span className="text-sm font-medium text-white/60">/ {String(total).padStart(2, '0')}</span>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Project details with motion text reveal */}
+            {/* Project details — staged reveal */}
             <div className="flex flex-col">
               <AnimatePresence mode="wait">
-                <motion.div
-                  key={current.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3, ease: 'easeInOut' }}
-                >
-                  <h3 className="text-2xl font-bold text-white md:text-3xl">{current.title}</h3>
+                <motion.div key={current.id} variants={contentStagger} initial="hidden" animate="show">
+                  <motion.h3 variants={layerReveal} className="text-2xl font-bold text-white md:text-3xl lg:text-4xl">
+                    {current.title}
+                  </motion.h3>
 
-                  {meta && (
-                    <div className="mt-3 inline-flex items-center gap-2 text-brand-silver">
-                      <MapPin className="h-4 w-4 text-brand-gold" />
-                      <span>{meta}</span>
-                    </div>
+                  {(current.location || current.year) && (
+                    <motion.div
+                      variants={layerReveal}
+                      className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-brand-silver"
+                    >
+                      {current.location && (
+                        <span className="inline-flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-brand-gold" />
+                          {current.location}
+                        </span>
+                      )}
+                      {current.year && (
+                        <span className="inline-flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-brand-gold" />
+                          {current.year}
+                        </span>
+                      )}
+                    </motion.div>
                   )}
 
                   {description && (
-                    <p className="mt-5 leading-8 text-brand-silver">
-                      {description.split(' ').map((word, i) => (
-                        <motion.span
-                          key={`${current.id}-${i}`}
-                          initial={{ filter: 'blur(10px)', opacity: 0, y: 5 }}
-                          animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-                          transition={{ duration: 0.22, ease: 'easeInOut', delay: 0.02 * i }}
-                          className="inline-block"
-                        >
-                          {word}&nbsp;
-                        </motion.span>
-                      ))}
-                    </p>
+                    <motion.p variants={layerReveal} className="mt-5 line-clamp-3 leading-8 text-brand-silver">
+                      {description}
+                    </motion.p>
                   )}
 
-                  <div className="mt-7 flex flex-wrap gap-3">
+                  <motion.div variants={layerReveal} className="mt-7 flex flex-wrap gap-3">
                     {chips.map((chip) => (
                       <span
                         key={chip}
-                        className="border border-brand-gold/30 bg-brand-gold/5 px-4 py-2 text-sm font-semibold text-brand-text"
+                        className="rounded-full border border-brand-gold/30 bg-brand-gold/5 px-4 py-2 text-sm font-semibold text-brand-text"
                       >
                         {chip}
                       </span>
                     ))}
-                  </div>
+                  </motion.div>
+
+                  {/* Controls + pagination finish the sequence */}
+                  {total > 1 && (
+                    <motion.div variants={layerReveal} className="mt-10 flex items-center gap-6">
+                      <button
+                        type="button"
+                        onClick={prev}
+                        aria-label={t('السابق', 'הקודם', 'Previous')}
+                        className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white transition hover:border-brand-gold hover:bg-brand-gold hover:text-brand-navy"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={next}
+                        aria-label={t('التالي', 'הבא', 'Next')}
+                        className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white transition hover:border-brand-gold hover:bg-brand-gold hover:text-brand-navy"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+
+                      <div className="flex items-center gap-2 ltr:ml-2 rtl:mr-2">
+                        {showcase.map((project, index) => (
+                          <button
+                            key={project.id}
+                            type="button"
+                            onClick={() => goTo(index)}
+                            aria-label={`${t('مشروع', 'פרויקט', 'Project')} ${index + 1}`}
+                            aria-current={index === active}
+                            className={cn(
+                              'h-2 rounded-full transition-all',
+                              index === active ? 'w-8 bg-brand-gold' : 'w-2 bg-white/25 hover:bg-white/50',
+                            )}
+                          />
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
                 </motion.div>
               </AnimatePresence>
-
-              {/* Controls + pagination */}
-              {total > 1 && (
-                <div className="mt-10 flex items-center gap-6">
-                  <button
-                    type="button"
-                    onClick={prev}
-                    aria-label={t('السابق', 'הקודם', 'Previous')}
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white transition hover:border-brand-gold hover:bg-brand-gold hover:text-brand-navy"
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={next}
-                    aria-label={t('التالي', 'הבא', 'Next')}
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white transition hover:border-brand-gold hover:bg-brand-gold hover:text-brand-navy"
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
-
-                  <div className="flex items-center gap-2 ltr:ml-2 rtl:mr-2">
-                    {showcase.map((project, index) => (
-                      <button
-                        key={project.id}
-                        type="button"
-                        onClick={() => goTo(index)}
-                        aria-label={`${t('مشروع', 'פרויקט', 'Project')} ${index + 1}`}
-                        aria-current={index === active}
-                        className={cn(
-                          'h-2 rounded-full transition-all',
-                          index === active ? 'w-8 bg-brand-gold' : 'w-2 bg-white/25 hover:bg-white/50',
-                        )}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         )}
