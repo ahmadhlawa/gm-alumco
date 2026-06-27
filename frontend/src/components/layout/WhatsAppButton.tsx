@@ -1,13 +1,14 @@
 import { MessageCircle } from "lucide-react";
 import { motion } from "motion/react";
 import { useLanguage } from "@/i18n";
+import { WHATSAPP_URL } from "@/components/common/ContactActions";
 
 export function WhatsAppButton() {
   const { t } = useLanguage();
 
   return (
     <motion.a
-      href="https://wa.me/1234567890"
+      href={WHATSAPP_URL}
       target="_blank"
       rel="noopener noreferrer"
       initial={{ scale: 0, opacity: 0 }}

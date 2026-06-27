@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { useLanguage } from '@/i18n';
 import { ContactForm } from '@/components/forms/ContactForm';
-import { ContactActions } from '@/components/common/ContactActions';
+import { ContactActions, WHATSAPP_DISPLAY_NUMBER } from '@/components/common/ContactActions';
 
 export function Contact() {
   const { t } = useLanguage();
@@ -53,7 +53,7 @@ export function Contact() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-white mb-2">{t('الهاتف', 'טֵלֵפוֹן')}</h3>
-                    <p className="text-brand-silver" dir="ltr">+972525808988</p>
+                    <p className="text-brand-silver" dir="ltr">{WHATSAPP_DISPLAY_NUMBER}</p>
                   </div>
                 </div>
                 

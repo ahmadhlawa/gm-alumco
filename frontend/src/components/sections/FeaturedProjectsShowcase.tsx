@@ -17,12 +17,12 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 // The image leads the sequence; content waits, then reveals one layer at a time.
 const contentStagger: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.12, delayChildren: 0.3 } },
+  show: { transition: { staggerChildren: 0.11, delayChildren: 0.42 } },
 };
 
 const layerReveal: Variants = {
-  hidden: { opacity: 0, y: 26, filter: 'blur(6px)' },
-  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.55, ease: EASE } },
+  hidden: { opacity: 0, y: 22, filter: 'blur(8px)' },
+  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.6, ease: EASE } },
 };
 
 export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseProps) {
@@ -128,29 +128,40 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
             onMouseLeave={() => setIsPaused(false)}
           >
             {/* Hero showcase image — the dominant visual element */}
-            <div className="relative">
+            <div className="group relative">
               {/* gold halo bloom behind the frame */}
-              <div className="absolute -inset-6 -z-10 rounded-[2.5rem] bg-brand-gold/10 blur-3xl" />
+              <div className="absolute -inset-6 -z-10 rounded-[2.5rem] bg-brand-gold/15 blur-3xl transition-opacity duration-700 group-hover:bg-brand-gold/20" />
 
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[1.75rem] border border-white/10 shadow-2xl shadow-black/60 ring-1 ring-white/5 sm:aspect-[16/10] lg:aspect-auto lg:h-[70vh]">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[1.75rem] border border-white/10 shadow-[0_40px_90px_-20px_rgba(0,0,0,0.75)] ring-1 ring-white/5 sm:aspect-[16/10] lg:aspect-auto lg:h-[75vh]">
                 <AnimatePresence mode="popLayout">
-                  <motion.img
+                  <motion.div
                     key={current.id}
-                    src={normalizeImageUrl(current.mainImage)}
-                    onError={handleImageError}
-                    alt={current.title}
-                    draggable={false}
-                    initial={{ opacity: 0, scale: 1.1, clipPath: 'inset(10% 0% 0% 0%)' }}
-                    animate={{ opacity: 1, scale: 1, clipPath: 'inset(0% 0% 0% 0%)' }}
-                    exit={{ opacity: 0, scale: 1.04 }}
+                    initial={{ opacity: 0, clipPath: 'inset(10% 0% 0% 0%)' }}
+                    animate={{ opacity: 1, clipPath: 'inset(0% 0% 0% 0%)' }}
+                    exit={{ opacity: 0 }}
                     transition={{ duration: 0.95, ease: EASE }}
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
+                    className="absolute inset-0"
+                  >
+                    {/* slow cinematic zoom (Ken Burns) — restarts each slide */}
+                    <motion.img
+                      src={normalizeImageUrl(current.mainImage)}
+                      onError={handleImageError}
+                      alt={current.title}
+                      draggable={false}
+                      initial={{ scale: 1 }}
+                      animate={{ scale: 1.03 }}
+                      transition={{ duration: 7, ease: 'easeOut' }}
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                  </motion.div>
                 </AnimatePresence>
 
                 {/* cinematic gradient overlay for depth + legibility */}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-navy/70 via-brand-navy/5 to-transparent" />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand-gold/5 via-transparent to-transparent" />
+                {/* soft top sheen + inset edge for premium glass-like depth */}
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/10 to-transparent" />
+                <div className="pointer-events-none absolute inset-0 rounded-[1.75rem] ring-1 ring-inset ring-white/10" />
 
                 {/* Category badge */}
                 {current.category && (
@@ -186,7 +197,7 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
                   {(current.location || current.year) && (
                     <motion.div
                       variants={layerReveal}
-                      className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-brand-silver"
+                      className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-brand-silver"
                     >
                       {current.location && (
                         <span className="inline-flex items-center gap-2">
@@ -204,12 +215,12 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
                   )}
 
                   {description && (
-                    <motion.p variants={layerReveal} className="mt-5 line-clamp-3 leading-8 text-brand-silver">
+                    <motion.p variants={layerReveal} className="mt-4 line-clamp-3 leading-8 text-brand-silver">
                       {description}
                     </motion.p>
                   )}
 
-                  <motion.div variants={layerReveal} className="mt-7 flex flex-wrap gap-3">
+                  <motion.div variants={layerReveal} className="mt-5 flex flex-wrap gap-3">
                     {chips.map((chip) => (
                       <span
                         key={chip}
@@ -222,7 +233,10 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
 
                   {/* Controls + pagination finish the sequence */}
                   {total > 1 && (
-                    <motion.div variants={layerReveal} className="mt-10 flex items-center gap-6">
+                    <motion.div
+                      variants={layerReveal}
+                      className="mt-7 flex items-center gap-6 border-t border-white/10 pt-7"
+                    >
                       <button
                         type="button"
                         onClick={prev}

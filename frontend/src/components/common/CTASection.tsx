@@ -29,7 +29,19 @@ export function CTASection({
   return (
     <section className={cn("py-20 relative overflow-hidden", className)}>
       <div className="absolute inset-0 bg-brand-navy z-0" />
-      
+
+      {/* Architectural facade backdrop — subtle, heavily navy-washed for contrast */}
+      <img
+        aria-hidden
+        src="/images/backgrounds/tas-bg-cta.png"
+        alt=""
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-[0.22]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-t from-brand-navy via-brand-navy/85 to-brand-navy/70"
+      />
+
       {/* Decorative architectural lines */}
       <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
          <div className="absolute top-0 right-[20%] w-[1px] h-full bg-white transform rotate-12" />

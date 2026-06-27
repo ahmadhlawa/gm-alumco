@@ -79,8 +79,19 @@ export function Home() {
       <GeometricHero />
 
       {/* About Preview */}
-      <section id="about" className="scroll-mt-24 py-24 bg-brand-surface">
-        <div className="container mx-auto px-4">
+      <section id="about" className="relative isolate scroll-mt-24 overflow-hidden py-24 bg-brand-surface">
+        {/* Decorative architectural backdrop — subtle, navy-washed for readability */}
+        <img
+          aria-hidden
+          src="/images/backgrounds/tas-bg-about.png"
+          alt=""
+          className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-[0.16]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-brand-surface/95 via-brand-surface/85 to-brand-navy/75"
+        />
+        <div className="container relative z-10 mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
@@ -130,7 +141,18 @@ export function Home() {
       <FeaturedProjectsShowcase projects={projects} />
 
       {/* Process / Why Choose Us */}
-      <section className="py-24 bg-brand-navy text-white relative overflow-hidden">
+      <section className="py-24 bg-brand-navy text-white relative isolate overflow-hidden">
+        {/* Aluminum & glass facade backdrop — subtle texture behind the grid */}
+        <img
+          aria-hidden
+          src="/images/backgrounds/tas-bg-process.png"
+          alt=""
+          className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-20"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-brand-navy/90 via-brand-navy/80 to-brand-navy/95"
+        />
         <div className="absolute inset-0 opacity-10">
           <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
             <defs>

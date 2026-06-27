@@ -19,8 +19,19 @@ export function About() {
         image="https://images.unsplash.com/photo-1541888048600-410a8d622941?auto=format&fit=crop&q=80"
       />
 
-      <section className="py-24">
-        <div className="container mx-auto px-4">
+      <section className="relative isolate overflow-hidden py-24">
+        {/* Subtle architectural backdrop — navy-washed for text readability */}
+        <img
+          aria-hidden
+          src="/images/backgrounds/tas-bg-about.png"
+          alt=""
+          className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-[0.14]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-brand-surface/95 via-brand-surface/88 to-brand-surface/95"
+        />
+        <div className="container relative z-10 mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center mb-24">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
