@@ -48,7 +48,7 @@ export function PageHero({
 
           {breadcrumbs && (
             <div className="mt-8 flex items-center justify-center gap-2 text-sm text-gray-400">
-              <Link to="/" className="hover:text-white transition-colors">{t('الرئيسية', 'דף הבית')}</Link>
+              <Link to="/" className="hover:text-white transition-colors">{t('الرئيسية', 'דף הבית', 'Home')}</Link>
               {breadcrumbs.map((crumb, idx) => (
                 <div key={idx} className="flex items-center gap-2">
                   <ChevronLeft className="w-4 h-4 rtl:-scale-x-100" />

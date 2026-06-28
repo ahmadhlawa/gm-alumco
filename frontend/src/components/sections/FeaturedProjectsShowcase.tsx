@@ -27,6 +27,7 @@ const layerReveal: Variants = {
 
 export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseProps) {
   const { t, dir } = useLanguage();
+  const isLtr = dir === 'ltr';
 
   // Prefer featured projects; fall back to all active projects from the API.
   const showcase = useMemo(() => {
@@ -243,7 +244,7 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
                         aria-label={t('السابق', 'הקודם', 'Previous')}
                         className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white transition hover:border-brand-gold hover:bg-brand-gold hover:text-brand-navy"
                       >
-                        <ChevronRight className="h-5 w-5" />
+                        {isLtr ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
                       </button>
                       <button
                         type="button"
@@ -251,7 +252,7 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
                         aria-label={t('التالي', 'הבא', 'Next')}
                         className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white transition hover:border-brand-gold hover:bg-brand-gold hover:text-brand-navy"
                       >
-                        <ChevronLeft className="h-5 w-5" />
+                        {isLtr ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
                       </button>
 
                       <div className="flex items-center gap-2 ltr:ml-2 rtl:mr-2">

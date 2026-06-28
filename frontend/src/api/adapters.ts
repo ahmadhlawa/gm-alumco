@@ -1,8 +1,14 @@
 import type { GalleryImage, Partner, Product, Project, Service, Testimonial } from '@/types';
 import type { GalleryDto, Locale, PartnerDto, ProductDto, ProjectDto, ServiceDto, SiteContentDto, TestimonialDto } from './types';
 
+function nonEmpty(value: string | null | undefined): string | undefined {
+  return value && value.trim() ? value : undefined;
+}
+
 function pick(locale: Locale, ar: string | null, en: string | null, he: string | null): string {
-  return ({ ar, en, he })[locale] ?? en ?? he ?? ar ?? '';
+  if (locale === 'he') return nonEmpty(he) ?? nonEmpty(en) ?? nonEmpty(ar) ?? '';
+  if (locale === 'en') return nonEmpty(en) ?? nonEmpty(he) ?? nonEmpty(ar) ?? '';
+  return nonEmpty(ar) ?? nonEmpty(he) ?? nonEmpty(en) ?? '';
 }
 
 export const toServiceView = (item: ServiceDto, locale: Locale): Service => ({

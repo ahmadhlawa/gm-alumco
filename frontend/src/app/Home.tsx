@@ -16,6 +16,8 @@ import { ShieldCheck, Ruler, Clock, LayoutTemplate } from 'lucide-react';
 import { LoadingState } from '@/components/common/LoadingState';
 import { Service, Project, Product, Testimonial } from '@/types';
 import { loadSiteContent } from '@/data/siteContent';
+import { defaultPublicStats, type PublicStatsContent } from '@/data/publicStats';
+import { getPublicStatsContent } from '@/api/content';
 import {
   HOME_SECTION_IDS,
   scrollToHomeSection,
@@ -30,11 +32,13 @@ export function Home() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [publicStats, setPublicStats] = useState<PublicStatsContent>(defaultPublicStats);
   const [loading, setLoading] = useState(true);
 
-  const stats = content.about.stats.map(stat => ({
+  const stats = publicStats.aboutPreviewStats.map(stat => ({
     value: stat.value,
-    label: t(stat.label.ar, stat.label.he, stat.label.en)
+    label: t(stat.label.ar, stat.label.he, stat.label.en),
+    suffix: stat.suffix ?? '',
   }));
 
   useEffect(() => {
@@ -43,17 +47,20 @@ export function Home() {
       getServices(language),
       getProjects(language),
       getProducts(language),
-      getTestimonials(language)
-    ]).then(([svcs, projs, prods, tests]) => {
+      getTestimonials(language),
+      getPublicStatsContent()
+    ]).then(([svcs, projs, prods, tests, statsContent]) => {
       setServices(svcs);
       setProjects(projs);
       setProducts(prods);
       setTestimonials(tests);
+      setPublicStats(statsContent);
     }).catch(() => {
       setServices([]);
       setProjects([]);
       setProducts([]);
       setTestimonials([]);
+      setPublicStats(defaultPublicStats);
     }).finally(() => setLoading(false));
   }, [language]);
 
@@ -76,14 +83,14 @@ export function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <GeometricHero />
+      <GeometricHero stats={publicStats.heroStats} valueChips={publicStats.valueChips} heroSince={publicStats.heroSince} />
 
       {/* About Preview */}
       <section id="about" className="relative isolate scroll-mt-24 overflow-hidden py-24 bg-brand-surface">
         {/* Decorative architectural backdrop — subtle, navy-washed for readability */}
         <img
           aria-hidden
-          src="/images/backgrounds/tas-bg-about.png"
+          src="/images/backgrounds/tas-bg-about.webp"
           alt=""
           className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-[0.16]"
         />
@@ -120,7 +127,7 @@ export function Home() {
                    transition={{ delay: idx * 0.1 }}
                    className="bg-brand-navy p-8 border border-white/5 text-center hover:border-brand-gold transition-colors block"
                  >
-                   <div className="text-4xl font-bold text-white mb-2" dir="ltr">{stat.value}</div>
+                   <div className="text-4xl font-bold text-white mb-2" dir="ltr">{stat.value}{stat.suffix}</div>
                    <div className="text-brand-silver font-medium">{stat.label}</div>
                  </motion.div>
               ))}
@@ -145,7 +152,7 @@ export function Home() {
         {/* Aluminum & glass facade backdrop — subtle texture behind the grid */}
         <img
           aria-hidden
-          src="/images/backgrounds/tas-bg-process.png"
+          src="/images/backgrounds/tas-bg-process.webp"
           alt=""
           className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-20"
         />

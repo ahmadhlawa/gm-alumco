@@ -42,6 +42,56 @@ def test_public_site_content_is_active_and_filterable_by_section(
     assert [item["key"] for item in section.json()] == ["cta", "headline"]
 
 
+def test_public_stats_content_can_be_read_and_updated(
+    client: TestClient, db: Session, auth_headers
+) -> None:
+    db.add(
+        SiteContent(
+            section="public_stats",
+            key="content",
+            value={
+                "heroStats": [
+                    {
+                        "id": "years-experience",
+                        "value": "10+",
+                        "label": {"ar": "سنوات خبرة", "en": "Years of experience", "he": "שנות ניסיון"},
+                        "sort_order": 1,
+                        "is_active": True,
+                    }
+                ]
+            },
+            content_type="json",
+            is_active=True,
+        )
+    )
+    db.commit()
+
+    public_response = client.get("/api/v1/site-content/public_stats")
+    content_id = public_response.json()[0]["id"]
+    updated = client.put(
+        f"/api/v1/admin/site-content/{content_id}",
+        headers=auth_headers(),
+        json={
+            "value": {
+                "heroStats": [
+                    {
+                        "id": "years-experience",
+                        "value": "12+",
+                        "label": {"ar": "سنوات خبرة", "en": "Years of experience", "he": "שנות ניסיון"},
+                        "sort_order": 1,
+                        "is_active": True,
+                    }
+                ]
+            }
+        },
+    )
+
+    assert public_response.status_code == 200
+    assert public_response.json()[0]["value"]["heroStats"][0]["value"] == "10+"
+    assert updated.status_code == 200
+    assert updated.json()["value"]["heroStats"][0]["value"] == "12+"
+
+
 def test_public_site_settings_returns_all_json_values(
     client: TestClient, db: Session
 ) -> None:

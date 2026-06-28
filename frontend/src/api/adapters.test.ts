@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assembleSiteContent, toProjectView, toServiceView, toTestimonialView } from './adapters';
+import { assembleSiteContent, toPartnerView, toProjectView, toServiceView, toTestimonialView } from './adapters';
 
 describe('API adapters', () => {
   it('localizes resource DTOs without inventing unavailable data', () => {
@@ -28,6 +28,27 @@ describe('API adapters', () => {
     expect(service).toMatchObject({ id: '4', slug: '4', title: 'Service', image: '' });
     expect(project).toMatchObject({ id: '5', slug: '5', featured: true, location: '', year: '' });
     expect(testimonial.rating).toBeUndefined();
+  });
+
+  it('falls back he to en to ar and en to he to ar for public DTOs', () => {
+    const service = {
+      id: 7,
+      title_ar: 'Arabic title', title_en: 'English title', title_he: '',
+      description_ar: 'Arabic description', description_en: null, description_he: 'Hebrew description',
+      image_url: null, starting_price: null, is_active: true, sort_order: 0,
+      created_at: '', updated_at: '',
+    };
+    const partner = {
+      id: 8,
+      name_ar: 'Arabic partner', name_en: '', name_he: 'Hebrew partner',
+      logo_url: '', website_url: null, is_active: true, sort_order: 0,
+      created_at: '', updated_at: '',
+    };
+
+    expect(toServiceView(service, 'he').title).toBe('English title');
+    expect(toServiceView(service, 'en').description).toBe('Hebrew description');
+    expect(toServiceView({ ...service, title_en: '', title_he: '' }, 'he').title).toBe('Arabic title');
+    expect(toPartnerView(partner, 'en').name).toBe('Hebrew partner');
   });
 
   it('assembles section content from active section/content rows', () => {

@@ -1,4 +1,4 @@
-import { Briefcase, ClipboardList, Handshake, Layers, LayoutDashboard, MessageSquare, ShieldCheck, Users, type LucideIcon } from 'lucide-react';
+import { BarChart3, Briefcase, ClipboardList, Handshake, Layers, LayoutDashboard, MessageSquare, ShieldCheck, Users, type LucideIcon } from 'lucide-react';
 import type { AdminDto } from '@/api/types';
 
 export interface AdminNavigationItem { path: string; label: string; icon: LucideIcon }
@@ -8,6 +8,7 @@ const contentItems: AdminNavigationItem[] = [
   { path: '/admin/projects', label: 'المشاريع', icon: Briefcase },
   { path: '/admin/services', label: 'الخدمات', icon: Layers },
   { path: '/admin/partners', label: 'الشركاء', icon: Handshake },
+  { path: '/admin/public-stats', label: 'أرقام الموقع', icon: BarChart3 },
   { path: '/admin/contact-messages', label: 'رسائل التواصل', icon: MessageSquare },
   { path: '/admin/quote-requests', label: 'طلبات عروض الأسعار', icon: ClipboardList },
 ];

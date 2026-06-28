@@ -33,7 +33,7 @@ export function CTASection({
       {/* Architectural facade backdrop — subtle, heavily navy-washed for contrast */}
       <img
         aria-hidden
-        src="/images/backgrounds/tas-bg-cta.png"
+        src="/images/backgrounds/tas-bg-cta.webp"
         alt=""
         className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-[0.22]"
       />

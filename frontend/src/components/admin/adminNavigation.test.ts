@@ -4,14 +4,16 @@ import { getAdminNavigation } from './adminNavigation';
 describe('admin navigation', () => {
   it('contains only operational company website sections', () => {
     const labels = getAdminNavigation('admin').map((item) => item.label);
+    const paths = getAdminNavigation('admin').map((item) => item.path);
 
-    expect(labels).toEqual([
-      'لوحة التحكم',
-      'المشاريع',
-      'الخدمات',
-      'الشركاء',
-      'رسائل التواصل',
-      'طلبات عروض الأسعار',
+    expect(paths).toEqual([
+      '/admin',
+      '/admin/projects',
+      '/admin/services',
+      '/admin/partners',
+      '/admin/public-stats',
+      '/admin/contact-messages',
+      '/admin/quote-requests',
     ]);
     expect(labels.join(' ')).not.toMatch(/منتج|متجر|CMS/i);
   });

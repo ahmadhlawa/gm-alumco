@@ -1,4 +1,5 @@
 import type { LocalizedText } from '@/types';
+import { defaultPublicStats } from './publicStats';
 
 export type { LocalizedText } from '@/types';
 
@@ -132,35 +133,7 @@ export const initialSiteContent: SiteContent = {
       },
       image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80"
     },
-    stats: [
-      {
-        id: "completed-projects",
-        value: "٢٥٠+",
-        label: {
-          ar: "مشروع مكتمل",
-          en: "Completed Projects",
-          he: "פרויקטים שהושלמו"
-        }
-      },
-      {
-        id: "years-experience",
-        value: "١٠+",
-        label: {
-          ar: "سنوات خبرة",
-          en: "Years of Experience",
-          he: "שנות ניסיון"
-        }
-      },
-      {
-        id: "warranty-years",
-        value: "٥",
-        label: {
-          ar: "سنوات ضمان",
-          en: "Years Warranty",
-          he: "שנות אחריות"
-        }
-      }
-    ]
+    stats: defaultPublicStats.heroStats
   },
   about: {
     title: {
@@ -183,44 +156,7 @@ export const initialSiteContent: SiteContent = {
       en: "Learn More About Us",
       he: "קרא עוד עלינו"
     },
-    stats: [
-      {
-        id: "about-completed",
-        value: "٢٥٠+",
-        label: {
-          ar: "مشاريع مكتملة",
-          en: "Completed Projects",
-          he: "פרויקטים שהושלמו"
-        }
-      },
-      {
-        id: "about-experience",
-        value: "١٠+",
-        label: {
-          ar: "سنوات خبرة",
-          en: "Years of Experience",
-          he: "שנות ניסיון"
-        }
-      },
-      {
-        id: "about-team",
-        value: "٤٠+",
-        label: {
-          ar: "فريق مختص",
-          en: "Expert Team",
-          he: "צוות מומחים"
-        }
-      },
-      {
-        id: "about-warranty",
-        value: "١٠٠%",
-        label: {
-          ar: "ضمان جودة",
-          en: "Quality Warranty",
-          he: "אחריות איכות"
-        }
-      }
-    ]
+    stats: defaultPublicStats.aboutPreviewStats
   },
   services: {
     title: {
@@ -306,12 +242,12 @@ export const initialSiteContent: SiteContent = {
       he: "אנחנו כאן כדי לעזור לכם להפוך את החזון שלכם למציאות. צרו קשר עוד היום לייעוץ הנדסי חינם."
     },
     address: {
-      ar: "المنطقة الصناعية، شارع الملك فهد، الرياض، المملكة العربية السعودية",
-      en: "Industrial Area, King Fahd Road, Riyadh, Saudi Arabia",
-      he: "אזור התעשייה, כביש המלך פהד, ריאד, ערב הסעודית"
+      ar: "متاح بموعد مسبق",
+      en: "Available by appointment",
+      he: "זמין בתיאום מראש"
     },
-    phone: "+966 50 123 4567",
-    email: "info@alu-horizon.com"
+    phone: "+972 52-580-8988",
+    email: "Mina@techno-alum.com"
   },
   footer: {
     description: {
@@ -327,12 +263,11 @@ export const initialSiteContent: SiteContent = {
   }
 };
 
-export const getCompanyStats = (translate: (ar: string, he?: string, en?: string) => string) => [
-  { label: translate('سنوات من الخبرة', 'שנות נסיון'), value: '+15' },
-  { label: translate('مشروع منجز', 'פרויקטים שהושלמו'), value: '+350' },
-  { label: translate('عميل سعيد', 'לקוחות מרוצים'), value: '+200' },
-  { label: translate('فريق هندسي متخصص', 'צוות מהנדסים מומחים'), value: '+40' }
-];
+export const getCompanyStats = (translate: (ar: string, he?: string, en?: string) => string) =>
+  defaultPublicStats.aboutPageStats.map((stat) => ({
+    label: translate(stat.label.ar, stat.label.he, stat.label.en),
+    value: stat.value,
+  }));
 
 // TODO(backend): Replace preview storage with versioned draft and publish APIs.
 const STORAGE_KEY = "tas_site_content";

@@ -1,6 +1,8 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import type React from 'react';
+import { LanguageProvider, PUBLIC_LANGUAGE_STORAGE_KEY } from '@/i18n';
 import type { Service } from '@/types';
 import { ServicesShowcase, getServiceSlideIndex } from './ServicesShowcase';
 
@@ -14,18 +16,34 @@ const service: Service = {
   benefits: [],
 };
 
+function renderWithLanguage(children: React.ReactNode, language: 'he' | 'en' = 'he') {
+  vi.stubGlobal('window', {
+    localStorage: {
+      getItem: (key: string) => key === PUBLIC_LANGUAGE_STORAGE_KEY ? language : null,
+      setItem: vi.fn(),
+    },
+  });
+  return renderToStaticMarkup(
+    <MemoryRouter>
+      <LanguageProvider>{children}</LanguageProvider>
+    </MemoryRouter>,
+  );
+}
+
 describe('ServicesShowcase', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it('renders the homepage anchor and real service content', () => {
-    const html = renderToStaticMarkup(
-      <MemoryRouter>
-        <ServicesShowcase
-          services={[service]}
-          title="خدماتنا"
-          subtitle="حلول متكاملة"
-          emptyMessage="لا توجد خدمات"
-          actionLabel="اطلب استشارة"
-        />
-      </MemoryRouter>,
+    const html = renderWithLanguage(
+      <ServicesShowcase
+        services={[service]}
+        title="خدماتنا"
+        subtitle="حلول متكاملة"
+        emptyMessage="لا توجد خدمات"
+        actionLabel="اطلب استشارة"
+      />,
     );
 
     expect(html).toContain('id="services"');
@@ -35,16 +53,14 @@ describe('ServicesShowcase', () => {
   });
 
   it('renders a branded empty state when the API returns no services', () => {
-    const html = renderToStaticMarkup(
-      <MemoryRouter>
-        <ServicesShowcase
-          services={[]}
-          title="خدماتنا"
-          subtitle="حلول متكاملة"
-          emptyMessage="لا توجد خدمات حالياً"
-          actionLabel="اطلب استشارة"
-        />
-      </MemoryRouter>,
+    const html = renderWithLanguage(
+      <ServicesShowcase
+        services={[]}
+        title="خدماتنا"
+        subtitle="حلول متكاملة"
+        emptyMessage="لا توجد خدمات حالياً"
+        actionLabel="اطلب استشارة"
+      />,
     );
 
     expect(html).toContain('لا توجد خدمات حالياً');
@@ -54,5 +70,24 @@ describe('ServicesShowcase', () => {
     expect(getServiceSlideIndex(2, 3, 1)).toBe(0);
     expect(getServiceSlideIndex(0, 3, -1)).toBe(2);
     expect(getServiceSlideIndex(0, 0, 1)).toBe(0);
+  });
+
+  it('renders direction-aware markup in English', () => {
+    const html = renderWithLanguage(
+      <ServicesShowcase
+        services={[service, { ...service, id: '8', title: 'Second service' }]}
+        title="Services"
+        subtitle="Integrated solutions"
+        emptyMessage="No services"
+        actionLabel="Request consultation"
+      />,
+      'en',
+    );
+
+    expect(html).toContain('id="services"');
+    expect(html).toContain('dir="ltr"');
+    expect(html).toContain('text-left');
+    expect(html).toContain('aria-label="Previous service"');
+    expect(html).toContain('aria-label="Next service"');
   });
 });

@@ -1,14 +1,26 @@
 import { PageHero } from '@/components/common/PageHero';
 import { SectionHeader } from '@/components/common/SectionHeader';
 import { CTASection } from '@/components/common/CTASection';
-import { getCompanyStats } from '@/data/siteContent';
+import { useEffect, useState } from 'react';
+import { getPublicStatsContent } from '@/api/content';
+import { defaultPublicStats, type PublicStatsContent } from '@/data/publicStats';
 import { motion } from 'motion/react';
 import { CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '@/i18n';
 
 export function About() {
   const { t } = useLanguage();
-  const stats = getCompanyStats(t);
+  const [publicStats, setPublicStats] = useState<PublicStatsContent>(defaultPublicStats);
+  const stats = publicStats.aboutPageStats.map((stat) => ({
+    value: stat.value,
+    label: t(stat.label.ar, stat.label.he, stat.label.en),
+    suffix: stat.suffix ?? '',
+  }));
+  const highlight = publicStats.aboutHighlight;
+
+  useEffect(() => {
+    getPublicStatsContent().then(setPublicStats).catch(() => setPublicStats(defaultPublicStats));
+  }, []);
 
   return (
     <div className="bg-brand-surface">
@@ -23,7 +35,7 @@ export function About() {
         {/* Subtle architectural backdrop — navy-washed for text readability */}
         <img
           aria-hidden
-          src="/images/backgrounds/tas-bg-about.png"
+          src="/images/backgrounds/tas-bg-about.webp"
           alt=""
           className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-[0.14]"
         />
@@ -76,8 +88,8 @@ export function About() {
                 className="w-full h-[500px] object-cover rounded-sm shadow-2xl shadow-brand-border/50"
               />
               <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-brand-navy border-8 border-brand-surface p-6 hidden md:flex flex-col justify-center text-center">
-                <span className="text-brand-gold text-5xl font-bold mb-2">15+</span>
-                <span className="text-white">{t('عاماً من الريادة في المملكة', 'שנים של מצוינות בבנייה')}</span>
+                <span className="text-brand-gold text-5xl font-bold mb-2" dir="ltr">{highlight.value}{highlight.suffix ?? ''}</span>
+                <span className="text-white">{t(highlight.label.ar, highlight.label.he, highlight.label.en)}</span>
               </div>
             </motion.div>
           </div>
@@ -93,7 +105,7 @@ export function About() {
                  transition={{ delay: idx * 0.1 }}
                  className="bg-brand-navy p-8 text-center border-b-4 border-transparent hover:border-brand-gold transition-colors"
                >
-                 <div className="text-4xl lg:text-5xl font-bold text-white mb-4" dir="ltr">{stat.value}</div>
+                 <div className="text-4xl lg:text-5xl font-bold text-white mb-4" dir="ltr">{stat.value}{stat.suffix}</div>
                  <div className="text-brand-silver font-bold">{stat.label}</div>
                </motion.div>
             ))}

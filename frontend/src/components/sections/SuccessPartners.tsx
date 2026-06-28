@@ -6,7 +6,7 @@ import { useLanguage } from '@/i18n';
 import { handleImageError, normalizeImageUrl } from '@/lib/utils';
 
 export function SuccessPartners() {
-  const { t, language } = useLanguage();
+  const { t, language, dir } = useLanguage();
   const autoplayInterval = 6000;
 
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -128,15 +128,16 @@ export function SuccessPartners() {
   const trackTransform = `translateX(calc(${-currentIndex * itemPercentage}% + ${dragOffset}px))`;
 
   return (
-    <section id="partners" className="scroll-mt-24 py-24 bg-[#0A192F] relative overflow-hidden shadow-inner">
+    <section id="partners" dir={dir} className="scroll-mt-24 py-24 bg-[#0A192F] relative overflow-hidden shadow-inner">
       <div className="absolute inset-0 bg-[#0A192F] opacity-50" />
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80')] opacity-[0.02] bg-cover bg-center" />
       
       <div className="container mx-auto px-4 relative z-10">
         <SectionHeader 
-          title={t("شركاؤنا في النجاح", "Our Success Partners")} 
+          title={t("شركاؤنا في النجاح", "השותפים שלנו להצלחה", "Our Success Partners")}
           subtitle={t(
             "نفخر بالتعاون مع نخبة من الموردين والشركاء العالميين لتقديم أفضل جودة",
+            "אנו גאים לשתף פעולה עם ספקים ושותפים גלובליים מובילים כדי לספק את האיכות הטובה ביותר",
             "We are proud to collaborate with elite global suppliers and partners to deliver the best quality"
           )}
           centered 

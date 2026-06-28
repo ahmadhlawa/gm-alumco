@@ -4,7 +4,7 @@ import { Menu, X, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '../common/Button';
 import { cn } from '@/lib/utils';
-import { useLanguage } from '@/i18n';
+import { getNextPublicLanguage, useLanguage } from '@/i18n';
 import {
   getHomeNavigationAction,
   scrollToHomeSection,
@@ -56,7 +56,7 @@ export function Navbar() {
   };
 
   const toggleLanguage = () => {
-    setLanguage(language === 'ar' ? 'he' : 'ar');
+    setLanguage(getNextPublicLanguage(language));
   };
 
   return (
@@ -124,7 +124,7 @@ export function Navbar() {
                 )}
               >
                 <Globe className="w-4 h-4" />
-                <span>{language === 'ar' ? 'HE' : 'AR'}</span>
+                <span>{language === 'he' ? 'EN' : 'HE'}</span>
               </button>
               
               <Button href="/request-quote" variant="secondary" size="sm" className="shadow-xl shadow-brand-border/50 shadow-brand-gold/20">
@@ -179,7 +179,7 @@ export function Navbar() {
               <div className="flex flex-col gap-4 mt-4">
                  <button onClick={toggleLanguage} className="flex items-center gap-2 text-white font-medium p-2 bg-white/5 rounded">
                   <Globe className="w-5 h-5" />
-                  <span>{language === 'ar' ? 'עברית (HE)' : 'العربية (AR)'}</span>
+                  <span>{language === 'he' ? 'English (EN)' : 'עברית (HE)'}</span>
                 </button>
                 <Button href="/request-quote" variant="primary" className="w-full justify-center">
                   {t('اطلب عرض سعر', 'בקש הצעת מחיר')}
