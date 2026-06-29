@@ -85,3 +85,99 @@ export function normalizePublicStatsContent(value: unknown): PublicStatsContent 
       : defaultPublicStats.heroSince,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Company Numbers — the simplified, customer-facing model.
+//
+// The admin only edits three canonical company numbers. Internally they are
+// projected onto every public stat section (hero + about) so there is no
+// duplicate editing, while the stored JSON keeps full backward compatibility:
+// value chips, the hero "since" badge and the about image highlight are
+// preserved untouched, and the legacy Arabic label is carried through as a
+// fallback (never edited, never cleared).
+// ---------------------------------------------------------------------------
+
+export type CompanyNumberId = 'completed-projects' | 'years-experience' | 'warranty-years';
+
+export interface CompanyNumber {
+  id: CompanyNumberId;
+  value: string;
+  labelHe: string;
+  labelEn: string;
+  /** Legacy Arabic label, preserved internally as a fallback. Not edited in the admin UI. */
+  labelAr: string;
+}
+
+export interface CompanyNumbers {
+  completedProjects: CompanyNumber;
+  yearsExperience: CompanyNumber;
+  warrantyYears: CompanyNumber;
+}
+
+export const defaultCompanyNumbers: CompanyNumbers = {
+  completedProjects: { id: 'completed-projects', value: '250+', labelHe: 'פרויקטים שהושלמו', labelEn: 'Completed projects', labelAr: 'مشروع منجز' },
+  yearsExperience: { id: 'years-experience', value: '10+', labelHe: 'שנות ניסיון', labelEn: 'Years of experience', labelAr: 'سنوات خبرة' },
+  warrantyYears: { id: 'warranty-years', value: '5', labelHe: 'שנות אחריות', labelEn: 'Years warranty', labelAr: 'سنوات ضمان' },
+};
+
+// Ordered so the canonical numbers always render in the same sequence everywhere.
+export const COMPANY_NUMBER_ORDER: Array<keyof CompanyNumbers> = [
+  'completedProjects',
+  'yearsExperience',
+  'warrantyYears',
+];
+
+function findStatById(content: PublicStatsContent, id: CompanyNumberId): PublicStat | undefined {
+  return [...content.heroStats, ...content.aboutPreviewStats, ...content.aboutPageStats].find(
+    (stat) => stat.id === id,
+  );
+}
+
+// Reads the three canonical numbers out of any stored public_stats JSON,
+// falling back to the defaults field-by-field so the admin form is always
+// fully populated.
+export function extractCompanyNumbers(value: unknown): CompanyNumbers {
+  const content = normalizePublicStatsContent(value);
+  const build = (id: CompanyNumberId, fallback: CompanyNumber): CompanyNumber => {
+    const stat = findStatById(content, id);
+    if (!stat) return { ...fallback };
+    return {
+      id,
+      value: stat.value || fallback.value,
+      labelHe: stat.label.he || fallback.labelHe,
+      labelEn: stat.label.en || fallback.labelEn,
+      labelAr: stat.label.ar || fallback.labelAr,
+    };
+  };
+  return {
+    completedProjects: build('completed-projects', defaultCompanyNumbers.completedProjects),
+    yearsExperience: build('years-experience', defaultCompanyNumbers.yearsExperience),
+    warrantyYears: build('warranty-years', defaultCompanyNumbers.warrantyYears),
+  };
+}
+
+function toStat(number: CompanyNumber, order: number): PublicStat {
+  return {
+    id: number.id,
+    value: number.value,
+    suffix: '',
+    sort_order: order,
+    is_active: true,
+    label: { ar: number.labelAr, he: number.labelHe, en: number.labelEn },
+  };
+}
+
+// Projects the three canonical numbers onto a full PublicStatsContent. Every
+// numeric section (hero + about preview + about page) is rebuilt from the same
+// three values; non-numeric/decorative content (value chips, hero since badge,
+// about image highlight) is preserved from the previous stored JSON.
+export function applyCompanyNumbers(previous: unknown, numbers: CompanyNumbers): PublicStatsContent {
+  const base = normalizePublicStatsContent(previous);
+  const canonical = COMPANY_NUMBER_ORDER.map((key, index) => toStat(numbers[key], index + 1));
+  return {
+    ...base,
+    heroStats: canonical.map((stat) => ({ ...stat, label: { ...stat.label } })),
+    aboutPreviewStats: canonical.map((stat) => ({ ...stat, label: { ...stat.label } })),
+    aboutPageStats: canonical.map((stat) => ({ ...stat, label: { ...stat.label } })),
+  };
+}
