@@ -160,7 +160,7 @@ export function GeometricHero({
               className="inline-flex items-center justify-center gap-3 bg-brand-gold px-7 py-4 text-sm font-bold text-brand-navy shadow-lg shadow-brand-gold/20 transition hover:-translate-y-0.5 hover:bg-[#e3c454] hover:shadow-xl hover:shadow-brand-gold/30"
             >
               {t('شاهد مشاريعنا', 'צפה בפרויקטים שלנו', 'View our projects')}
-              <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" />
+              <ArrowLeft className="h-4 w-4 ltr:-scale-x-100" />
             </a>
             <a
               href="#services"

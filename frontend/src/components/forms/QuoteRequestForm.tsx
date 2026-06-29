@@ -30,7 +30,9 @@ export function QuoteRequestForm() {
         email: formData.email,
         phone: formData.phone,
         service_type: formData.serviceType || undefined,
-        message: formData.projectType ? `نوع المشروع: ${formData.projectType}` : undefined
+        message: formData.projectType
+          ? `${t('نوع المشروع', 'סוג פרויקט', 'Project type')}: ${formData.projectType}`
+          : undefined
       });
       setStatus('success');
     } catch {

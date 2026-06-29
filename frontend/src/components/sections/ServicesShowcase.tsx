@@ -117,7 +117,7 @@ export function ServicesShowcase({
                       className="mt-9 inline-flex items-center gap-3 text-sm font-bold tracking-wide text-brand-gold transition-colors hover:text-white"
                     >
                       <span>{actionLabel}</span>
-                      <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1 rtl:-scale-x-100" />
+                      <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1 ltr:-scale-x-100" />
                     </Link>
                   </div>
                 </div>
