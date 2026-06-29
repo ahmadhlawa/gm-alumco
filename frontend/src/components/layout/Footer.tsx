@@ -59,7 +59,6 @@ export function Footer({ cmsContent, previewLocale }: FooterProps = {}) {
             <ul className="space-y-4">
               <li><Link to="/about" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('عن الشركة', 'עלינו', 'About')}</Link></li>
               <li><Link to="/projects" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('معرض المشاريع', 'פרויקטים', 'Projects')}</Link></li>
-              <li><Link to="/products" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('كتالوج المنتجات', 'מוצרים', 'Products')}</Link></li>
               <li><Link to="/careers" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('الوظائف', 'קריירה', 'Careers')}</Link></li>
               <li><Link to="/contact" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('اتصل بنا', 'צור קשר', 'Contact')}</Link></li>
             </ul>

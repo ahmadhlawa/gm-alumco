@@ -6,7 +6,6 @@ import { Home } from '@/app/Home';
 import { About } from '@/app/About';
 import { Services } from '@/app/Services';
 import { Projects } from '@/app/Projects';
-import { Products } from '@/app/Products';
 import { Contact } from '@/app/Contact';
 import { RequestQuote } from '@/app/RequestQuote';
 import { PageHero } from '@/components/common/PageHero';
@@ -44,9 +43,9 @@ const DynamicDetailsPage = ({ basePath, baseTitle }: { basePath: string, baseTit
         breadcrumbs={[{ label: baseTitle, path: `/${basePath}` }, { label: String(slug), path: '#' }]}
       />
       <section className="py-24 container mx-auto px-4 max-w-4xl text-center">
-         <h2 className="text-3xl font-bold text-white mb-8">{t('تفاصيل قيد التجهيز', 'פרטים בהכנה')}</h2>
+         <h2 className="text-3xl font-bold text-white mb-8">{t('تفاصيل قيد التجهيز', 'פרטים בהכנה', "Details in preparation")}</h2>
          <p className="text-xl text-brand-silver leading-relaxed mb-12">
-            {t('هذه الصفحة مخصصة لعرض التفاصيل الكاملة (صور الموقع، المخططات، المواصفات التقنية). سيتم إضافتها قريباً كجزء من الهيكل الشامل.', 'דף זה מיועד להראות פרטים מלאים. הוא יתווסף בקרוב כחלק מהמבנה המקיף.')}
+            {t('هذه الصفحة مخصصة لعرض التفاصيل الكاملة (صور الموقع، المخططات، المواصفات التقنية). سيتم إضافتها قريباً كجزء من الهيكل الشامل.', 'דף זה מיועד להראות פרטים מלאים. הוא יתווסף בקרוב כחלק מהמבנה המקיף.', "This page is dedicated to full details (site photos, plans, technical specifications). It will be added soon as part of the complete structure.")}
          </p>
       </section>
       <CTASection />
@@ -60,8 +59,8 @@ const PlaceholderPage = ({ title }: { title: string }) => {
   <div className="bg-brand-navy min-h-screen">
       <PageHero title={title} />
       <section className="py-24 container mx-auto px-4 text-center">
-         <h2 className="text-3xl font-bold text-white mb-8">{t('قريباً', 'בקרוב')}</h2>
-         <p className="text-xl text-brand-silver">{t('الصفحة قيد الإنشاء.', 'הדף בבנייה.')}</p>
+         <h2 className="text-3xl font-bold text-white mb-8">{t('قريباً', 'בקרוב', "Coming soon")}</h2>
+         <p className="text-xl text-brand-silver">{t('الصفحة قيد الإنشاء.', 'הדף בבנייה.', "This page is under construction.")}</p>
       </section>
   </div>
   );
@@ -105,14 +104,12 @@ function AppContent() {
                   <Route path="/" element={<Home />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/services" element={<Services />} />
-                  <Route path="/services/:slug" element={<DynamicDetailsPage basePath="services" baseTitle={t("الخدمات", "שירותים")} />} />
+                  <Route path="/services/:slug" element={<DynamicDetailsPage basePath="services" baseTitle={t("الخدمات", "שירותים", "Services")} />} />
                   <Route path="/projects" element={<Projects />} />
-                  <Route path="/projects/:slug" element={<DynamicDetailsPage basePath="projects" baseTitle={t("المشاريع", "פרויקטים")} />} />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/products/:slug" element={<DynamicDetailsPage basePath="products" baseTitle={t("المنتجات", "מוצרים")} />} />
+                  <Route path="/projects/:slug" element={<DynamicDetailsPage basePath="projects" baseTitle={t("المشاريع", "פרויקטים", "Projects")} />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/request-quote" element={<RequestQuote />} />
-                  <Route path="/careers" element={<PlaceholderPage title={t("الوظائف", "קריירה")} />} />
+                  <Route path="/careers" element={<PlaceholderPage title={t("الوظائف", "קריירה", "Careers")} />} />
                 </Routes>
               </main>
               <Footer />

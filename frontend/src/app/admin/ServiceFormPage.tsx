@@ -30,9 +30,9 @@ export function ServiceFormPage() {
   if (loading) return <LoadingState />;
   if (error) return <ErrorState />;
   return <form onSubmit={submit} className="max-w-5xl space-y-6">
-    <div><h2 className="text-2xl font-bold text-white">{id ? 'تعديل الخدمة' : 'إضافة خدمة'}</h2><p className="mt-1 text-brand-silver">أدخل محتوى الخدمة بالعربية والإنجليزية والعبرية.</p></div>
-    <div className="grid gap-5 lg:grid-cols-3">{(['ar', 'en', 'he'] as const).map((lang) => <section key={lang} className="space-y-3">
-      <h3 className="font-bold text-brand-gold">{lang === 'ar' ? 'العربية' : lang === 'en' ? 'English' : 'עברית'}</h3>
+    <div><h2 className="text-2xl font-bold text-white">{id ? 'تعديل الخدمة' : 'إضافة خدمة'}</h2><p className="mt-1 text-brand-silver">أدخل محتوى الخدمة بالعبرية والإنجليزية. (تُحفظ القيم العربية السابقة كما هي.)</p></div>
+    <div className="grid gap-5 lg:grid-cols-2">{(['he', 'en'] as const).map((lang) => <section key={lang} className="space-y-3">
+      <h3 className="font-bold text-brand-gold">{lang === 'en' ? 'English' : 'עברית'}</h3>
       <input required value={values[`title_${lang}`]} onChange={(e) => set(`title_${lang}`, e.target.value)} className={input} placeholder="العنوان" dir={lang === 'en' ? 'ltr' : 'rtl'} />
       <textarea value={values[`description_${lang}`] ?? ''} onChange={(e) => set(`description_${lang}`, e.target.value)} className={input} rows={6} placeholder="الوصف" dir={lang === 'en' ? 'ltr' : 'rtl'} />
     </section>)}</div>

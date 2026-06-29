@@ -25,7 +25,7 @@ const initialFooter: FooterCmsContent = {
 };
 
 export function AdminFooter() {
-  const [locale, setLocale] = useState<CmsLocale>('ar');
+  const [locale, setLocale] = useState<CmsLocale>('he');
   const [content, setContent] = useState<FooterCmsContent>(initialFooter);
 
   return (

@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import { LanguageProvider } from '@/i18n';
 import {
   CONTACT_EMAIL,
   ContactActions,
@@ -10,7 +11,9 @@ import {
 describe('ContactActions', () => {
   it('renders the approved WhatsApp and email destinations', () => {
     const html = renderToStaticMarkup(
-      <ContactActions title="هل تحتاج مساعدة فورية؟" compact />,
+      <LanguageProvider>
+        <ContactActions title="هل تحتاج مساعدة فورية؟" compact />
+      </LanguageProvider>,
     );
 
     expect(WHATSAPP_URL).toBe('https://wa.me/972525808988');

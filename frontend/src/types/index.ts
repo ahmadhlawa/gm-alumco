@@ -44,21 +44,6 @@ export interface Project {
   scope?: string[];
 }
 
-export interface Product {
-  id: string;
-  slug: string;
-  title: string;
-  category: string;
-  image: string;
-  gallery: string[];
-  description: string;
-  features: string[];
-  specs: Record<string, string>;
-  suitableFor: string[];
-  seoTitle?: string;
-  seoDescription?: string;
-}
-
 export interface Testimonial {
   id: string;
   name: string;

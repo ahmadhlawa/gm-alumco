@@ -58,10 +58,11 @@ function LocalizedInputs({
   onChange: (value: LocalizedText) => void;
   textarea?: boolean;
 }) {
+  // Hebrew + English only. The Arabic (ar) value stays in the LocalizedText
+  // object and is preserved on save; it is simply not editable here.
   const rows: Array<{ key: keyof LocalizedText; label: string; dir: 'rtl' | 'ltr'; note?: string }> = [
-    { key: 'ar', label: 'العربية', dir: 'rtl', note: 'للتطوير والمعاينة فقط' },
-    { key: 'en', label: 'English', dir: 'ltr', note: 'Production' },
-    { key: 'he', label: 'עברית', dir: 'rtl', note: 'Production' }
+    { key: 'he', label: 'עברית', dir: 'rtl', note: 'Production' },
+    { key: 'en', label: 'English', dir: 'ltr', note: 'Production' }
   ];
 
   return (

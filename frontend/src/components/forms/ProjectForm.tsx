@@ -27,10 +27,11 @@ export const EMPTY_PROJECT: ProjectFormValues = {
   sort_order: 0,
 };
 
+// Admin manages Hebrew + English only. Existing *_ar values are preserved on
+// save (passed through untouched in `values`); Arabic is simply not edited here.
 const LANGS = [
-  { key: 'ar', label: 'العربية', dir: 'rtl' as const },
-  { key: 'en', label: 'English', dir: 'ltr' as const },
   { key: 'he', label: 'עברית', dir: 'rtl' as const },
+  { key: 'en', label: 'English', dir: 'ltr' as const },
 ] as const;
 
 const CATEGORIES = [
@@ -53,7 +54,7 @@ interface Props {
 
 export function ProjectForm({ initialValues, submitting, error, onSubmit }: Props) {
   const [values, setValues] = useState<ProjectFormValues>(initialValues ?? EMPTY_PROJECT);
-  const [lang, setLang] = useState<Lang>('ar');
+  const [lang, setLang] = useState<Lang>('he');
   const [validation, setValidation] = useState<string | null>(null);
 
   const set = <K extends keyof ProjectFormValues>(key: K, value: ProjectFormValues[K]) =>
@@ -61,8 +62,8 @@ export function ProjectForm({ initialValues, submitting, error, onSubmit }: Prop
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!values.title_ar.trim() || !values.title_en.trim() || !values.title_he.trim()) {
-      setValidation('يجب إدخال عنوان المشروع باللغات الثلاث (عربي، إنجليزي، عبري).');
+    if (!values.title_he.trim() || !values.title_en.trim()) {
+      setValidation('يجب إدخال عنوان المشروع بالعبرية والإنجليزية.');
       return;
     }
     setValidation(null);

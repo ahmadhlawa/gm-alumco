@@ -96,27 +96,6 @@ export function AdminWebsite() {
       )
     },
     {
-      id: 'products',
-      name: 'أنظمة وكتالوجات المنتجات (Product Catalog)',
-      description: 'تعديل قائمة تفاصيل قطاعات الألمنيوم، وأنظمة الزجاج الفردي والمزدوج، والمقابض والإكسسوارات.',
-      type: 'link',
-      path: '/admin/products',
-      badge: 'قائمة بيانات 🗄️',
-      status: 'active',
-      preview: (
-        <div className="h-28 bg-[#112240] border border-white/5 rounded p-3 grid grid-cols-2 gap-2">
-          <div className="bg-white/5 p-1 flex flex-col justify-between rounded">
-            <span className="text-[10px] text-white">أنظمة نوافذ</span>
-            <span className="text-[8px] text-brand-silver">سماكة ٨٠ مم</span>
-          </div>
-          <div className="bg-white/5 p-1 flex flex-col justify-between rounded">
-            <span className="text-[10px] text-white">زجاج حراري</span>
-            <span className="text-[8px] text-brand-silver">مقاوم للصدمات</span>
-          </div>
-        </div>
-      )
-    },
-    {
       id: 'gallery',
       name: 'معرض الصور والأعمال (Gallery)',
       description: 'تحرير صور المشاريع وعناوينها ضمن معاينة بصرية مطابقة لشبكة العرض.',

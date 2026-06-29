@@ -11,7 +11,7 @@ interface HeroVisualEditorProps {
 
 export function HeroVisualEditor({ content, onChange }: HeroVisualEditorProps) {
   // Locale preview in the admin panel to check English/Hebrew rendering on correct layout
-  const [previewLocale, setPreviewLocale] = useState<'ar' | 'en' | 'he'>('ar');
+  const [previewLocale, setPreviewLocale] = useState<'ar' | 'en' | 'he'>('he');
 
   const getT = (obj: any) => {
     return obj?.[previewLocale] || obj?.ar || '';
@@ -49,16 +49,8 @@ export function HeroVisualEditor({ content, onChange }: HeroVisualEditorProps) {
           <p className="text-xs text-brand-silver mt-1">تظهر التعديلات بشكل فوري على الهيكل البصري أدناه. اختر لغة المعاينة للتحقق:</p>
         </div>
         
-        {/* Toggle preview languages */}
+        {/* Toggle preview languages — Hebrew + English only */}
         <div className="flex items-center gap-2 bg-[#172A45] p-1 rounded-md border border-white/5">
-          <button
-            type="button"
-            onClick={() => setPreviewLocale('ar')}
-            className={`px-3 py-1.5 text-xs font-bold rounded transition-all flex items-center gap-1 ${previewLocale === 'ar' ? 'bg-brand-gold text-white' : 'text-brand-silver hover:text-white'}`}
-          >
-            <Globe className="w-3.5 h-3.5" />
-            العربية
-          </button>
           <button
             type="button"
             onClick={() => setPreviewLocale('en')}

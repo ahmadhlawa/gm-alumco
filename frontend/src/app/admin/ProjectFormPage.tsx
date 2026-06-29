@@ -31,7 +31,7 @@ function toValues(dto: ProjectDetailDto): ProjectFormValues {
   };
 }
 
-function toPayload(values: ProjectFormValues): Partial<ProjectDto> {
+export function toPayload(values: ProjectFormValues): Partial<ProjectDto> {
   return {
     title_ar: values.title_ar.trim(),
     title_en: values.title_en.trim(),

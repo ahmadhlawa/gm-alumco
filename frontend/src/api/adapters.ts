@@ -1,5 +1,5 @@
-import type { GalleryImage, Partner, Product, Project, Service, Testimonial } from '@/types';
-import type { GalleryDto, Locale, PartnerDto, ProductDto, ProjectDto, ServiceDto, SiteContentDto, TestimonialDto } from './types';
+import type { GalleryImage, Partner, Project, Service, Testimonial } from '@/types';
+import type { GalleryDto, Locale, PartnerDto, ProjectDto, ServiceDto, SiteContentDto, TestimonialDto } from './types';
 
 function nonEmpty(value: string | null | undefined): string | undefined {
   return value && value.trim() ? value : undefined;
@@ -20,10 +20,6 @@ export const toProjectView = (item: ProjectDto, locale: Locale): Project => ({
   id: String(item.id), slug: String(item.id), title: pick(locale, item.title_ar, item.title_en, item.title_he), category: item.category,
   location: '', year: '', shortDescription: pick(locale, item.description_ar, item.description_en, item.description_he),
   description: pick(locale, item.description_ar, item.description_en, item.description_he), mainImage: item.main_image_url ?? '', images: [], featured: item.category === 'FEATURED', tags: [],
-});
-export const toProductView = (item: ProductDto, locale: Locale): Product => ({
-  id: String(item.id), slug: String(item.id), title: pick(locale, item.title_ar, item.title_en, item.title_he), category: '', image: item.image_url ?? '', gallery: [],
-  description: pick(locale, item.description_ar, item.description_en, item.description_he), features: [], specs: {}, suitableFor: [],
 });
 export const toGalleryView = (item: GalleryDto, locale: Locale): GalleryImage => ({
   id: String(item.id), url: item.image_url, alt: pick(locale, item.alt_text_ar ?? item.title_ar, item.alt_text_en ?? item.title_en, item.alt_text_he ?? item.title_he), category: item.category ?? '',

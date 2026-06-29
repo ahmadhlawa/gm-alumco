@@ -36,7 +36,7 @@ export function ProjectCard({ project, index = 0, disableLink }: ProjectCardProp
           {project.location} • {project.year}
         </p>
         <div className="flex items-center text-white font-bold text-sm tracking-wide gap-2 group-hover:gap-3 transition-all">
-          <span>{t('التفاصيل', 'פרטים')}</span>
+          <span>{t('التفاصيل', 'פרטים', "Details")}</span>
           <ArrowLeft className="w-4 h-4 rtl:-scale-x-100" />
         </div>
       </div>

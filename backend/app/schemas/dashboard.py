@@ -13,7 +13,6 @@ class DashboardStats(BaseModel):
     international_projects: int
     featured_projects: int
     services: int
-    products: int
     gallery: int
     partners: int
     testimonials: int

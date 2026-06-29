@@ -47,10 +47,6 @@ export interface SiteContent {
     title: LocalizedText;
     subtitle: LocalizedText;
   };
-  products: {
-    title: LocalizedText;
-    subtitle: LocalizedText;
-  };
   gallery: {
     title: LocalizedText;
     subtitle: LocalizedText;
@@ -180,18 +176,6 @@ export const initialSiteContent: SiteContent = {
       ar: "نستعرض بعضاً من أعمالنا التي تعكس التزامنا بالجودة والابتكار.",
       en: "We showcase some of our work that reflects our commitment to quality and innovation.",
       he: "אנו מציגים כמה מהעבודות שלנו המשקפות את המחויבות שלנו לאיכות וחדשנות."
-    }
-  },
-  products: {
-    title: {
-      ar: "منتجاتنا الرئيسية",
-      en: "Our Primary Products",
-      he: "המוצרים העיקריים שלנו"
-    },
-    subtitle: {
-      ar: "تعرف على مجموعتنا من الأنظمة المعمارية.",
-      en: "Learn about our range of architectural systems.",
-      he: "למדו עוד על מגוון המערכות האדריכליות שלנו."
     }
   },
   gallery: {

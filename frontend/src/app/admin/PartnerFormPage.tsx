@@ -12,7 +12,7 @@ const input = 'w-full rounded border border-white/10 bg-brand-navy px-4 py-3 tex
 export function PartnerFormPage() {
   const { id } = useParams(); const navigate = useNavigate();
   const [values, setValues] = useState(empty); const [loading, setLoading] = useState(Boolean(id)); const [error, setError] = useState(false); const [saving, setSaving] = useState(false); const [formError, setFormError] = useState<string | null>(null);
-  useEffect(() => { if (id) getAdminPartner(id).then((item) => setValues({ name: item.name_ar, logo_url: item.logo_url, website_url: item.website_url ?? '', is_active: item.is_active, sort_order: item.sort_order })).catch(() => setError(true)).finally(() => setLoading(false)); }, [id]);
+  useEffect(() => { if (id) getAdminPartner(id).then((item) => setValues({ name: item.name_he || item.name_en || item.name_ar, logo_url: item.logo_url, website_url: item.website_url ?? '', is_active: item.is_active, sort_order: item.sort_order })).catch(() => setError(true)).finally(() => setLoading(false)); }, [id]);
   const submit = async (event: FormEvent) => { event.preventDefault(); if (!values.logo_url.trim()) { setFormError('يجب رفع شعار الشريك أو إدخال رابط يدوي.'); return; } setFormError(null); setSaving(true); try { const payload = partnerPayload(values); if (id) await updatePartner(id, payload); else await createPartner(payload); navigate('/admin/partners'); } finally { setSaving(false); } };
   if (loading) return <LoadingState />; if (error) return <ErrorState />;
   return <form onSubmit={submit} className="max-w-2xl space-y-6"><div><h2 className="text-2xl font-bold text-white">{id ? 'تعديل الشريك' : 'إضافة شريك'}</h2><p className="mt-1 text-brand-silver">بيانات بسيطة للشريك كما ستظهر في الموقع.</p></div>

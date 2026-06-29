@@ -38,12 +38,12 @@ export function Navbar() {
   }, [location.pathname]);
 
   const navLinks: NavLink[] = [
-    { name: t('الرئيسية', 'דף הבית'), path: '/', scrollTarget: 'home' },
-    { name: t('من نحن', 'עלינו'), path: '/', scrollTarget: 'about' },
-    { name: t('خدماتنا', 'שירותים'), path: '/', scrollTarget: 'services' },
-    { name: t('مشاريعنا', 'פרויקטים'), path: '/', scrollTarget: 'projects' },
-    { name: t('شركاؤنا', 'השותפים שלנו'), path: '/', scrollTarget: 'partners' },
-    { name: t('اتصل بنا', 'צור קשר'), path: '/contact' },
+    { name: t('الرئيسية', 'דף הבית', "Home"), path: '/', scrollTarget: 'home' },
+    { name: t('من نحن', 'עלינו', "About"), path: '/', scrollTarget: 'about' },
+    { name: t('خدماتنا', 'שירותים', "Services"), path: '/', scrollTarget: 'services' },
+    { name: t('مشاريعنا', 'פרויקטים', "Projects"), path: '/', scrollTarget: 'projects' },
+    { name: t('شركاؤنا', 'השותפים שלנו', "Partners"), path: '/', scrollTarget: 'partners' },
+    { name: t('اتصل بنا', 'צור קשר', "Contact"), path: '/contact' },
   ];
 
   const handleNavClick = (event: MouseEvent<HTMLAnchorElement>, link: NavLink) => {
@@ -80,7 +80,7 @@ export function Navbar() {
               "font-bold text-xl tracking-tight transition-colors",
               isScrolled ? "text-white" : "text-white lg:text-white"
             )}>
-              {t('T.A.S', 'T.A.S')}
+              {t('T.A.S', 'T.A.S', "T.A.S")}
             </span>
           </Link>
 
@@ -115,7 +115,7 @@ export function Navbar() {
               })}
             </ul>
 
-            <div className="flex items-center gap-4 border-r border-gray-300/30 pr-4">
+            <div className="flex items-center gap-4 border-s border-gray-300/30 ps-4">
               <button 
                 onClick={toggleLanguage}
                 className={cn(
@@ -128,7 +128,7 @@ export function Navbar() {
               </button>
               
               <Button href="/request-quote" variant="secondary" size="sm" className="shadow-xl shadow-brand-border/50 shadow-brand-gold/20">
-                {t('اطلب عرض سعر', 'בקש הצעת מחיר')}
+                {t('اطلب عرض سعر', 'בקש הצעת מחיר', "Request a quote")}
               </Button>
             </div>
           </nav>
@@ -182,7 +182,7 @@ export function Navbar() {
                   <span>{language === 'he' ? 'English (EN)' : 'עברית (HE)'}</span>
                 </button>
                 <Button href="/request-quote" variant="primary" className="w-full justify-center">
-                  {t('اطلب عرض سعر', 'בקש הצעת מחיר')}
+                  {t('اطلب عرض سعر', 'בקש הצעת מחיר', "Request a quote")}
                 </Button>
               </div>
             </div>

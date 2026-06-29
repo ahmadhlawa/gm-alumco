@@ -19,7 +19,7 @@ const fields = [
 ];
 
 export function AdminTestimonials() {
-  const [locale, setLocale] = useState<CmsLocale>('ar');
+  const [locale, setLocale] = useState<CmsLocale>('he');
   const [testimonials, setTestimonials] = useState<CmsTestimonial[]>(() => initialTestimonials.map((item) => ({
     ...item,
     name: localize(item.name),

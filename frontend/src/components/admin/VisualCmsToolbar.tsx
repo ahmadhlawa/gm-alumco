@@ -7,10 +7,11 @@ interface VisualCmsToolbarProps {
   title?: string;
 }
 
+// Admin manages Hebrew + English only. Arabic (*_ar) values are preserved in
+// the data but are no longer presented as a customer-facing language here.
 const locales: Array<{ value: CmsLocale; label: string }> = [
-  { value: 'ar', label: 'العربية - تطوير' },
-  { value: 'en', label: 'English' },
-  { value: 'he', label: 'עברית' }
+  { value: 'he', label: 'עברית' },
+  { value: 'en', label: 'English' }
 ];
 
 export function VisualCmsToolbar({

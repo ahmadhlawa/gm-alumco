@@ -35,6 +35,13 @@ const valueIcons = {
   'modern-aesthetic': Sparkles,
 } as const;
 
+// The Hero background follows the text direction: Hebrew/RTL keeps the original
+// orientation, English/LTR mirrors the image so the building moves to the
+// opposite side from the headline. Only the background <img> uses this.
+export function heroBackgroundTransform(dir: 'rtl' | 'ltr'): string {
+  return dir === 'rtl' ? 'scaleX(-1)' : 'scaleX(1)';
+}
+
 export function GeometricHero({
   stats = defaultPublicStats.heroStats,
   valueChips = defaultPublicStats.valueChips,
@@ -49,7 +56,9 @@ export function GeometricHero({
       className="relative isolate flex min-h-screen scroll-mt-24 overflow-hidden bg-brand-navy text-brand-text"
       aria-label="T.A.S"
     >
-      {/* Background image with a slow, luxurious zoom — never fully static */}
+      {/* Background image with a slow, luxurious zoom — never fully static.
+          The outer wrapper owns the ken-burns scale; the inner <img> owns the
+          direction mirror, so the two transforms never conflict. */}
       <motion.div
         aria-hidden
         className="absolute inset-0"
@@ -57,16 +66,25 @@ export function GeometricHero({
         animate={{ scale: 1.13 }}
         transition={{ duration: 20, ease: 'easeInOut', repeat: Infinity, repeatType: 'reverse' }}
       >
+        {/* RTL (Hebrew) keeps the original orientation; LTR (English) mirrors the
+            image so the building moves to the opposite side from the headline. */}
         <img
           src="/images/main.jpeg"
           alt=""
           className="absolute inset-0 h-full w-full object-cover"
-          style={{ transform: 'scaleX(-1)' }}
+          style={{ transform: heroBackgroundTransform(dir) }}
         />
       </motion.div>
 
-      {/* Layered overlays — darker navy for premium contrast + readable text */}
-      <div className="absolute inset-0 bg-gradient-to-l from-brand-navy/97 via-brand-navy/85 to-brand-surface-alt/50" />
+      {/* Layered overlays — darker navy for premium contrast + readable text.
+          Primary contrast wash: the dark side follows the text (RTL → right, LTR → left). */}
+      <div
+        className={
+          dir === 'rtl'
+            ? 'absolute inset-0 bg-gradient-to-l from-brand-navy/97 via-brand-navy/85 to-brand-surface-alt/50'
+            : 'absolute inset-0 bg-gradient-to-r from-brand-navy/97 via-brand-navy/85 to-brand-surface-alt/50'
+        }
+      />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_18%,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,rgba(10,25,47,0.4),rgba(10,25,47,0.96))]" />
       <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/55 via-transparent to-brand-navy/35" />
       <div className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-brand-navy to-transparent" />
@@ -118,7 +136,9 @@ export function GeometricHero({
 
           <motion.h1
             variants={heroItem}
-            className="max-w-4xl text-4xl font-black leading-[1.05] tracking-tight text-white drop-shadow-[0_2px_24px_rgba(0,0,0,0.45)] sm:text-5xl lg:text-7xl"
+            className={`max-w-4xl text-4xl font-black leading-[1.08] tracking-tight text-[#F4F5F7] drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)] sm:text-5xl ${
+              dir === 'rtl' ? 'lg:text-6xl' : 'lg:text-7xl'
+            }`}
           >
             {t('حلول الألمنيوم والزجاج', 'פתרונות אלומיניום וזכוכית', 'Aluminum & glass solutions')}
             <span className="block text-brand-text">
@@ -126,7 +146,7 @@ export function GeometricHero({
             </span>
           </motion.h1>
 
-          <motion.p variants={heroItem} className="mt-6 max-w-2xl text-base leading-8 text-brand-silver sm:text-lg">
+          <motion.p variants={heroItem} className="mt-6 max-w-2xl text-base leading-8 text-[#A7B0C2] sm:text-lg">
             {t(
               'تصميم وتصنيع وتركيب أنظمة الألمنيوم والزجاج وفق معايير هندسية عالمية. واجهات زجاجية، أبواب منزلقة وحلول مصمّمة خصيصاً للفلل والقصور.',
               'תכנון, ייצור והתקנה של מערכות אלומיניום וזכוכית בסטנדרטים הנדסיים בינלאומיים. קירות מסך, דלתות הזזה ופתרונות מותאמים אישית לווילות וארמונות.',

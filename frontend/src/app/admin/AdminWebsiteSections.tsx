@@ -8,7 +8,7 @@ export function AdminWebsiteSections() {
   const location = useLocation();
   const [siteContent, setSiteContent] = useState<SiteContent>(() => structuredClone(initialSiteContent));
   const [activeTab, setActiveTab] = useState<'about' | 'footer'>('about');
-  const [previewLocale, setPreviewLocale] = useState<'ar' | 'en' | 'he'>('ar');
+  const [previewLocale, setPreviewLocale] = useState<'ar' | 'en' | 'he'>('he');
   const [toast, setToast] = useState<{ show: boolean; msg: string }>({ show: false, msg: '' });
   const [isSaving, setIsSaving] = useState(false);
 
@@ -160,14 +160,14 @@ export function AdminWebsiteSections() {
         {/* Preview Locale Selector */}
         <div className="flex items-center gap-1 bg-[#172A45] p-1 rounded border border-white/5">
           <span className="text-[10px] text-brand-silver px-2 select-none">معاينة اللغة:</span>
-          {(['ar', 'en', 'he'] as const).map((loc) => (
+          {(['he', 'en'] as const).map((loc) => (
             <button
               key={loc}
               onClick={() => setPreviewLocale(loc)}
               className={`px-3 py-1 text-xs font-bold rounded transition-all flex items-center gap-1.5 ${previewLocale === loc ? 'bg-brand-gold text-white shadow-sm' : 'text-brand-silver hover:text-white'}`}
             >
               <Globe className="w-3 h-3" />
-              {loc === 'ar' ? 'العربية' : loc === 'en' ? 'English' : 'עברית'}
+              {loc === 'en' ? 'English' : 'עברית'}
             </button>
           ))}
         </div>

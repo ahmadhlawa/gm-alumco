@@ -14,7 +14,7 @@ import { Project } from '@/types';
 
 export function Projects() {
   const { t, language } = useLanguage();
-  const [filter, setFilter] = useState(t('الكل', 'הכל'));
+  const [filter, setFilter] = useState(t('الكل', 'הכל', "All"));
   const [searchQuery, setSearchQuery] = useState('');
 
   const [projects, setProjects] = useState<Project[]>([]);
@@ -30,10 +30,10 @@ export function Projects() {
       .finally(() => setLoading(false));
   }, [language]);
 
-  const categories = [t('الكل', 'הכל'), ...Array.from(new Set(projects.map(p => p.category)))];
+  const categories = [t('الكل', 'הכל', "All"), ...Array.from(new Set(projects.map(p => p.category)))];
 
   const filteredProjects = projects.filter(project => {
-    const matchesFilter = filter === t('الكل', 'הכל') || project.category === filter;
+    const matchesFilter = filter === t('الكل', 'הכל', "All") || project.category === filter;
     const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           project.location.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
@@ -42,16 +42,16 @@ export function Projects() {
   return (
     <div className="bg-brand-surface">
       <PageHero 
-        title={t("معرض المشاريع", "גלריית פרויקטים")} 
-        subtitle={t("نماذج من أعمالنا التي تم تنفيذها بأعلى معايير الدقة والاحترافية.", "דוגמאות מהעבודות שלנו שנעשו בסטנדרטים הגבוהים ביותר.")}
-        breadcrumbs={[{ label: t('مشاريعنا', 'הפרויקטים שלנו'), path: '/projects' }]}
+        title={t("معرض المشاريع", "גלריית פרויקטים", "Project gallery")} 
+        subtitle={t("نماذج من أعمالنا التي تم تنفيذها بأعلى معايير الدقة والاحترافية.", "דוגמאות מהעבודות שלנו שנעשו בסטנדרטים הגבוהים ביותר.", "Examples of our work, executed to the highest standards of precision and professionalism.")}
+        breadcrumbs={[{ label: t('مشاريعنا', 'הפרויקטים שלנו', "Our projects"), path: '/projects' }]}
         image="https://images.unsplash.com/photo-1545615714-fb9bd747190d?auto=format&fit=crop&q=80"
       />
 
       <section className="py-24">
         <div className="container mx-auto px-4">
           <SectionHeader 
-            title={t("أعمال نفتخر بها", "עבודות שאנו גאים בהן")} 
+            title={t("أعمال نفتخر بها", "עבודות שאנו גאים בהן", "Work we're proud of")} 
             centered
           />
           
@@ -77,7 +77,7 @@ export function Projects() {
             <div className="relative w-full md:w-64 shrink-0">
               <input 
                 type="text" 
-                placeholder={t("ابحث في المشاريع...", "חפש בפרויקטים...")} 
+                placeholder={t("ابحث في المشاريع...", "חפש בפרויקטים...", "Search projects...")} 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full h-11 pl-4 rtl:pr-11 ltr:pl-11 bg-white/5 border border-white/10 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent transition-all"
@@ -89,9 +89,9 @@ export function Projects() {
           {/* Project Grid */}
           <div className="min-h-[400px]">
             {loading ? (
-              <LoadingState />
+              <LoadingState message={t('جاري تحميل المشاريع...', 'טוען פרויקטים...', 'Loading projects...')} />
             ) : error ? (
-              <ErrorState />
+              <ErrorState message={t('تعذر تحميل المشاريع. يرجى المحاولة مرة أخرى.', 'טעינת הפרויקטים נכשלה. נסה שוב.', 'Could not load projects. Please try again.')} />
             ) : (
               <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <AnimatePresence>
@@ -116,7 +116,7 @@ export function Projects() {
                       className="col-span-full flex flex-col items-center justify-center text-brand-silver py-20"
                     >
                       <Search className="w-16 h-16 text-gray-200 mb-4 opacity-50" />
-                      <p className="text-xl">{t('لا توجد مشاريع مطابقة للبحث', 'אין פרויקטים שתואמים לחיפוש')}</p>
+                      <p className="text-xl">{t('لا توجد مشاريع مطابقة للبحث', 'אין פרויקטים שתואמים לחיפוש', "No projects match your search")}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>

@@ -5,16 +5,15 @@ import { Button } from '@/components/common/Button';
 import { SectionHeader } from '@/components/common/SectionHeader';
 import { CTASection } from '@/components/common/CTASection';
 import { TestimonialCard } from '@/components/cards/TestimonialCard';
-import { ProductCard } from '@/components/cards/ProductCard';
 import { SuccessPartners } from '@/components/sections/SuccessPartners';
 import { FeaturedProjectsShowcase } from '@/components/sections/FeaturedProjectsShowcase';
 import { GeometricHero } from '@/components/sections/GeometricHero';
 import { ServicesShowcase } from '@/components/sections/ServicesShowcase';
-import { getServices, getProjects, getProducts, getTestimonials } from '@/lib/api';
+import { getServices, getProjects, getTestimonials } from '@/lib/api';
 import { useLanguage } from '@/i18n';
 import { ShieldCheck, Ruler, Clock, LayoutTemplate } from 'lucide-react';
 import { LoadingState } from '@/components/common/LoadingState';
-import { Service, Project, Product, Testimonial } from '@/types';
+import { Service, Project, Testimonial } from '@/types';
 import { loadSiteContent } from '@/data/siteContent';
 import { defaultPublicStats, type PublicStatsContent } from '@/data/publicStats';
 import { getPublicStatsContent } from '@/api/content';
@@ -30,7 +29,6 @@ export function Home() {
   const [content] = useState(() => loadSiteContent());
   const [services, setServices] = useState<Service[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [publicStats, setPublicStats] = useState<PublicStatsContent>(defaultPublicStats);
   const [loading, setLoading] = useState(true);
@@ -46,19 +44,16 @@ export function Home() {
     Promise.all([
       getServices(language),
       getProjects(language),
-      getProducts(language),
       getTestimonials(language),
       getPublicStatsContent()
-    ]).then(([svcs, projs, prods, tests, statsContent]) => {
+    ]).then(([svcs, projs, tests, statsContent]) => {
       setServices(svcs);
       setProjects(projs);
-      setProducts(prods);
       setTestimonials(tests);
       setPublicStats(statsContent);
     }).catch(() => {
       setServices([]);
       setProjects([]);
-      setProducts([]);
       setTestimonials([]);
       setPublicStats(defaultPublicStats);
     }).finally(() => setLoading(false));
@@ -76,7 +71,7 @@ export function Home() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-brand-navy">
-        <LoadingState message={t("جاري تحميل الصفحة الرئيسية...", "טוען עמוד ראשית...")} />
+        <LoadingState message={t("جاري تحميل الصفحة الرئيسية...", "טוען עמוד ראשית...", "Loading the homepage...")} />
       </div>
     );
   }
@@ -140,8 +135,8 @@ export function Home() {
         services={services}
         title={t(content.services.title.ar, content.services.title.he, content.services.title.en)}
         subtitle={t(content.services.subtitle.ar, content.services.subtitle.he, content.services.subtitle.en)}
-        emptyMessage={t('لا توجد خدمات متاحة حالياً.', 'אין שירותים זמינים כרגע.')}
-        actionLabel={t('اطلب استشارة', 'בקש ייעוץ')}
+        emptyMessage={t('لا توجد خدمات متاحة حالياً.', 'אין שירותים זמינים כרגע.', "No services available at the moment.")}
+        actionLabel={t('اطلب استشارة', 'בקש ייעוץ', "Request a consultation")}
       />
 
       {/* Featured Projects */}
@@ -172,17 +167,17 @@ export function Home() {
         </div>
         <div className="container mx-auto px-4 relative z-10">
           <SectionHeader 
-            title={t("منهجية العمل", "איך אנחנו עובדים")}
-            subtitle={t("نتبع خطوات مدروسة لضمان تنفيذ مشروعك بأعلى المعايير.", "אנו עוקבים אחר צעדים זהירים כדי להבטיח את הסטנדרטים הגבוהים ביותר.")}
+            title={t("منهجية العمل", "איך אנחנו עובדים", "How we work")}
+            subtitle={t("نتبع خطوات مدروسة لضمان تنفيذ مشروعك بأعلى المعايير.", "אנו עוקבים אחר צעדים זהירים כדי להבטיח את הסטנדרטים הגבוהים ביותר.", "We follow careful, considered steps to ensure your project is delivered to the highest standards.")}
             light
             centered
           />
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { title: t("الاستشارة والتصميم", "ייעوץ ועיצוב"), desc: t("دراسة المتطلبات وتقديم مقترحات معمارية هندسية.", "לימוד דרישות והגשת הצעות הנדסיות."), icon: Ruler },
-              { title: t("الرفع المساحي", "מדידה מסחרית"), desc: t("قياسات دقيقة للموقع باستخدام أحدث الأجهزة.", "מדידות מדויקות לאתר באמצעות המכשירים העдכניים."), icon: ShieldCheck },
-              { title: t("التصنيع الممتاز", "ייצור מצטיין"), desc: t("تصنيع عالي الجودة في ورشنا المجهزة.", "ייצור בגובה רב בסדנאות המצוידות שלנו."), icon: LayoutTemplate },
-              { title: t("التركيب والضمان", "התקנה ואחريות"), desc: t("تركيب احترافي وتسليم مع شهادة ضمان.", "התקנה מקצועית ואספקה עם תעודת אחריות."), icon: Clock },
+              { title: t("الاستشارة والتصميم", "ייעוץ ועיצוב", "Consultation & design"), desc: t("دراسة المتطلبات وتقديم مقترحات معمارية هندسية.", "לימוד דרישות והגשת הצעות הנדסיות.", "Studying requirements and presenting architectural engineering proposals."), icon: Ruler },
+              { title: t("الرفع المساحي", "מדידה מסחרית", "Site survey"), desc: t("قياسات دقيقة للموقع باستخدام أحدث الأجهزة.", "מדידות מדויקות לאתר באמצעות המכשירים העדכניים.", "Precise on-site measurements using the latest equipment."), icon: ShieldCheck },
+              { title: t("التصنيع الممتاز", "ייצור מצטיין", "Premium manufacturing"), desc: t("تصنيع عالي الجودة في ورشنا المجهزة.", "ייצור בגובה רב בסדנאות המצוידות שלנו.", "High-quality manufacturing in our fully equipped workshops."), icon: LayoutTemplate },
+              { title: t("التركيب والضمان", "התקנה ואחריות", "Installation & warranty"), desc: t("تركيب احترافي وتسليم مع شهادة ضمان.", "התקנה מקצועית ואספקה עם תעודת אחריות.", "Professional installation and handover with a warranty certificate."), icon: Clock },
             ].map((step, idx) => (
               <motion.div 
                 key={idx}
@@ -197,24 +192,6 @@ export function Home() {
                 <p className="text-gray-400">{step.desc}</p>
               </motion.div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Products */}
-      <section className="py-24 bg-brand-navy">
-        <div className="container mx-auto px-4">
-          <SectionHeader 
-            title={t(content.products.title.ar, content.products.title.he, content.products.title.en)} 
-            subtitle={t(content.products.subtitle.ar, content.products.subtitle.he, content.products.subtitle.en)}
-          />
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-             {products.slice(0, 4).map((product, idx) => (
-                <ProductCard key={product.id} product={product} index={idx} />
-             ))}
-          </div>
-          <div className="mt-10 text-center">
-             <Button href="/products" variant="outline">{t('عرض كتيب المنتجات', 'הצג מפרט מוצרים')}</Button>
           </div>
         </div>
       </section>

@@ -19,7 +19,7 @@ const fields = [
 ];
 
 export function AdminGallery() {
-  const [locale, setLocale] = useState<CmsLocale>('ar');
+  const [locale, setLocale] = useState<CmsLocale>('he');
   const [images, setImages] = useState<CmsGalleryImage[]>([]);
 
   const load = () => getGalleryImages().then((items) => setImages(items.map((item) => ({

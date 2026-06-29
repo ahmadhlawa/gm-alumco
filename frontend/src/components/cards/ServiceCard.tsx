@@ -33,7 +33,7 @@ export function ServiceCard({ service, index = 0, disableLink }: ServiceCardProp
           {service.shortDescription}
         </p>
         <div className="flex items-center text-white font-bold text-sm tracking-wide gap-2 group-hover:gap-3 transition-all">
-          <span>{t('اقرأ المزيد', 'קרא עוד')}</span>
+          <span>{t('اقرأ المزيد', 'קרא עוד', "Read more")}</span>
           <ArrowLeft className="w-4 h-4" />
         </div>
       </div>

@@ -25,9 +25,9 @@ export function About() {
   return (
     <div className="bg-brand-surface">
       <PageHero 
-        title={t("عن T.A.S", "על T.A.S")}
-        subtitle={t("شريكك الموثوق في تقديم أرقى حلول الواجهات الزجاجية والألمنيوم.", "השותף המהימן שלך במתן פתרונות חזית זכוכית ואלומיניום.")}
-        breadcrumbs={[{ label: t('عن الشركة', 'عن الشركة'), path: '/about' }]}
+        title={t("عن T.A.S", "על T.A.S", "About T.A.S")}
+        subtitle={t("شريكك الموثوق في تقديم أرقى حلول الواجهات الزجاجية والألمنيوم.", "השותף המהימן שלך במתן פתרונות חזית זכוכית ואלומיניום.", "Your trusted partner in delivering the finest glass and aluminum facade solutions.")}
+        breadcrumbs={[{ label: t('عن الشركة', 'אודות', "About"), path: '/about' }]}
         image="https://images.unsplash.com/photo-1541888048600-410a8d622941?auto=format&fit=crop&q=80"
       />
 
@@ -51,22 +51,22 @@ export function About() {
               viewport={{ once: true }}
             >
               <SectionHeader 
-                title={t("قصة نجاحنا", "סיפור ההצלחה שלנו")} 
-                subtitle={t("رحلة من الشغف في عالم الهندسة المعمارية بدأناها لتقديم الجودة التي تليق بكم.", "מסע של תשוקה בעולם האדריכלות למען איכות.")}
+                title={t("قصة نجاحنا", "סיפור ההצלחה שלנו", "Our success story")} 
+                subtitle={t("رحلة من الشغف في عالم الهندسة المعمارية بدأناها لتقديم الجودة التي تليق بكم.", "מסע של תשוקה בעולם האדריכלות למען איכות.", "A journey of passion in architecture, begun to deliver the quality you deserve.")}
               />
               <p className="text-brand-silver mb-6 leading-relaxed text-lg">
-                {t('تأسست شركة T.A.S برؤية واضحة تهدف إلى إحداث نقلة نوعية في صناعة الواجهات الزجاجية وأنظمة الألمنيوم في المنطقة. منذ اليوم الأول، ركزنا على الجودة الفائقة، والالتزام بالمعايير الهندسية الدقيقة، واحترام مواعيد تسليم المشاريع.', 'T.A.S הוקמה בחזון ברור לחולל שינוי מהותי בתעשיית קירוי מבנים ומערכות אלומיניום.')}
+                {t('تأسست شركة T.A.S برؤية واضحة تهدف إلى إحداث نقلة نوعية في صناعة الواجهات الزجاجية وأنظمة الألمنيوم في المنطقة. منذ اليوم الأول، ركزنا على الجودة الفائقة، والالتزام بالمعايير الهندسية الدقيقة، واحترام مواعيد تسليم المشاريع.', 'T.A.S הוקמה בחזון ברור לחולל שינוי מהותי בתעשיית קירוי מבנים ומערכות אלומיניום.', "T.A.S was founded with a clear vision to drive a real shift in the building cladding and aluminum systems industry. From day one we have focused on superior quality, strict engineering standards and on-time delivery.")}
               </p>
               <p className="text-brand-silver mb-8 leading-relaxed text-lg">
-                {t('نحن نفخر بتوظيف نخبة من الكوادر الهندسية والفنية، ونسعى دائماً لاعتماد أحدث ما توصلت إليه تكنولوجيا التصنيع، لضمان تقديم حلول مستدامة وآمنة للقطاعين السكني والتجاري.', 'אנו גאים להעסיק אנשי מקצוע ומהנדסים מובילים לפיתוח בר קיימא עבור המגזר הפרטי והעסקי.')}
+                {t('نحن نفخر بتوظيف نخبة من الكوادر الهندسية والفنية، ونسعى دائماً لاعتماد أحدث ما توصلت إليه تكنولوجيا التصنيع، لضمان تقديم حلول مستدامة وآمنة للقطاعين السكني والتجاري.', 'אנו גאים להעסיק אנשי מקצוע ומהנדסים מובילים לפיתוח בר קיימא עבור המגזר הפרטי והעסקי.', "We are proud to employ leading professionals and engineers, and we continually adopt the latest manufacturing technology to deliver sustainable, safe solutions for the residential and commercial sectors.")}
               </p>
               
               <ul className="space-y-4">
                 {[
-                  t('تطبيق أقصى معايير السلامة والجودة', 'יישום תקני בטיחות ואיכות מחמירים'),
-                  t('استخدام مواد أولية معتمدة عالمياً', 'שימוש בחומרי גלם באישור בינלאומי'),
-                  t('فريق فني ذو كفاءة وخبرة عالية', 'צוות טכני מיומן ומנוסה'),
-                  t('خدمات ما بعد البيع وضمان حقيقي', 'שירותי לאחר המכירה ואחריות מקיפה')
+                  t('تطبيق أقصى معايير السلامة والجودة', 'יישום תקני בטיחות ואיכות מחמירים', "Applying the strictest safety and quality standards"),
+                  t('استخدام مواد أولية معتمدة عالمياً', 'שימוש בחומרי גלם באישור בינלאומי', "Using internationally certified raw materials"),
+                  t('فريق فني ذو كفاءة وخبرة عالية', 'צוות טכני מיומן ומנוסה', "A skilled and experienced technical team"),
+                  t('خدمات ما بعد البيع وضمان حقيقي', 'שירותי לאחר המכירה ואחריות מקיפה', "Comprehensive after-sales service and genuine warranty")
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-white font-medium">
                     <CheckCircle2 className="text-brand-gold w-5 h-5 flex-shrink-0" />
@@ -119,9 +119,9 @@ export function About() {
               viewport={{ once: true }}
               className="bg-brand-navy text-white p-12"
             >
-              <h3 className="text-3xl font-bold mb-6 text-brand-gold">{t('رؤيتنا', 'החזון שלנו')}</h3>
+              <h3 className="text-3xl font-bold mb-6 text-brand-gold">{t('رؤيتنا', 'החזון שלנו', "Our vision")}</h3>
               <p className="text-gray-300 leading-relaxed text-lg">
-                {t('أن نكون الخيار الأول والشركة الرائدة في مجال تقديم الحلول المعمارية المبتكرة من الألمنيوم والزجاج في المنطقة، من خلال إرساء معايير جديدة للجودة، التصميم، والموثوقية.', 'להיות הבחירה הראשונה והחברה המובילה במתן פתרונות אלומיניום וזכוכית חדשניים ואיכותיים ביות')}
+                {t('أن نكون الخيار الأول والشركة الرائدة في مجال تقديم الحلول المعمارية المبتكرة من الألمنيوم والزجاج في المنطقة، من خلال إرساء معايير جديدة للجودة، التصميم، والموثوقية.', 'להיות הבחירה הראשונה והחברה המובילה במתן פתרונות אלומיניום וזכוכית חדשניים ואיכותיים ביות', "To be the first choice and leading company providing innovative aluminum and glass solutions in the region, setting new standards for quality, design and reliability.")}
               </p>
             </motion.div>
             <motion.div 
@@ -131,9 +131,9 @@ export function About() {
               transition={{ delay: 0.2 }}
               className="bg-brand-navy border border-white/5 p-12"
             >
-              <h3 className="text-3xl font-bold mb-6 text-white">{t('رسالتنا', 'המשימה שלנו')}</h3>
+              <h3 className="text-3xl font-bold mb-6 text-white">{t('رسالتنا', 'המשימה שלנו', "Our mission")}</h3>
               <p className="text-brand-silver leading-relaxed text-lg">
-                {t('تلبية تطلعات عملائنا عبر تصميم وإنتاج أنظمة متطورة تصمد أمام الزمن، مع الالتزام بأعلى قيم النزاهة المهنية وتقديم خدمة عملاء استثنائية قبل وأثناء وبعد التنفيذ.', 'לספק מענה מלא לדרישות הלקוחות בעזרת ייצור מתקדם ואמינות מתמשכת לפני, תוך ולאחר הייצור.')}
+                {t('تلبية تطلعات عملائنا عبر تصميم وإنتاج أنظمة متطورة تصمد أمام الزمن، مع الالتزام بأعلى قيم النزاهة المهنية وتقديم خدمة عملاء استثنائية قبل وأثناء وبعد التنفيذ.', 'לספק מענה מלא לדרישות הלקוחות בעזרת ייצור מתקדם ואמינות מתמשכת לפני, תוך ולאחר הייצור.', "To fully meet our clients' aspirations through advanced, time-resistant systems, with the highest professional integrity and exceptional service before, during and after execution.")}
               </p>
             </motion.div>
           </div>

@@ -8,7 +8,6 @@ from app.api.v1.endpoints import (
     gallery,
     messages,
     partners,
-    products,
     projects,
     quote_requests,
     services,
@@ -60,12 +59,6 @@ api_router.include_router(
     services.admin_router,
     prefix="/admin/services",
     tags=["admin: services"],
-)
-api_router.include_router(products.public_router, prefix="/products", tags=["products"])
-api_router.include_router(
-    products.admin_router,
-    prefix="/admin/products",
-    tags=["admin: products"],
 )
 api_router.include_router(gallery.public_router, prefix="/gallery", tags=["gallery"])
 api_router.include_router(

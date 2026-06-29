@@ -22,9 +22,9 @@ export function CTASection({
 }: CTASectionProps) {
   const { t } = useLanguage();
 
-  const finalTitle = title || t("هل لديك مشروع جديد؟ دعنا نساعدك في تنفيذه.", "האם יש לך פרויקט חדש? תן לנו לעזור לך לממש אותו.");
-  const finalSubtitle = subtitle || t("نحن هنا لتقديم الاستشارة الهندسية وعروض الأسعار التنافسية لمشروعك القادم.", "אנו כאן לייעוץ הנדסי והצעות מחיר תחרותיות לפרויקט הבא שלך.");
-  const finalButtonText = buttonText || t("تواصل معنا الآن", "צור קשר עכשיו");
+  const finalTitle = title || t("هل لديك مشروع جديد؟ دعنا نساعدك في تنفيذه.", "האם יש לך פרויקט חדש? תן לנו לעזור לך לממש אותו.", "Have a new project? Let us help you bring it to life.");
+  const finalSubtitle = subtitle || t("نحن هنا لتقديم الاستشارة الهندسية وعروض الأسعار التنافسية لمشروعك القادم.", "אנו כאן לייעוץ הנדסי והצעות מחיר תחרותיות לפרויקט הבא שלך.", "We're here to provide engineering consultation and competitive quotes for your next project.");
+  const finalButtonText = buttonText || t("تواصل معنا الآن", "צור קשר עכשיו", "Contact us now");
 
   return (
     <section className={cn("py-20 relative overflow-hidden", className)}>
@@ -67,7 +67,7 @@ export function CTASection({
               {finalButtonText}
             </Button>
             <Button href="/contact" variant="outline" size="lg" className="min-w-[200px] border-white/20 text-white hover:bg-white/5">
-              {t('اتصل بنا', 'צור קשר')}
+              {t('اتصل بنا', 'צור קשר', "Contact")}
             </Button>
             <a
               href={WHATSAPP_URL}
@@ -76,7 +76,7 @@ export function CTASection({
               className="inline-flex min-h-12 min-w-[200px] items-center justify-center gap-2 border border-brand-gold/60 px-6 py-3 font-bold text-brand-gold transition-colors hover:bg-brand-gold hover:text-brand-navy focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold"
             >
               <MessageCircle className="h-5 w-5" aria-hidden="true" />
-              <span>WhatsApp</span>
+              <span>{t('واتساب', 'וואטסאפ', 'WhatsApp')}</span>
             </a>
           </div>
         </motion.div>

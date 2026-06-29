@@ -9,7 +9,6 @@ export interface LocalizedTitle {
 }
 
 export interface ServiceDto extends Timestamped, ActiveSortable, LocalizedTitle { id: number; image_url: string | null; starting_price: string | null }
-export interface ProductDto extends Timestamped, ActiveSortable, LocalizedTitle { id: number; image_url: string | null }
 export interface ProjectDto extends Timestamped, ActiveSortable, LocalizedTitle {
   id: number; category: 'LOCAL' | 'INTERNATIONAL' | 'FEATURED'; main_image_url: string | null;
 }

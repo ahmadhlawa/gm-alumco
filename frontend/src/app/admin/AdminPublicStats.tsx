@@ -24,11 +24,12 @@ function StatEditor({
   stat: PublicStat;
   onChange: (stat: PublicStat) => void;
 }) {
+  // Hebrew + English only. The existing label.ar value is kept in state and
+  // re-serialized on save (never cleared); it is simply not edited here.
   return (
-    <div className="grid gap-3 rounded border border-white/10 bg-brand-navy p-4 md:grid-cols-6">
+    <div className="grid gap-3 rounded border border-white/10 bg-brand-navy p-4 md:grid-cols-5">
       <input value={stat.value} onChange={(e) => onChange({ ...stat, value: e.target.value })} className="rounded bg-brand-surface px-3 py-2 text-white" placeholder="value" dir="ltr" />
       <input value={stat.suffix ?? ''} onChange={(e) => onChange({ ...stat, suffix: e.target.value })} className="rounded bg-brand-surface px-3 py-2 text-white" placeholder="suffix" dir="ltr" />
-      <input value={stat.label.ar} onChange={(e) => onChange({ ...stat, label: { ...stat.label, ar: e.target.value } })} className="rounded bg-brand-surface px-3 py-2 text-white" placeholder="label_ar" dir="rtl" />
       <input value={stat.label.he} onChange={(e) => onChange({ ...stat, label: { ...stat.label, he: e.target.value } })} className="rounded bg-brand-surface px-3 py-2 text-white" placeholder="label_he" dir="rtl" />
       <input value={stat.label.en} onChange={(e) => onChange({ ...stat, label: { ...stat.label, en: e.target.value } })} className="rounded bg-brand-surface px-3 py-2 text-white" placeholder="label_en" dir="ltr" />
       <div className="flex items-center gap-2">
