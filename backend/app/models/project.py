@@ -10,10 +10,8 @@ class Project(Base):
     __tablename__ = "projects"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    title_ar: Mapped[str] = mapped_column(String(255))
     title_en: Mapped[str] = mapped_column(String(255))
     title_he: Mapped[str] = mapped_column(String(255))
-    description_ar: Mapped[str | None] = mapped_column(String(2000), nullable=True)
     description_en: Mapped[str | None] = mapped_column(String(2000), nullable=True)
     description_he: Mapped[str | None] = mapped_column(String(2000), nullable=True)
     category: Mapped[str] = mapped_column(String(50), default="LOCAL", index=True)
@@ -40,7 +38,6 @@ class ProjectImage(Base):
         ForeignKey("projects.id", ondelete="CASCADE"), index=True
     )
     image_url: Mapped[str] = mapped_column(String(500))
-    alt_text_ar: Mapped[str | None] = mapped_column(String(255), nullable=True)
     alt_text_en: Mapped[str | None] = mapped_column(String(255), nullable=True)
     alt_text_he: Mapped[str | None] = mapped_column(String(255), nullable=True)
     sort_order: Mapped[int] = mapped_column(Integer, default=0)

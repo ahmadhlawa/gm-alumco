@@ -6,10 +6,8 @@ from app.models.project import Project, ProjectImage
 
 def project_payload(**overrides) -> dict:
     payload = {
-        "title_ar": "مشروع",
         "title_en": "Project",
         "title_he": "פרויקט",
-        "description_ar": None,
         "description_en": "Description",
         "description_he": None,
         "category": "LOCAL",

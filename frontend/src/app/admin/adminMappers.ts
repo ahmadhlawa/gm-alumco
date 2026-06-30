@@ -49,5 +49,5 @@ export interface PartnerFormValues { name: string; logo_url: string; website_url
 
 export function partnerPayload(values: PartnerFormValues): Partial<PartnerDto> {
   const name = values.name.trim();
-  return { name_ar: name, name_en: name, name_he: name, logo_url: values.logo_url.trim(), website_url: values.website_url.trim() || null, is_active: values.is_active, sort_order: values.sort_order };
+  return { name_en: name, name_he: name, logo_url: values.logo_url.trim(), website_url: values.website_url.trim() || null, is_active: values.is_active, sort_order: values.sort_order };
 }

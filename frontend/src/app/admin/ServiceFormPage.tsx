@@ -7,8 +7,8 @@ import { ErrorState } from '@/components/common/ErrorState';
 import { ImageUploadField } from '@/components/forms/ImageUploadField';
 import { useLanguage } from '@/i18n';
 
-type Values = Pick<ServiceDto, 'title_ar' | 'title_en' | 'title_he' | 'description_ar' | 'description_en' | 'description_he' | 'image_url' | 'starting_price' | 'is_active' | 'sort_order'>;
-const empty: Values = { title_ar: '', title_en: '', title_he: '', description_ar: '', description_en: '', description_he: '', image_url: '', starting_price: null, is_active: true, sort_order: 0 };
+type Values = Pick<ServiceDto, 'title_en' | 'title_he' | 'description_en' | 'description_he' | 'image_url' | 'starting_price' | 'is_active' | 'sort_order'>;
+const empty: Values = { title_en: '', title_he: '', description_en: '', description_he: '', image_url: '', starting_price: null, is_active: true, sort_order: 0 };
 const input = 'w-full rounded border border-white/10 bg-brand-navy px-4 py-3 text-white outline-none focus:border-brand-gold';
 
 // Admin service form copy — Hebrew + English only (Hebrew is the default).
@@ -58,7 +58,7 @@ export function ServiceFormPage() {
 
   const submit = async (event: FormEvent) => {
     event.preventDefault(); setSaving(true);
-    const payload = { ...values, description_ar: values.description_ar || null, description_en: values.description_en || null, description_he: values.description_he || null, image_url: values.image_url || null, starting_price: values.starting_price || null };
+    const payload = { ...values, description_en: values.description_en || null, description_he: values.description_he || null, image_url: values.image_url || null, starting_price: values.starting_price || null };
     try { if (id) await updateService(id, payload); else await createService(payload); navigate('/admin/services'); } finally { setSaving(false); }
   };
 

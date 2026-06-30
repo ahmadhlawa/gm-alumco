@@ -7,10 +7,8 @@ from app.schemas.common import ImageUrlString, ORMModel
 
 
 class ServiceBase(BaseModel):
-    title_ar: str
     title_en: str
     title_he: str
-    description_ar: str | None = None
     description_en: str | None = None
     description_he: str | None = None
     image_url: ImageUrlString | None = None
@@ -24,10 +22,8 @@ class ServiceCreate(ServiceBase):
 
 
 class ServiceUpdate(BaseModel):
-    title_ar: str | None = None
     title_en: str | None = None
     title_he: str | None = None
-    description_ar: str | None = None
     description_en: str | None = None
     description_he: str | None = None
     image_url: ImageUrlString | None = None

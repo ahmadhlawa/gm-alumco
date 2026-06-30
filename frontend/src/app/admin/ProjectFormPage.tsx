@@ -49,10 +49,8 @@ const COPY = {
 
 function toValues(dto: ProjectDetailDto): ProjectFormValues {
   return {
-    title_ar: dto.title_ar,
     title_en: dto.title_en,
     title_he: dto.title_he,
-    description_ar: dto.description_ar ?? '',
     description_en: dto.description_en ?? '',
     description_he: dto.description_he ?? '',
     category: dto.category,
@@ -64,10 +62,8 @@ function toValues(dto: ProjectDetailDto): ProjectFormValues {
 
 export function toPayload(values: ProjectFormValues): Partial<ProjectDto> {
   return {
-    title_ar: values.title_ar.trim(),
     title_en: values.title_en.trim(),
     title_he: values.title_he.trim(),
-    description_ar: values.description_ar.trim() || null,
     description_en: values.description_en.trim() || null,
     description_he: values.description_he.trim() || null,
     category: values.category,

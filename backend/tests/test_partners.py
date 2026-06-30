@@ -6,7 +6,6 @@ from app.models.partner import Partner
 
 def partner_payload(**overrides) -> dict:
     payload = {
-        "name_ar": "شريك",
         "name_en": "Partner",
         "name_he": "שותף",
         "logo_url": "https://drive.google.com/logo.png",

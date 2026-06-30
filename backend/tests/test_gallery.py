@@ -7,10 +7,8 @@ from app.models.gallery import GalleryImage
 def gallery_payload(**overrides) -> dict:
     payload = {
         "image_url": "https://drive.google.com/gallery.jpg",
-        "title_ar": "صورة",
         "title_en": "Image",
         "title_he": "תמונה",
-        "alt_text_ar": None,
         "alt_text_en": "Building",
         "alt_text_he": None,
         "category": "facades",

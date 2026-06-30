@@ -11,10 +11,8 @@ class GalleryImage(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     image_url: Mapped[str] = mapped_column(String(500))
-    title_ar: Mapped[str | None] = mapped_column(String(255), nullable=True)
     title_en: Mapped[str | None] = mapped_column(String(255), nullable=True)
     title_he: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    alt_text_ar: Mapped[str | None] = mapped_column(String(255), nullable=True)
     alt_text_en: Mapped[str | None] = mapped_column(String(255), nullable=True)
     alt_text_he: Mapped[str | None] = mapped_column(String(255), nullable=True)
     category: Mapped[str | None] = mapped_column(String(100), nullable=True)

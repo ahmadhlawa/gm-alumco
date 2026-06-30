@@ -3,10 +3,8 @@ import { ImageUploadField } from './ImageUploadField';
 import { useLanguage } from '@/i18n';
 
 export interface ProjectFormValues {
-  title_ar: string;
   title_en: string;
   title_he: string;
-  description_ar: string;
   description_en: string;
   description_he: string;
   category: 'LOCAL' | 'INTERNATIONAL' | 'FEATURED';
@@ -16,10 +14,8 @@ export interface ProjectFormValues {
 }
 
 export const EMPTY_PROJECT: ProjectFormValues = {
-  title_ar: '',
   title_en: '',
   title_he: '',
-  description_ar: '',
   description_en: '',
   description_he: '',
   category: 'LOCAL',
@@ -28,8 +24,7 @@ export const EMPTY_PROJECT: ProjectFormValues = {
   sort_order: 0,
 };
 
-// Admin manages Hebrew + English only. Existing *_ar values are preserved on
-// save (passed through untouched in `values`); Arabic is simply not edited here.
+// Admin manages Hebrew + English only.
 const LANGS = [
   { key: 'he', label: 'עברית', dir: 'rtl' as const },
   { key: 'en', label: 'English', dir: 'ltr' as const },

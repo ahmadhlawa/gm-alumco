@@ -7,10 +7,8 @@ from app.schemas.common import ImageUrlString, ORMModel
 
 class GalleryBase(BaseModel):
     image_url: ImageUrlString
-    title_ar: str | None = None
     title_en: str | None = None
     title_he: str | None = None
-    alt_text_ar: str | None = None
     alt_text_en: str | None = None
     alt_text_he: str | None = None
     category: str | None = None
@@ -24,10 +22,8 @@ class GalleryCreate(GalleryBase):
 
 class GalleryUpdate(BaseModel):
     image_url: ImageUrlString | None = None
-    title_ar: str | None = None
     title_en: str | None = None
     title_he: str | None = None
-    alt_text_ar: str | None = None
     alt_text_en: str | None = None
     alt_text_he: str | None = None
     category: str | None = None

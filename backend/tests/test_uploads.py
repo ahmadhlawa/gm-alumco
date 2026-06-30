@@ -115,7 +115,6 @@ def test_uploaded_relative_url_can_be_saved_on_project(
             "/api/v1/admin/projects",
             headers=headers,
             json={
-                "title_ar": "مشروع",
                 "title_en": "Project",
                 "title_he": "פרויקט",
                 "category": "LOCAL",

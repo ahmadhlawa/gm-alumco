@@ -10,7 +10,6 @@ class Partner(Base):
     __tablename__ = "partners"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name_ar: Mapped[str] = mapped_column(String(255))
     name_en: Mapped[str] = mapped_column(String(255))
     name_he: Mapped[str] = mapped_column(String(255))
     logo_url: Mapped[str] = mapped_column(String(500))

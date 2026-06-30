@@ -6,10 +6,8 @@ from app.models.service import Service
 
 def service_payload(**overrides) -> dict:
     payload = {
-        "title_ar": "خدمة",
         "title_en": "Service",
         "title_he": "שירות",
-        "description_ar": None,
         "description_en": "Description",
         "description_he": None,
         "image_url": "https://drive.google.com/service.jpg",

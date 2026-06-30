@@ -10,10 +10,8 @@ ProjectCategory = Literal["LOCAL", "INTERNATIONAL", "FEATURED"]
 
 
 class ProjectBase(BaseModel):
-    title_ar: str
     title_en: str
     title_he: str
-    description_ar: str | None = None
     description_en: str | None = None
     description_he: str | None = None
     category: ProjectCategory = "LOCAL"
@@ -27,10 +25,8 @@ class ProjectCreate(ProjectBase):
 
 
 class ProjectUpdate(BaseModel):
-    title_ar: str | None = None
     title_en: str | None = None
     title_he: str | None = None
-    description_ar: str | None = None
     description_en: str | None = None
     description_he: str | None = None
     category: ProjectCategory | None = None
@@ -47,7 +43,6 @@ class ProjectRead(ProjectBase, ORMModel):
 
 class ProjectImageCreate(BaseModel):
     image_url: ImageUrlString
-    alt_text_ar: str | None = None
     alt_text_en: str | None = None
     alt_text_he: str | None = None
     sort_order: int = 0

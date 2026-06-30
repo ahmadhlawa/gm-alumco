@@ -18,9 +18,9 @@ def test_dashboard_stats_reflect_data(
     add_project(db, title_en="Hidden", is_active=False)
     db.add_all(
         [
-            Service(title_ar="خدمة", title_en="Service", title_he="שירות", is_active=True),
-            Service(title_ar="مخفية", title_en="Hidden", title_he="מוסתר", is_active=False),
-            Partner(name_ar="شريك", name_en="Partner", name_he="שותף", logo_url="https://x.test/logo.png", is_active=True),
+            Service(title_en="Service", title_he="שירות", is_active=True),
+            Service(title_en="Hidden", title_he="מוסתר", is_active=False),
+            Partner(name_en="Partner", name_he="שותף", logo_url="https://x.test/logo.png", is_active=True),
             ContactMessage(name="A", email="a@x.test", message="hi", status="NEW"),
             ContactMessage(name="B", email="b@x.test", message="hi", status="READ"),
             ContactMessage(name="D", email="d@x.test", message="hi", status="ARCHIVED"),

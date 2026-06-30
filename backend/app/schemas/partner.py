@@ -6,7 +6,6 @@ from app.schemas.common import HttpUrlString, ImageUrlString, ORMModel
 
 
 class PartnerBase(BaseModel):
-    name_ar: str
     name_en: str
     name_he: str
     logo_url: ImageUrlString
@@ -20,7 +19,6 @@ class PartnerCreate(PartnerBase):
 
 
 class PartnerUpdate(BaseModel):
-    name_ar: str | None = None
     name_en: str | None = None
     name_he: str | None = None
     logo_url: ImageUrlString | None = None

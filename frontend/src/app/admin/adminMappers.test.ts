@@ -7,9 +7,8 @@ describe('admin mappers', () => {
     expect(Object.keys(QUOTE_STATUS_LABELS)).toEqual(['NEW', 'IN_PROGRESS', 'DONE', 'ARCHIVED']);
   });
 
-  it('mirrors the simple partner name for legacy multilingual storage', () => {
+  it('mirrors the simple partner name into the Hebrew + English columns', () => {
     expect(partnerPayload({ name: 'Schüco', logo_url: 'https://x.test/logo.png', website_url: '', is_active: true, sort_order: 2 })).toEqual({
-      name_ar: 'Schüco',
       name_en: 'Schüco',
       name_he: 'Schüco',
       logo_url: 'https://x.test/logo.png',

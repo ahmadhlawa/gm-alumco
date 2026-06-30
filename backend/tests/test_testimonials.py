@@ -6,13 +6,10 @@ from app.models.testimonial import Testimonial as testimonial_model
 
 def make_testimonial_payload(**overrides) -> dict:
     payload = {
-        "client_name_ar": "عميل",
         "client_name_en": "Client",
         "client_name_he": "לקוח",
-        "message_ar": "رسالة",
         "message_en": "Message",
         "message_he": "הודעה",
-        "client_position_ar": None,
         "client_position_en": "Manager",
         "client_position_he": None,
         "sort_order": 1,

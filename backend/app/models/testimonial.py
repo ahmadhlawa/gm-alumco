@@ -10,13 +10,10 @@ class Testimonial(Base):
     __tablename__ = "testimonials"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    client_name_ar: Mapped[str] = mapped_column(String(180))
     client_name_en: Mapped[str] = mapped_column(String(180))
     client_name_he: Mapped[str] = mapped_column(String(180))
-    message_ar: Mapped[str] = mapped_column(String(2000))
     message_en: Mapped[str] = mapped_column(String(2000))
     message_he: Mapped[str] = mapped_column(String(2000))
-    client_position_ar: Mapped[str | None] = mapped_column(String(255), nullable=True)
     client_position_en: Mapped[str | None] = mapped_column(String(255), nullable=True)
     client_position_he: Mapped[str | None] = mapped_column(String(255), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
