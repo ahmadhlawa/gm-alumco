@@ -1,15 +1,15 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '@/api/auth';
-import { LogOut, Menu, X, ExternalLink } from 'lucide-react';
+import { LogOut, Menu, X, ExternalLink, Globe } from 'lucide-react';
 import { useState } from 'react';
 import { useAdminAuth } from '@/components/admin/AdminAuthProvider';
 import { getAdminNavigation } from '@/components/admin/adminNavigation';
-import { useLanguage } from '@/i18n';
+import { getNextPublicLanguage, useLanguage } from '@/i18n';
 
 // Admin layout chrome — Hebrew + English only (Hebrew is the default).
 const COPY = {
-  he: { dashboard: 'לוח הבקרה', backToSite: 'חזרה לאתר', logout: 'התנתקות' },
-  en: { dashboard: 'Dashboard', backToSite: 'Back to site', logout: 'Log out' },
+  he: { dashboard: 'לוח הבקרה', backToSite: 'חזרה לאתר', logout: 'התנתקות', switchLanguage: 'מעבר לאנגלית' },
+  en: { dashboard: 'Dashboard', backToSite: 'Back to site', logout: 'Log out', switchLanguage: 'Switch to Hebrew' },
 };
 
 function initials(name: string): string {
@@ -21,7 +21,7 @@ export function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { admin } = useAdminAuth();
-  const { language, dir } = useLanguage();
+  const { language, dir, setLanguage } = useLanguage();
   const copy = language === 'en' ? COPY.en : COPY.he;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -89,6 +89,16 @@ export function AdminLayout() {
         <header className="flex justify-between items-center mb-10 pb-6 border-b border-white/5">
           <h1 className="text-2xl font-bold text-white">{copy.dashboard}</h1>
           <div className="flex items-center gap-4">
+             <button
+               type="button"
+               onClick={() => setLanguage(getNextPublicLanguage(language))}
+               aria-label={copy.switchLanguage}
+               title={copy.switchLanguage}
+               className="flex items-center gap-2 rounded border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold text-brand-silver transition-colors hover:bg-white/10 hover:text-white"
+             >
+               <Globe className="h-4 w-4" />
+               <span>{language === 'he' ? 'EN' : 'HE'}</span>
+             </button>
              <div className="text-start hidden sm:block">
                <p className="text-sm font-bold text-white">{admin?.full_name ?? '—'}</p>
                <p className="text-xs text-brand-silver" dir="ltr">{admin?.email ?? ''}</p>

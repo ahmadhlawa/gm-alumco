@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Globe } from 'lucide-react';
 import { login } from '@/api/auth';
 import { ApiError } from '@/api/client';
-import { useLanguage } from '@/i18n';
+import { getNextPublicLanguage, useLanguage } from '@/i18n';
 
 // Admin login copy — Hebrew + English only. Hebrew is the default. No Arabic.
 const COPY = {
@@ -16,6 +17,7 @@ const COPY = {
     backToSite: 'חזרה לאתר הראשי',
     invalid: 'הדוא״ל או הסיסמה שגויים.',
     failed: 'ההתחברות נכשלה. בדקו את החיבור ונסו שוב.',
+    switchLanguage: 'מעבר לאנגלית',
   },
   en: {
     title: 'Admin sign in',
@@ -27,11 +29,12 @@ const COPY = {
     backToSite: 'Back to main site',
     invalid: 'The email or password is incorrect.',
     failed: 'Sign in failed. Check your connection and try again.',
+    switchLanguage: 'Switch to Hebrew',
   },
 };
 
 export function AdminLogin() {
-  const { language, dir } = useLanguage();
+  const { language, dir, setLanguage } = useLanguage();
   const copy = language === 'en' ? COPY.en : COPY.he;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -56,6 +59,18 @@ export function AdminLogin() {
   return (
     <div className="min-h-screen bg-[#0A0B0E] flex items-center justify-center p-4" dir={dir}>
       <div className="w-full max-w-md bg-brand-navy border border-white/10 rounded-lg shadow-2xl p-8">
+        <div className="flex justify-end mb-2">
+          <button
+            type="button"
+            onClick={() => setLanguage(getNextPublicLanguage(language))}
+            aria-label={copy.switchLanguage}
+            title={copy.switchLanguage}
+            className="flex items-center gap-2 rounded border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-bold text-brand-silver transition-colors hover:bg-white/10 hover:text-white"
+          >
+            <Globe className="h-4 w-4" />
+            <span>{language === 'he' ? 'EN' : 'HE'}</span>
+          </button>
+        </div>
         <div className="text-center mb-8">
            <div className="w-16 h-16 bg-brand-gold/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-brand-gold/20 p-2">
              <img src="/images/logo-TAS-navbar.png" alt="T.A.S" className="w-full h-full object-contain" />

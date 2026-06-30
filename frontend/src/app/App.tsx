@@ -9,7 +9,7 @@ import { Projects } from '@/app/Projects';
 import { Contact } from '@/app/Contact';
 import { RequestQuote } from '@/app/RequestQuote';
 import { PageHero } from '@/components/common/PageHero';
-import { LanguageProvider, useLanguage } from '@/i18n';
+import { AdminLanguageProvider, LanguageProvider, useLanguage } from '@/i18n';
 
 // Admin imports
 import { AdminLayout } from '@/components/admin/AdminLayout';
@@ -50,9 +50,10 @@ function AppContent() {
       <div className="flex flex-col min-h-screen bg-brand-surface text-brand-text font-sans" dir={dir}>
         
         <Routes>
-          {/* Admin Routes */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<RequireAuth><AdminAuthProvider><AdminLayout /></AdminAuthProvider></RequireAuth>}>
+          {/* Admin Routes — wrapped in their own language provider so the
+              admin/login UI language is independent of the public site. */}
+          <Route path="/admin/login" element={<AdminLanguageProvider><AdminLogin /></AdminLanguageProvider>} />
+          <Route path="/admin" element={<AdminLanguageProvider><RequireAuth><AdminAuthProvider><AdminLayout /></AdminAuthProvider></RequireAuth></AdminLanguageProvider>}>
              <Route index element={<Dashboard />} />
              <Route path="projects" element={<AdminProjects />} />
              <Route path="projects/new" element={<ProjectFormPage />} />
