@@ -15,6 +15,37 @@ import { LoadingState } from '@/components/common/LoadingState';
 import { ErrorState } from '@/components/common/ErrorState';
 import { handleImageError, normalizeImageUrl } from '@/lib/utils';
 import { ImageUploadField } from '@/components/forms/ImageUploadField';
+import { useLanguage } from '@/i18n';
+
+// Admin project form page copy — Hebrew + English only (Hebrew is the default).
+const COPY = {
+  he: {
+    editTitle: 'עריכת פרויקט',
+    addTitle: 'הוספת פרויקט חדש',
+    gallery: 'גלריית תמונות הפרויקט',
+    upload: 'העלאת תמונה לגלריית הפרויקט',
+    advancedAdd: 'אפשרות מתקדמת: הוספת קישור תמונה ידני',
+    add: 'הוספה',
+    noImages: 'אין עדיין תמונות.',
+    deleteTooltip: 'מחיקה',
+    addImageFailed: 'הוספת התמונה נכשלה.',
+    deleteImageFailed: 'מחיקת התמונה נכשלה.',
+    saveFailed: 'שמירת הפרויקט נכשלה.',
+  },
+  en: {
+    editTitle: 'Edit project',
+    addTitle: 'Add new project',
+    gallery: 'Project image gallery',
+    upload: 'Upload an image to the project gallery',
+    advancedAdd: 'Advanced option: add a manual image link',
+    add: 'Add',
+    noImages: 'No images yet.',
+    deleteTooltip: 'Delete',
+    addImageFailed: 'Could not add the image.',
+    deleteImageFailed: 'Could not delete the image.',
+    saveFailed: 'Could not save the project.',
+  },
+};
 
 function toValues(dto: ProjectDetailDto): ProjectFormValues {
   return {
@@ -47,6 +78,8 @@ export function toPayload(values: ProjectFormValues): Partial<ProjectDto> {
 }
 
 function ProjectImagesManager({ projectId, initialImages }: { projectId: number; initialImages: ProjectImageDto[] }) {
+  const { language } = useLanguage();
+  const copy = language === 'en' ? COPY.en : COPY.he;
   const [images, setImages] = useState<ProjectImageDto[]>(initialImages);
   const [url, setUrl] = useState('');
   const [busy, setBusy] = useState(false);
@@ -65,7 +98,7 @@ function ProjectImagesManager({ projectId, initialImages }: { projectId: number;
     try {
       await storeImage(url.trim());
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'تعذر إضافة الصورة.');
+      setError(e instanceof ApiError ? e.message : copy.addImageFailed);
     } finally {
       setBusy(false);
     }
@@ -77,24 +110,24 @@ function ProjectImagesManager({ projectId, initialImages }: { projectId: number;
       await deleteProjectImage(imageId);
       setImages((prev) => prev.filter((img) => img.id !== imageId));
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'تعذر حذف الصورة.');
+      setError(e instanceof ApiError ? e.message : copy.deleteImageFailed);
     }
   };
 
   return (
     <div className="mt-10 max-w-4xl border-t border-white/10 pt-8">
-      <h3 className="text-lg font-bold text-white mb-4">معرض صور المشروع</h3>
+      <h3 className="text-lg font-bold text-white mb-4">{copy.gallery}</h3>
       {error && (
         <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-300 rounded text-sm">{error}</div>
       )}
       <div className="mb-6 space-y-3">
         <ImageUploadField
-          label="رفع صورة إلى معرض المشروع"
+          label={copy.upload}
           folder="projects"
           onUploaded={storeImage}
         />
         <details className="rounded border border-white/10 p-3">
-          <summary className="cursor-pointer text-sm text-brand-silver">خيار متقدم: إضافة رابط صورة يدوي</summary>
+          <summary className="cursor-pointer text-sm text-brand-silver">{copy.advancedAdd}</summary>
           <div className="mt-3 flex gap-3">
             <input
               type="text"
@@ -111,23 +144,23 @@ function ProjectImagesManager({ projectId, initialImages }: { projectId: number;
               disabled={busy}
               className="rounded bg-brand-gold px-6 font-bold text-white hover:bg-[#b8962e] disabled:opacity-60"
             >
-              إضافة
+              {copy.add}
             </button>
           </div>
         </details>
       </div>
       {images.length === 0 ? (
-        <p className="text-brand-silver text-sm">لا توجد صور بعد.</p>
+        <p className="text-brand-silver text-sm">{copy.noImages}</p>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {images.map((img) => (
             <div key={img.id} className="relative group rounded overflow-hidden border border-white/10">
-              <img src={normalizeImageUrl(img.image_url)} onError={handleImageError} alt={img.alt_text_ar ?? ''} className="h-32 w-full object-cover" />
+              <img src={normalizeImageUrl(img.image_url)} onError={handleImageError} alt="" className="h-32 w-full object-cover" />
               <button
                 type="button"
                 onClick={() => remove(img.id)}
                 className="absolute top-2 right-2 p-2 bg-red-500/80 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
-                title="حذف"
+                title={copy.deleteTooltip}
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -142,6 +175,8 @@ function ProjectImagesManager({ projectId, initialImages }: { projectId: number;
 export function ProjectFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { language } = useLanguage();
+  const copy = language === 'en' ? COPY.en : COPY.he;
   const isEdit = Boolean(id);
 
   const [detail, setDetail] = useState<ProjectDetailDto | undefined>();
@@ -174,7 +209,7 @@ export function ProjectFormPage() {
         navigate(`/admin/projects/${created.id}/edit`, { replace: true });
       }
     } catch (e) {
-      setSubmitError(e instanceof ApiError ? e.message : 'تعذر حفظ المشروع.');
+      setSubmitError(e instanceof ApiError ? e.message : copy.saveFailed);
     } finally {
       setSubmitting(false);
     }
@@ -185,7 +220,7 @@ export function ProjectFormPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-white mb-8">{isEdit ? 'تعديل المشروع' : 'إضافة مشروع جديد'}</h2>
+      <h2 className="text-2xl font-bold text-white mb-8">{isEdit ? copy.editTitle : copy.addTitle}</h2>
       <ProjectForm
         initialValues={detail ? toValues(detail) : EMPTY_PROJECT}
         submitting={submitting}

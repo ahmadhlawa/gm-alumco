@@ -2,6 +2,7 @@ import { useState, type ChangeEvent } from 'react';
 import { ApiError } from '@/api/client';
 import { uploadAdminImage, type UploadFolder } from '@/api/uploads';
 import { handleImageError, normalizeImageUrl } from '@/lib/utils';
+import { useLanguage } from '@/i18n';
 
 interface ImageUploadFieldProps {
   label: string;
@@ -10,12 +11,32 @@ interface ImageUploadFieldProps {
   onUploaded: (url: string) => void | Promise<void>;
 }
 
+// Admin image upload copy — Hebrew + English only (Hebrew is the default).
+const COPY = {
+  he: {
+    uploading: 'מעלה…',
+    uploadingPct: (pct: number) => `מעלה… ${pct}%`,
+    success: 'התמונה הועלתה בהצלחה.',
+    failed: 'העלאת התמונה נכשלה. נסו שוב.',
+    previewAlt: 'תצוגה מקדימה של התמונה',
+  },
+  en: {
+    uploading: 'Uploading…',
+    uploadingPct: (pct: number) => `Uploading… ${pct}%`,
+    success: 'Image uploaded successfully.',
+    failed: 'Image upload failed. Please try again.',
+    previewAlt: 'Image preview',
+  },
+};
+
 export function ImageUploadField({
   label,
   folder,
   value,
   onUploaded,
 }: ImageUploadFieldProps) {
+  const { language } = useLanguage();
+  const copy = language === 'en' ? COPY.en : COPY.he;
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +59,7 @@ export function ImageUploadField({
       setError(
         uploadError instanceof ApiError
           ? uploadError.message
-          : 'تعذّر رفع الصورة. حاول مرة أخرى.',
+          : copy.failed,
       );
     } finally {
       setUploading(false);
@@ -59,17 +80,17 @@ export function ImageUploadField({
       <div aria-live="polite" className="min-h-5 text-sm">
         {uploading && (
           <span className="text-brand-gold">
-            {progress === null ? 'جارٍ الرفع…' : `جارٍ الرفع… ${progress}%`}
+            {progress === null ? copy.uploading : copy.uploadingPct(progress)}
           </span>
         )}
-        {!uploading && success && <span className="text-emerald-400">تم رفع الصورة بنجاح.</span>}
+        {!uploading && success && <span className="text-emerald-400">{copy.success}</span>}
         {!uploading && error && <span className="text-red-300">{error}</span>}
       </div>
       {value && (
         <img
           src={normalizeImageUrl(value)}
           onError={handleImageError}
-          alt="معاينة الصورة"
+          alt={copy.previewAlt}
           className="h-36 w-full rounded object-cover"
         />
       )}

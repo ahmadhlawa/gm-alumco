@@ -50,7 +50,7 @@ describe('Footer services (backend-driven)', () => {
     expect(html).not.toContain('Pergolas and shades');
   });
 
-  it('renders only the services it is given, linking to the real service route', () => {
+  it('renders the services it is given as plain text (no placeholder details link)', () => {
     const html = renderToStaticMarkup(
       <MemoryRouter>
         <FooterServices
@@ -64,8 +64,10 @@ describe('Footer services (backend-driven)', () => {
 
     expect(html).toContain('קירות מסך');
     expect(html).toContain('מעקות זכוכית');
-    expect(html).toContain('href="/services/5"');
-    expect(html).toContain('href="/services/9"');
+    // Footer services are informational only — they must not link anywhere
+    // (there is no public service details page).
+    expect(html).not.toContain('href="/services/5"');
+    expect(html).not.toContain('href="/services/9"');
     // No fabricated empty state when services exist.
     expect(html).not.toContain('אין שירותים זמינים');
   });

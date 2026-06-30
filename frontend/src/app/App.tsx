@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Navigate, Routes, Route, useParams } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Routes, Route } from 'react-router-dom';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { WhatsAppButton } from '@/components/layout/WhatsAppButton';
@@ -9,7 +9,6 @@ import { Projects } from '@/app/Projects';
 import { Contact } from '@/app/Contact';
 import { RequestQuote } from '@/app/RequestQuote';
 import { PageHero } from '@/components/common/PageHero';
-import { CTASection } from '@/components/common/CTASection';
 import { LanguageProvider, useLanguage } from '@/i18n';
 
 // Admin imports
@@ -30,28 +29,6 @@ import { AdminContactMessages } from '@/app/admin/AdminContactMessages';
 import { AdminQuoteRequests } from '@/app/admin/AdminQuoteRequests';
 import { AdminAuditLogs } from '@/app/admin/AdminAuditLogs';
 import { AdminPublicStats } from '@/app/admin/AdminPublicStats';
-
-// Dynamic Placeholder
-const DynamicDetailsPage = ({ basePath, baseTitle }: { basePath: string, baseTitle: string }) => {
-  const { slug } = useParams();
-  const { t } = useLanguage();
-  
-  return (
-    <div className="bg-brand-navy min-h-screen">
-      <PageHero 
-        title={`${baseTitle} - ${slug}`} 
-        breadcrumbs={[{ label: baseTitle, path: `/${basePath}` }, { label: String(slug), path: '#' }]}
-      />
-      <section className="py-24 container mx-auto px-4 max-w-4xl text-center">
-         <h2 className="text-3xl font-bold text-white mb-8">{t('تفاصيل قيد التجهيز', 'פרטים בהכנה', "Details in preparation")}</h2>
-         <p className="text-xl text-brand-silver leading-relaxed mb-12">
-            {t('هذه الصفحة مخصصة لعرض التفاصيل الكاملة (صور الموقع، المخططات، المواصفات التقنية). سيتم إضافتها قريباً كجزء من الهيكل الشامل.', 'דף זה מיועד להראות פרטים מלאים. הוא יתווסף בקרוב כחלק מהמבנה המקיף.', "This page is dedicated to full details (site photos, plans, technical specifications). It will be added soon as part of the complete structure.")}
-         </p>
-      </section>
-      <CTASection />
-    </div>
-  );
-};
 
 const PlaceholderPage = ({ title }: { title: string }) => {
   const { t } = useLanguage();
@@ -104,9 +81,7 @@ function AppContent() {
                   <Route path="/" element={<Home />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/services" element={<Services />} />
-                  <Route path="/services/:slug" element={<DynamicDetailsPage basePath="services" baseTitle={t("الخدمات", "שירותים", "Services")} />} />
                   <Route path="/projects" element={<Projects />} />
-                  <Route path="/projects/:slug" element={<DynamicDetailsPage basePath="projects" baseTitle={t("المشاريع", "פרויקטים", "Projects")} />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/request-quote" element={<RequestQuote />} />
                   <Route path="/careers" element={<PlaceholderPage title={t("الوظائف", "קריירה", "Careers")} />} />

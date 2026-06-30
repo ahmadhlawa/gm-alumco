@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { ImageUploadField } from './ImageUploadField';
+import { useLanguage } from '@/i18n';
 
 export interface ProjectFormValues {
   title_ar: string;
@@ -34,11 +35,35 @@ const LANGS = [
   { key: 'en', label: 'English', dir: 'ltr' as const },
 ] as const;
 
-const CATEGORIES = [
-  { value: 'LOCAL', label: 'داخل البلاد' },
-  { value: 'INTERNATIONAL', label: 'خارج البلاد' },
-  { value: 'FEATURED', label: 'مميز' },
-] as const;
+// Admin form copy — Hebrew + English only (Hebrew is the default). No Arabic.
+const COPY = {
+  he: {
+    titleLabel: 'כותרת הפרויקט',
+    descLabel: 'תיאור',
+    category: 'קטגוריה',
+    sortOrder: 'סדר הצגה',
+    mainImage: 'התמונה הראשית של הפרויקט',
+    advancedImage: 'אפשרות מתקדמת: שימוש בקישור תמונה ידני',
+    publishedLabel: 'מפורסם (מוצג באתר)',
+    save: 'שמירת הפרויקט',
+    saving: 'שומר…',
+    validation: 'יש להזין כותרת לפרויקט בעברית ובאנגלית.',
+    categories: { LOCAL: 'בארץ', INTERNATIONAL: 'בחו״ל', FEATURED: 'נבחר' },
+  },
+  en: {
+    titleLabel: 'Project title',
+    descLabel: 'Description',
+    category: 'Category',
+    sortOrder: 'Display order',
+    mainImage: 'Project main image',
+    advancedImage: 'Advanced option: use a manual image link',
+    publishedLabel: 'Published (visible on the site)',
+    save: 'Save project',
+    saving: 'Saving…',
+    validation: 'Please enter the project title in Hebrew and English.',
+    categories: { LOCAL: 'Local', INTERNATIONAL: 'International', FEATURED: 'Featured' },
+  },
+};
 
 type Lang = (typeof LANGS)[number]['key'];
 
@@ -53,6 +78,8 @@ interface Props {
 }
 
 export function ProjectForm({ initialValues, submitting, error, onSubmit }: Props) {
+  const { language } = useLanguage();
+  const copy = language === 'en' ? COPY.en : COPY.he;
   const [values, setValues] = useState<ProjectFormValues>(initialValues ?? EMPTY_PROJECT);
   const [lang, setLang] = useState<Lang>('he');
   const [validation, setValidation] = useState<string | null>(null);
@@ -63,7 +90,7 @@ export function ProjectForm({ initialValues, submitting, error, onSubmit }: Prop
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!values.title_he.trim() || !values.title_en.trim()) {
-      setValidation('يجب إدخال عنوان المشروع بالعبرية والإنجليزية.');
+      setValidation(copy.validation);
       return;
     }
     setValidation(null);
@@ -73,6 +100,12 @@ export function ProjectForm({ initialValues, submitting, error, onSubmit }: Prop
   const activeLang = LANGS.find((l) => l.key === lang)!;
   const titleKey = `title_${lang}` as const;
   const descKey = `description_${lang}` as const;
+
+  const CATEGORIES = [
+    { value: 'LOCAL', label: copy.categories.LOCAL },
+    { value: 'INTERNATIONAL', label: copy.categories.INTERNATIONAL },
+    { value: 'FEATURED', label: copy.categories.FEATURED },
+  ] as const;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
@@ -101,7 +134,7 @@ export function ProjectForm({ initialValues, submitting, error, onSubmit }: Prop
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-bold text-gray-200">عنوان المشروع ({activeLang.label})</label>
+        <label className="text-sm font-bold text-gray-200">{copy.titleLabel} ({activeLang.label})</label>
         <input
           type="text"
           dir={activeLang.dir}
@@ -112,7 +145,7 @@ export function ProjectForm({ initialValues, submitting, error, onSubmit }: Prop
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-bold text-gray-200">الوصف ({activeLang.label})</label>
+        <label className="text-sm font-bold text-gray-200">{copy.descLabel} ({activeLang.label})</label>
         <textarea
           dir={activeLang.dir}
           value={values[descKey]}
@@ -124,7 +157,7 @@ export function ProjectForm({ initialValues, submitting, error, onSubmit }: Prop
 
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="text-sm font-bold text-gray-200">التصنيف</label>
+          <label className="text-sm font-bold text-gray-200">{copy.category}</label>
           <select
             value={values.category}
             onChange={(e) => set('category', e.target.value as ProjectFormValues['category'])}
@@ -138,7 +171,7 @@ export function ProjectForm({ initialValues, submitting, error, onSubmit }: Prop
           </select>
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-bold text-gray-200">ترتيب العرض</label>
+          <label className="text-sm font-bold text-gray-200">{copy.sortOrder}</label>
           <input
             type="number"
             value={values.sort_order}
@@ -150,13 +183,13 @@ export function ProjectForm({ initialValues, submitting, error, onSubmit }: Prop
 
       <div className="space-y-2">
         <ImageUploadField
-          label="الصورة الرئيسية للمشروع"
+          label={copy.mainImage}
           folder="projects"
           value={values.main_image_url}
           onUploaded={(url) => set('main_image_url', url)}
         />
         <details className="rounded border border-white/10 p-3">
-          <summary className="cursor-pointer text-sm text-brand-silver">خيار متقدم: استخدام رابط صورة يدوي</summary>
+          <summary className="cursor-pointer text-sm text-brand-silver">{copy.advancedImage}</summary>
           <input
             type="text"
             inputMode="url"
@@ -178,7 +211,7 @@ export function ProjectForm({ initialValues, submitting, error, onSubmit }: Prop
           className="w-5 h-5 accent-brand-gold"
         />
         <label htmlFor="is_active" className="text-white font-bold cursor-pointer">
-          منشور (ظاهر في الموقع)
+          {copy.publishedLabel}
         </label>
       </div>
 
@@ -188,7 +221,7 @@ export function ProjectForm({ initialValues, submitting, error, onSubmit }: Prop
           disabled={submitting}
           className="px-8 py-3 bg-brand-gold text-white font-bold rounded-md hover:bg-[#b8962e] transition-colors disabled:opacity-60"
         >
-          {submitting ? 'جارٍ الحفظ...' : 'حفظ المشروع'}
+          {submitting ? copy.saving : copy.save}
         </button>
       </div>
     </form>

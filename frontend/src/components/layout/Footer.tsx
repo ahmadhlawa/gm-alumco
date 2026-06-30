@@ -46,12 +46,8 @@ export function FooterServices({
         <ul className="space-y-4">
           {services.map((service) => (
             <li key={service.id}>
-              <Link
-                to={`/services/${service.slug}`}
-                className="text-gray-400 hover:text-brand-gold transition-colors block"
-              >
-                {service.title}
-              </Link>
+              {/* Informational only — no public service details page to link to. */}
+              <span className="text-gray-400 block">{service.title}</span>
             </li>
           ))}
         </ul>

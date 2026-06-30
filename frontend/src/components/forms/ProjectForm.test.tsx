@@ -1,11 +1,16 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import { LanguageProvider } from '@/i18n';
 import { ProjectForm, EMPTY_PROJECT } from './ProjectForm';
 import { toPayload } from '@/app/admin/ProjectFormPage';
 
 describe('ProjectForm admin language tabs', () => {
   it('exposes only Hebrew and English tabs (no Arabic language tab)', () => {
-    const html = renderToStaticMarkup(<ProjectForm initialValues={EMPTY_PROJECT} onSubmit={() => {}} />);
+    const html = renderToStaticMarkup(
+      <LanguageProvider>
+        <ProjectForm initialValues={EMPTY_PROJECT} onSubmit={() => {}} />
+      </LanguageProvider>,
+    );
     expect(html).toContain('עברית'); // Hebrew tab
     expect(html).toContain('English'); // English tab
     expect(html).not.toContain('العربية'); // Arabic tab must be gone

@@ -3,6 +3,7 @@ import { AnimatePresence, motion, type Variants } from 'motion/react';
 import { Building2, Calendar, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import type { Project } from '@/types';
 import { useLanguage } from '@/i18n';
+import { projectCategoryLabel } from '@/lib/projectCategories';
 import { cn, handleImageError, normalizeImageUrl } from '@/lib/utils';
 
 interface FeaturedProjectsShowcaseProps {
@@ -26,7 +27,7 @@ const layerReveal: Variants = {
 };
 
 export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseProps) {
-  const { t, dir } = useLanguage();
+  const { t, dir, language } = useLanguage();
   const isLtr = dir === 'ltr';
 
   // Prefer featured projects; fall back to all active projects from the API.
@@ -173,7 +174,7 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
                     transition={{ duration: 0.5, delay: 0.35, ease: EASE }}
                     className="absolute top-5 z-[4] rounded-full bg-brand-gold px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-brand-navy shadow-lg shadow-black/30 ltr:left-5 rtl:right-5"
                   >
-                    {current.category}
+                    {projectCategoryLabel(current.category, language)}
                   </motion.span>
                 )}
 

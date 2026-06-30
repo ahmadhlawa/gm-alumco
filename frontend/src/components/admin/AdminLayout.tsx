@@ -4,6 +4,13 @@ import { LogOut, Menu, X, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 import { useAdminAuth } from '@/components/admin/AdminAuthProvider';
 import { getAdminNavigation } from '@/components/admin/adminNavigation';
+import { useLanguage } from '@/i18n';
+
+// Admin layout chrome — Hebrew + English only (Hebrew is the default).
+const COPY = {
+  he: { dashboard: 'לוח הבקרה', backToSite: 'חזרה לאתר', logout: 'התנתקות' },
+  en: { dashboard: 'Dashboard', backToSite: 'Back to site', logout: 'Log out' },
+};
 
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -14,9 +21,11 @@ export function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { admin } = useAdminAuth();
+  const { language, dir } = useLanguage();
+  const copy = language === 'en' ? COPY.en : COPY.he;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const items = getAdminNavigation(admin?.role ?? 'admin');
+  const items = getAdminNavigation(admin?.role ?? 'admin', language);
 
   const handleLogout = () => {
     logout();
@@ -29,7 +38,7 @@ export function AdminLayout() {
   }
 
   return (
-    <div className="flex bg-brand-surface min-h-screen text-brand-text font-sans" dir="rtl">
+    <div className="flex bg-brand-surface min-h-screen text-brand-text font-sans" dir={dir}>
       {/* Mobile Menu Button */}
       <button 
         className="lg:hidden fixed top-4 right-4 z-50 bg-brand-navy p-2 rounded border border-white/10"
@@ -65,11 +74,11 @@ export function AdminLayout() {
         <div className="absolute bottom-0 w-full p-4 border-t border-white/10 space-y-2">
            <Link to="/" className="flex items-center gap-3 px-4 py-3 rounded-md text-brand-silver hover:bg-white/5 hover:text-white transition-colors">
               <ExternalLink className="w-5 h-5 shrink-0" />
-              <span className="font-medium">العودة للموقع</span>
+              <span className="font-medium">{copy.backToSite}</span>
            </Link>
            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-md text-red-400 hover:bg-red-400/10 transition-colors">
               <LogOut className="w-5 h-5 shrink-0" />
-              <span className="font-medium">تسجيل الخروج</span>
+              <span className="font-medium">{copy.logout}</span>
            </button>
         </div>
       </aside>
@@ -78,9 +87,9 @@ export function AdminLayout() {
       <main className="flex-1 min-w-0 p-6 lg:p-10 pb-24 overflow-x-hidden">
         {/* Top Header Mocking */}
         <header className="flex justify-between items-center mb-10 pb-6 border-b border-white/5">
-          <h1 className="text-2xl font-bold text-white">اللوحة الرئيسية</h1>
+          <h1 className="text-2xl font-bold text-white">{copy.dashboard}</h1>
           <div className="flex items-center gap-4">
-             <div className="text-right hidden sm:block">
+             <div className="text-start hidden sm:block">
                <p className="text-sm font-bold text-white">{admin?.full_name ?? '—'}</p>
                <p className="text-xs text-brand-silver" dir="ltr">{admin?.email ?? ''}</p>
              </div>
