@@ -49,7 +49,7 @@ export function AdminGallery() {
           <EditableBlock key={image.id} title="تعديل صورة المعرض" type="fields" value={image} fields={fields} onSave={(value) => update(image.id, value)}>
             <div className="group relative aspect-square overflow-hidden bg-brand-surface">
               <img src={normalizeImageUrl(image.url)} onError={handleImageError} alt={translated(image.alt, locale)} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/20 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-brand-navy via-brand-navy/20 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-6">
                 <h3 className="font-bold text-white">{translated(image.alt, locale)}</h3>
                 <p className="mt-1 text-xs text-brand-silver">{translated(image.category, locale)}</p>

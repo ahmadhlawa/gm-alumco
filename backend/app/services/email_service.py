@@ -66,6 +66,7 @@ class EmailService:
                     f"Email: {request.email or 'Not provided'}",
                     f"Service / project type: {request.service_type or 'Not provided'}",
                     f"Message: {request.message or 'Not provided'}",
+                    f"Plans / files link: {request.plans_link or 'Not provided'}",
                     f"Timestamp: {request.created_at.isoformat(sep=' ', timespec='seconds')}",
                 ]
             )

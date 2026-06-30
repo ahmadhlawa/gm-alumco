@@ -28,6 +28,7 @@ class QuoteRequest(Base):
     phone: Mapped[str] = mapped_column(String(50))
     service_type: Mapped[str | None] = mapped_column(String(180), nullable=True)
     message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    plans_link: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     status: Mapped[str] = mapped_column(String(50), default="NEW", index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(

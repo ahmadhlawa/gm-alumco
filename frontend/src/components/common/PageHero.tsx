@@ -28,7 +28,7 @@ export function PageHero({
           alt={title}
           className="w-full h-full object-cover opacity-30 mix-blend-luminosity"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/50 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-brand-navy via-brand-navy/50 to-transparent" />
       </div>
       
       <div className="container mx-auto px-4 relative z-10 text-center mt-16">

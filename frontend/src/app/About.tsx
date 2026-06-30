@@ -41,7 +41,7 @@ export function About() {
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-brand-surface/95 via-brand-surface/88 to-brand-surface/95"
+          className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-b from-brand-surface/95 via-brand-surface/88 to-brand-surface/95"
         />
         <div className="container relative z-10 mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center mb-24">

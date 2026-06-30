@@ -86,7 +86,7 @@ export function AdminWebsite() {
       badge: 'قائمة بيانات 🗄️',
       status: 'active',
       preview: (
-        <div className="h-28 bg-[#112240] border border-white/5 rounded relative overflow-hidden flex items-end p-2 bg-gradient-to-t from-black to-transparent">
+        <div className="h-28 bg-[#112240] border border-white/5 rounded relative overflow-hidden flex items-end p-2 bg-linear-to-t from-black to-transparent">
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80')] bg-cover opacity-30"></div>
           <div className="relative z-10">
             <p className="text-[8px] text-brand-gold uppercase font-bold">برج الأعمال الزجاجي</p>
@@ -173,7 +173,7 @@ export function AdminWebsite() {
     <div className="space-y-6" dir="rtl">
       
       {/* Banner / Header */}
-      <div className="p-6 bg-gradient-to-l from-brand-gold/10 via-brand-navy to-brand-navy border border-brand-gold/10 rounded-xl relative overflow-hidden">
+      <div className="p-6 bg-linear-to-l from-brand-gold/10 via-brand-navy to-brand-navy border border-brand-gold/10 rounded-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-48 h-48 bg-brand-gold/5 blur-3xl rounded-full"></div>
         <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>

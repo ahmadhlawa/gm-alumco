@@ -30,5 +30,5 @@ export interface SiteSettingDto extends Timestamped { id: number; key: string; v
 export type ContactStatus = 'NEW' | 'READ' | 'ARCHIVED';
 export type QuoteStatus = 'NEW' | 'IN_PROGRESS' | 'DONE' | 'ARCHIVED';
 export interface ContactMessageDto { id: number; name: string; email: string; phone: string | null; subject: string | null; message: string; status: ContactStatus; created_at: string }
-export interface QuoteRequestDto extends Timestamped { id: number; name: string; email: string | null; phone: string; service_type: string | null; message: string | null; status: QuoteStatus }
+export interface QuoteRequestDto extends Timestamped { id: number; name: string; email: string | null; phone: string; service_type: string | null; message: string | null; plans_link: string | null; status: QuoteStatus }
 export interface AuditLogDto { id: number; admin_id: number | null; actor_name: string | null; actor_email: string | null; action: string; entity_type: string | null; entity_id: string | null; created_at: string }

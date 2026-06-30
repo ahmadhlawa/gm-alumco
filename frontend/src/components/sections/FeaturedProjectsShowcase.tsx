@@ -158,10 +158,10 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
                 </AnimatePresence>
 
                 {/* cinematic gradient overlay for depth + legibility */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-navy/70 via-brand-navy/5 to-transparent" />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand-gold/5 via-transparent to-transparent" />
+                <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-brand-navy/70 via-brand-navy/5 to-transparent" />
+                <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-brand-gold/5 via-transparent to-transparent" />
                 {/* soft top sheen + inset edge for premium glass-like depth */}
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/10 to-transparent" />
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-1/3 bg-linear-to-b from-white/10 to-transparent" />
                 <div className="pointer-events-none absolute inset-0 rounded-[1.75rem] ring-1 ring-inset ring-white/10" />
 
                 {/* Category badge */}

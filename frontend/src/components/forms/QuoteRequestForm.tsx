@@ -2,7 +2,6 @@ import React from "react";
 import { useState } from "react";
 import { useLanguage } from "@/i18n";
 import { submitQuoteRequest } from "@/lib/api";
-import { FileUploadPlaceholder } from "../common/FileUploadPlaceholder";
 
 export function QuoteRequestForm() {
   const { t } = useLanguage();
@@ -12,7 +11,8 @@ export function QuoteRequestForm() {
     phone: '',
     email: '',
     projectType: '',
-    serviceType: ''
+    serviceType: '',
+    plansLink: ''
   });
 
   const handleChange = (
@@ -32,7 +32,8 @@ export function QuoteRequestForm() {
         service_type: formData.serviceType || undefined,
         message: formData.projectType
           ? `${t('نوع المشروع', 'סוג פרויקט', 'Project type')}: ${formData.projectType}`
-          : undefined
+          : undefined,
+        plans_link: formData.plansLink.trim() || undefined
       });
       setStatus('success');
     } catch {
@@ -93,7 +94,28 @@ export function QuoteRequestForm() {
 
       <div className="space-y-6">
         <h3 className="text-xl font-bold text-brand-gold border-b border-white/10 pb-2">{t('المخططات الهندسية', 'תוכניות הנדסיות', 'Engineering plans')}</h3>
-        <FileUploadPlaceholder label={t('ارفع المخططات هنا إن وجدت', 'העלה תוכניות כאן אם קיימות', 'Upload plans here if available')} />
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-gray-200">
+            {t('رابط المخططات أو الملفات', 'קישור לתוכניות או קבצים', 'Link to plans or files')}
+          </label>
+          <input
+            type="url"
+            name="plansLink"
+            inputMode="url"
+            dir="ltr"
+            value={formData.plansLink}
+            onChange={handleChange}
+            placeholder="https://drive.google.com/..."
+            className="w-full h-12 px-4 bg-white/5 border border-white/10 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition-colors text-left text-white rounded"
+          />
+          <p className="text-sm text-brand-silver">
+            {t(
+              'يمكنك لصق رابط Google Drive أو مجلد سحابي يحتوي على المخططات أو الرسومات أو الملفات.',
+              'ניתן להדביק קישור ל-Google Drive או לתיקייה בענן עם שרטוטים, תוכניות או קבצים.',
+              'Paste a link to Google Drive or a cloud folder with drawings, plans or files.',
+            )}
+          </p>
+        </div>
       </div>
 
       {status === 'error' && (

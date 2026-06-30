@@ -39,7 +39,7 @@ export function CTASection({
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-t from-brand-navy via-brand-navy/85 to-brand-navy/70"
+        className="pointer-events-none absolute inset-0 z-0 bg-linear-to-t from-brand-navy via-brand-navy/85 to-brand-navy/70"
       />
 
       {/* Decorative architectural lines */}

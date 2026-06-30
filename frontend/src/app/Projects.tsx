@@ -7,6 +7,7 @@ import { useLanguage } from '@/i18n';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
+import { PROJECT_FILTER_KEYS, projectFilterLabel, type ProjectFilterKey } from '@/lib/projectCategories';
 import { Search } from 'lucide-react';
 import { LoadingState } from '@/components/common/LoadingState';
 import { ErrorState } from '@/components/common/ErrorState';
@@ -14,7 +15,9 @@ import { Project } from '@/types';
 
 export function Projects() {
   const { t, language } = useLanguage();
-  const [filter, setFilter] = useState(t('الكل', 'הכל', "All"));
+  // Store a stable filter key (not a translated label) so switching language
+  // never invalidates the active filter and empties the grid.
+  const [filter, setFilter] = useState<ProjectFilterKey>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
 
   const [projects, setProjects] = useState<Project[]>([]);
@@ -30,11 +33,16 @@ export function Projects() {
       .finally(() => setLoading(false));
   }, [language]);
 
-  const categories = [t('الكل', 'הכל', "All"), ...Array.from(new Set(projects.map(p => p.category)))];
+  // Build the chip list from the categories actually present in the data,
+  // keeping a stable, deterministic order, and always lead with "ALL".
+  const presentCategories = PROJECT_FILTER_KEYS.filter((key) =>
+    projects.some((project) => project.category === key),
+  );
+  const filterKeys: ProjectFilterKey[] = ['ALL', ...presentCategories];
 
   const filteredProjects = projects.filter(project => {
-    const matchesFilter = filter === t('الكل', 'הכל', "All") || project.category === filter;
-    const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    const matchesFilter = filter === 'ALL' || project.category === filter;
+    const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           project.location.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
@@ -58,18 +66,18 @@ export function Projects() {
           {/* Filters & Search */}
           <div className="max-w-4xl mx-auto mb-16 flex flex-col md:flex-row gap-6 items-center justify-between">
             <div className="flex flex-wrap gap-2 justify-center">
-              {categories.map((cat) => (
+              {filterKeys.map((key) => (
                 <button
-                  key={cat}
-                  onClick={() => setFilter(cat)}
+                  key={key}
+                  onClick={() => setFilter(key)}
                   className={cn(
                     "px-6 py-2 rounded-full text-sm font-bold transition-all",
-                    filter === cat 
-                      ? "bg-brand-navy text-white" 
+                    filter === key
+                      ? "bg-brand-navy text-white"
                       : "bg-white/10 text-brand-silver hover:bg-white/20"
                   )}
                 >
-                  {cat}
+                  {projectFilterLabel(key, language)}
                 </button>
               ))}
             </div>

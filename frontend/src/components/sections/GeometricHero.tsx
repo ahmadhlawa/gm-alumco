@@ -81,18 +81,18 @@ export function GeometricHero({
       <div
         className={
           dir === 'rtl'
-            ? 'absolute inset-0 bg-gradient-to-l from-brand-navy/97 via-brand-navy/85 to-brand-surface-alt/50'
-            : 'absolute inset-0 bg-gradient-to-r from-brand-navy/97 via-brand-navy/85 to-brand-surface-alt/50'
+            ? 'absolute inset-0 bg-linear-to-l from-brand-navy/97 via-brand-navy/85 to-brand-surface-alt/50'
+            : 'absolute inset-0 bg-linear-to-r from-brand-navy/97 via-brand-navy/85 to-brand-surface-alt/50'
         }
       />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_18%,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,rgba(10,25,47,0.4),rgba(10,25,47,0.96))]" />
-      <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/55 via-transparent to-brand-navy/35" />
-      <div className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-brand-navy to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-t from-brand-navy/55 via-transparent to-brand-navy/35" />
+      <div className="absolute inset-x-0 bottom-0 h-52 bg-linear-to-t from-brand-navy to-transparent" />
 
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute right-0 top-0 h-px w-full bg-gradient-to-l from-transparent via-brand-gold/55 to-transparent" />
-        <div className="absolute right-[12%] top-0 h-full w-px bg-gradient-to-b from-brand-gold/40 via-white/5 to-transparent" />
-        <div className="absolute bottom-[18%] left-0 h-px w-2/3 bg-gradient-to-r from-transparent via-brand-gold/40 to-transparent" />
+        <div className="absolute right-0 top-0 h-px w-full bg-linear-to-l from-transparent via-brand-gold/55 to-transparent" />
+        <div className="absolute right-[12%] top-0 h-full w-px bg-linear-to-b from-brand-gold/40 via-white/5 to-transparent" />
+        <div className="absolute bottom-[18%] left-0 h-px w-2/3 bg-linear-to-r from-transparent via-brand-gold/40 to-transparent" />
 
         {shapes.map((shape, index) => (
           <motion.div

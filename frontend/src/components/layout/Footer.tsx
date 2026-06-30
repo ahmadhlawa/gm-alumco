@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Instagram, Linkedin, Twitter, Facebook } from 'lucide-react';
 import { useLanguage } from '@/i18n';
-import type { CmsLocale, LocalizedText } from '@/types';
+import type { CmsLocale, LocalizedText, Service } from '@/types';
+import { getServices } from '@/lib/api';
 import { CONTACT_EMAIL, WHATSAPP_DISPLAY_NUMBER } from '@/components/common/ContactActions';
 
 export interface FooterCmsContent {
@@ -18,10 +20,74 @@ interface FooterProps {
   previewLocale?: CmsLocale;
 }
 
+/**
+ * Pure presentational services list for the footer. It only renders the
+ * services it is given (already localized by the API adapter) — it never
+ * fabricates fallback service names. While the list is still loading it
+ * renders nothing; once loading has finished with no services it shows a
+ * clean empty state. Kept as its own exported component so it is testable
+ * without an async data layer (mirrors how ServicesShowcase is fed `services`).
+ */
+export function FooterServices({
+  services,
+  loaded,
+  heading,
+  emptyLabel,
+}: {
+  services: Service[];
+  loaded: boolean;
+  heading: string;
+  emptyLabel: string;
+}) {
+  return (
+    <div>
+      <h3 className="text-lg font-bold mb-6 text-white">{heading}</h3>
+      {services.length > 0 ? (
+        <ul className="space-y-4">
+          {services.map((service) => (
+            <li key={service.id}>
+              <Link
+                to={`/services/${service.slug}`}
+                className="text-gray-400 hover:text-brand-gold transition-colors block"
+              >
+                {service.title}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : loaded ? (
+        <p className="text-gray-400">{emptyLabel}</p>
+      ) : null}
+    </div>
+  );
+}
+
 export function Footer({ cmsContent, previewLocale }: FooterProps = {}) {
   const currentYear = new Date().getFullYear();
   const { t, language } = useLanguage();
   const locale = previewLocale ?? language;
+
+  // Real services come from the public services API only — no mock fallback.
+  const [services, setServices] = useState<Service[]>([]);
+  const [servicesLoaded, setServicesLoaded] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    setServicesLoaded(false);
+    getServices(locale)
+      .then((data) => {
+        if (active) setServices(data);
+      })
+      .catch(() => {
+        if (active) setServices([]);
+      })
+      .finally(() => {
+        if (active) setServicesLoaded(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, [locale]);
   const cmsText = (value: LocalizedText | undefined, ar: string, he: string, en: string) => {
     if (!value) return t(ar, he, en);
     if (locale === 'he') return value.he || value.en || value.ar || '';
@@ -64,16 +130,12 @@ export function Footer({ cmsContent, previewLocale }: FooterProps = {}) {
             </ul>
           </div>
 
-          <div>
-            <h3 className="text-lg font-bold mb-6 text-white">{t('خدماتنا', 'שירותים', 'Services')}</h3>
-            <ul className="space-y-4">
-              <li><Link to="/services/curtain-walls" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('واجهات الكيرتن وول', 'קירות מסך', 'Curtain walls')}</Link></li>
-              <li><Link to="/services/windows-doors" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('نوافذ وأبواب حرارية', 'חלונות ודלתות', 'Windows and doors')}</Link></li>
-              <li><Link to="/services/pergolas" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('برجولات ومظلات', 'פרגולות וסוככים', 'Pergolas and shades')}</Link></li>
-              <li><Link to="/services/handrails" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('درابزين زجاجي', 'מעקות זכוכית', 'Glass railings')}</Link></li>
-              <li><Link to="/services/aluminum-cladding" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('تجليد واجهات', 'חיפוי קירות', 'Facade cladding')}</Link></li>
-            </ul>
-          </div>
+          <FooterServices
+            services={services}
+            loaded={servicesLoaded}
+            heading={t('خدماتنا', 'שירותים', 'Services')}
+            emptyLabel={t('لا توجد خدمات متاحة حالياً.', 'אין שירותים זמינים כרגע.', 'No services available')}
+          />
 
           <div>
             <h3 className="text-lg font-bold mb-6 text-white">{t('تواصل معنا', 'צור קשר', 'Contact us')}</h3>

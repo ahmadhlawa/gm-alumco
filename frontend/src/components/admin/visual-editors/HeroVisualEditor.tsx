@@ -183,7 +183,7 @@ export function HeroVisualEditor({ content, onChange }: HeroVisualEditorProps) {
           <div className="lg:w-[45%] min-h-[350px] lg:h-auto bg-brand-surface relative group/feature overflow-hidden border-r lg:border-r-0 lg:border-l border-white/5 flex flex-col justify-end">
             
             {/* Visual CMS Background image edit action panel */}
-            <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-brand-navy/30 to-brand-navy z-10 pointer-events-none"></div>
+            <div className="absolute inset-0 z-0 bg-linear-to-b from-transparent via-brand-navy/30 to-brand-navy z-10 pointer-events-none"></div>
             
             <img src={normalizeImageUrl(content.backgroundImage)} onError={handleImageError} className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10s] group-hover/feature:scale-105" alt="Hero representation background" />
 

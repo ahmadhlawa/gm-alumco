@@ -102,7 +102,7 @@ export function ServicesShowcase({
                     isActive ? 'scale-110' : 'scale-100',
                   )}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#081425] via-[#081425]/85 to-transparent md:bg-gradient-to-l md:from-[#081425]/95 md:via-[#081425]/80 md:to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-[#081425] via-[#081425]/85 to-transparent md:bg-linear-to-l md:from-[#081425]/95 md:via-[#081425]/80 md:to-transparent" />
                 <div className="relative z-10 mx-auto flex h-full max-w-7xl items-end px-5 pb-28 pt-20 md:items-center md:px-16 md:pb-20">
                   <div className={cn('max-w-2xl', isLtr ? 'text-left' : 'text-right')}>
                     <div className="mb-7 h-0.5 w-16 bg-brand-gold" />

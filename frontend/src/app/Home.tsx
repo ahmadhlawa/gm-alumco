@@ -91,7 +91,7 @@ export function Home() {
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-brand-surface/95 via-brand-surface/85 to-brand-navy/75"
+          className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-br from-brand-surface/95 via-brand-surface/85 to-brand-navy/75"
         />
         <div className="container relative z-10 mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -153,7 +153,7 @@ export function Home() {
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-brand-navy/90 via-brand-navy/80 to-brand-navy/95"
+          className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-b from-brand-navy/90 via-brand-navy/80 to-brand-navy/95"
         />
         <div className="absolute inset-0 opacity-10">
           <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
