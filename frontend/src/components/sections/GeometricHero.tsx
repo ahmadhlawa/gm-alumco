@@ -76,18 +76,20 @@ export function GeometricHero({
         />
       </motion.div>
 
-      {/* Layered overlays — darker navy for premium contrast + readable text.
-          Primary contrast wash: the dark side follows the text (RTL → right, LTR → left). */}
+      {/* Layered overlays — rebalanced for a more visible building while keeping
+          premium contrast + readable text. The dark stays anchored on the text
+          side (RTL → right, LTR → left) and the bottom; the mid/far and diagonal
+          are lightened so the center reveals more of the image. */}
       <div
         className={
           dir === 'rtl'
-            ? 'absolute inset-0 bg-linear-to-l from-brand-navy/97 via-brand-navy/85 to-brand-surface-alt/50'
-            : 'absolute inset-0 bg-linear-to-r from-brand-navy/97 via-brand-navy/85 to-brand-surface-alt/50'
+            ? 'absolute inset-0 bg-linear-to-l from-brand-navy/88 via-brand-navy/58 to-brand-surface-alt/20'
+            : 'absolute inset-0 bg-linear-to-r from-brand-navy/88 via-brand-navy/58 to-brand-surface-alt/20'
         }
       />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_18%,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,rgba(10,25,47,0.4),rgba(10,25,47,0.96))]" />
-      <div className="absolute inset-0 bg-linear-to-t from-brand-navy/55 via-transparent to-brand-navy/35" />
-      <div className="absolute inset-x-0 bottom-0 h-52 bg-linear-to-t from-brand-navy to-transparent" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_18%,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,rgba(10,25,47,0.22),rgba(10,25,47,0.68))]" />
+      <div className="absolute inset-0 bg-linear-to-t from-brand-navy/40 via-transparent to-brand-navy/22" />
+      <div className="absolute inset-x-0 bottom-0 h-52 bg-linear-to-t from-brand-navy/85 to-transparent" />
 
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute right-0 top-0 h-px w-full bg-linear-to-l from-transparent via-brand-gold/55 to-transparent" />
