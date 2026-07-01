@@ -56,10 +56,21 @@ export function Projects() {
         image="https://images.unsplash.com/photo-1545615714-fb9bd747190d?auto=format&fit=crop&q=80"
       />
 
-      <section className="py-24">
-        <div className="container mx-auto px-4">
-          <SectionHeader 
-            title={t("أعمال نفتخر بها", "עבודות שאנו גאים בהן", "Work we're proud of")} 
+      <section className="relative isolate overflow-hidden py-24">
+        {/* Subtle architectural backdrop — surface-washed for text readability */}
+        <img
+          aria-hidden
+          src="/images/backgrounds/tas-bg-projects.webp"
+          alt=""
+          className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-[0.24]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-b from-brand-surface/85 via-brand-surface/55 to-brand-surface/82"
+        />
+        <div className="container relative z-10 mx-auto px-4">
+          <SectionHeader
+            title={t("أعمال نفتخر بها", "עבודות שאנו גאים בהן", "Work we're proud of")}
             centered
           />
           

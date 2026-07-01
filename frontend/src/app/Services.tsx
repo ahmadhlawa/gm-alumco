@@ -34,10 +34,21 @@ export function Services() {
         image="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80"
       />
 
-      <section className="py-24">
-        <div className="container mx-auto px-4">
-          <SectionHeader 
-            title={t("حلول هندسية مصممة للإبداع", "פתרונות הנדסיים מיועדים ליצירתיות", "Engineering solutions built for creativity")} 
+      <section className="relative isolate overflow-hidden py-24">
+        {/* Subtle architectural backdrop — navy-washed for text readability */}
+        <img
+          aria-hidden
+          src="/images/backgrounds/tas-bg-services.webp"
+          alt=""
+          className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-[0.28]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-b from-brand-navy/85 via-brand-navy/55 to-brand-navy/80"
+        />
+        <div className="container relative z-10 mx-auto px-4">
+          <SectionHeader
+            title={t("حلول هندسية مصممة للإبداع", "פתרונות הנדסיים מיועדים ליצירתיות", "Engineering solutions built for creativity")}
             centered
           />
           <div className="min-h-[400px]">

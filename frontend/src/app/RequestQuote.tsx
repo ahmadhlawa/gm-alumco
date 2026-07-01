@@ -13,7 +13,7 @@ export function RequestQuote() {
         src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80"
         alt=""
         aria-hidden
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.07]"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.18]"
       />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(185,199,228,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(185,199,228,0.04)_1px,transparent_1px)] bg-[size:46px_46px]" />
       <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-brand-gold/10 blur-3xl" />

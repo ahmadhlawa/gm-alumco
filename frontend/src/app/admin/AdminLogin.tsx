@@ -57,8 +57,25 @@ export function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0B0E] flex items-center justify-center p-4" dir={dir}>
-      <div className="w-full max-w-md bg-brand-navy border border-white/10 rounded-lg shadow-2xl p-8">
+    <div
+      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-linear-to-br from-[#03060c] via-brand-navy to-[#152c4f] p-4"
+      dir={dir}
+    >
+      {/* Ambient mixed-color glow + faint geometric grid/accent — no photos, keeps the login screen off flat black */}
+      <div aria-hidden className="pointer-events-none absolute -top-24 start-[2%] h-96 w-96 rounded-full bg-brand-gold/[0.16] blur-[90px]" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-24 end-[2%] h-96 w-96 rounded-full bg-brand-silver/[0.13] blur-[90px]" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(212,175,55,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(212,175,55,0.05)_1px,transparent_1px)] bg-[size:56px_56px]"
+      />
+      {/* Faint architectural accent shape, echoing the public site's geometric motif */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-20 end-[8%] hidden h-72 w-72 border border-brand-gold/15 sm:block"
+        style={{ clipPath: 'polygon(50% 0%, 100% 28%, 100% 72%, 50% 100%, 0% 72%, 0% 28%)' }}
+      />
+
+      <div className="relative w-full max-w-md bg-brand-navy border border-white/10 rounded-lg shadow-2xl p-8">
         <div className="flex justify-end mb-2">
           <button
             type="button"

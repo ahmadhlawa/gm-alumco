@@ -17,8 +17,19 @@ export function Contact() {
         breadcrumbs={[{ label: t('اتصل بنا', 'צור קשר', 'Contact us'), path: '/contact' }]}
       />
 
-      <section className="py-24">
-        <div className="container mx-auto px-4">
+      <section className="relative isolate overflow-hidden py-24">
+        {/* Subtle architectural backdrop — navy-washed for text readability */}
+        <img
+          aria-hidden
+          src="/images/backgrounds/tas-bg-contact.webp"
+          alt=""
+          className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-[0.24]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-b from-brand-navy/82 via-brand-navy/52 to-brand-navy/85"
+        />
+        <div className="container relative z-10 mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16">
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
               <SectionHeader title={t("معلومات التواصل", "פרטי התקשרות", "Contact information")} />

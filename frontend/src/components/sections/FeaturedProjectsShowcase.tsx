@@ -90,6 +90,18 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
       dir={dir}
       className="relative isolate flex min-h-[92vh] scroll-mt-24 flex-col justify-center overflow-hidden bg-brand-navy py-16 lg:py-20"
     >
+      {/* Architectural glass facade backdrop — subtle, navy-washed for readability */}
+      <img
+        aria-hidden
+        src="/images/backgrounds/tas-bg-projects.webp"
+        alt=""
+        className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-[0.22]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-br from-brand-navy/82 via-brand-navy/58 to-brand-navy/85"
+      />
+
       {/* Soft gold glow accents */}
       <motion.div
         aria-hidden

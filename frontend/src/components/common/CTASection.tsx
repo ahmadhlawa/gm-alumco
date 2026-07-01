@@ -35,11 +35,11 @@ export function CTASection({
         aria-hidden
         src="/images/backgrounds/tas-bg-cta.webp"
         alt=""
-        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-[0.22]"
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-[0.30]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 z-0 bg-linear-to-t from-brand-navy via-brand-navy/85 to-brand-navy/70"
+        className="pointer-events-none absolute inset-0 z-0 bg-linear-to-t from-brand-navy/85 via-brand-navy/50 to-brand-navy/60"
       />
 
       {/* Decorative architectural lines */}

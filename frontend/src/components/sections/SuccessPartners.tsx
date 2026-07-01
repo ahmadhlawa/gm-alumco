@@ -129,8 +129,17 @@ export function SuccessPartners() {
 
   return (
     <section id="partners" dir={dir} className="scroll-mt-24 py-24 bg-[#0A192F] relative overflow-hidden shadow-inner">
-      <div className="absolute inset-0 bg-[#0A192F] opacity-50" />
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80')] opacity-[0.02] bg-cover bg-center" />
+      {/* Architectural metal & glass backdrop — subtle, navy-washed for readability */}
+      <img
+        aria-hidden
+        src="/images/backgrounds/tas-bg-partners.webp"
+        alt=""
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.26]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(10,25,47,0.55),rgba(10,25,47,0.88)_75%)]"
+      />
       
       <div className="container mx-auto px-4 relative z-10">
         <SectionHeader 

@@ -57,9 +57,20 @@ export function ServicesShowcase({
       aria-labelledby="services-title"
       className="scroll-mt-24 overflow-hidden bg-[#040e1f] text-white"
     >
-      <div className="relative border-y border-white/10 bg-brand-navy px-4 py-16 md:px-8 md:py-20">
+      <div className="relative overflow-hidden border-y border-white/10 bg-brand-navy px-4 py-16 md:px-8 md:py-20">
+        {/* Architectural facade backdrop — subtle, navy-washed for readability */}
+        <img
+          aria-hidden
+          src="/images/backgrounds/tas-bg-services.webp"
+          alt=""
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.26]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-linear-to-b from-brand-navy/80 via-brand-navy/52 to-brand-navy/82"
+        />
         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(185,199,228,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(185,199,228,0.035)_1px,transparent_1px)] bg-[size:50px_50px]" />
-        <div className={cn('relative mx-auto max-w-7xl', isLtr ? 'text-left' : 'text-right')}>
+        <div className={cn('relative z-10 mx-auto max-w-7xl', isLtr ? 'text-left' : 'text-right')}>
           <span className="mb-5 block text-xs font-bold tracking-[0.3em] text-brand-gold">T.A.S</span>
           <h2 id="services-title" className="max-w-4xl text-4xl font-extrabold leading-tight text-white md:text-6xl">
             {title}
