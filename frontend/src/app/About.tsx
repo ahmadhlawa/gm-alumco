@@ -28,7 +28,7 @@ export function About() {
         title={t("عن T.A.S", "על T.A.S", "About T.A.S")}
         subtitle={t("شريكك الموثوق في تقديم أرقى حلول الواجهات الزجاجية والألمنيوم.", "השותף המהימן שלך במתן פתרונות חזית זכוכית ואלומיניום.", "Your trusted partner in delivering the finest glass and aluminum facade solutions.")}
         breadcrumbs={[{ label: t('عن الشركة', 'אודות', "About"), path: '/about' }]}
-        image="https://images.unsplash.com/photo-1541888048600-410a8d622941?auto=format&fit=crop&q=80"
+        image="/images/backgrounds/tas-bg-about.webp"
       />
 
       <section className="relative isolate overflow-hidden py-24">
