@@ -25,6 +25,8 @@ import { ServiceFormPage } from '@/app/admin/ServiceFormPage';
 import { AdminLogin } from '@/app/admin/AdminLogin';
 import { AdminPartners } from '@/app/admin/AdminPartners';
 import { PartnerFormPage } from '@/app/admin/PartnerFormPage';
+import { AdminTestimonials } from '@/app/admin/AdminTestimonials';
+import { TestimonialFormPage } from '@/app/admin/TestimonialFormPage';
 import { AdminContactMessages } from '@/app/admin/AdminContactMessages';
 import { AdminQuoteRequests } from '@/app/admin/AdminQuoteRequests';
 import { AdminAuditLogs } from '@/app/admin/AdminAuditLogs';
@@ -64,6 +66,9 @@ function AppContent() {
              <Route path="partners" element={<AdminPartners />} />
              <Route path="partners/new" element={<PartnerFormPage />} />
              <Route path="partners/:id/edit" element={<PartnerFormPage />} />
+             <Route path="testimonials" element={<AdminTestimonials />} />
+             <Route path="testimonials/new" element={<TestimonialFormPage />} />
+             <Route path="testimonials/:id/edit" element={<TestimonialFormPage />} />
              <Route path="contact-messages" element={<AdminContactMessages />} />
              <Route path="quote-requests" element={<AdminQuoteRequests />} />
              <Route path="public-stats" element={<AdminPublicStats />} />

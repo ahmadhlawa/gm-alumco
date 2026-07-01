@@ -12,6 +12,7 @@ class TestimonialBase(BaseModel):
     message_he: str = Field(max_length=2000)
     client_position_en: str | None = Field(default=None, max_length=255)
     client_position_he: str | None = Field(default=None, max_length=255)
+    rating: int = Field(default=5, ge=1, le=5)
     sort_order: int = 0
     is_active: bool = True
 
@@ -27,6 +28,7 @@ class TestimonialUpdate(BaseModel):
     message_he: str | None = Field(default=None, max_length=2000)
     client_position_en: str | None = Field(default=None, max_length=255)
     client_position_he: str | None = Field(default=None, max_length=255)
+    rating: int | None = Field(default=None, ge=1, le=5)
     sort_order: int | None = None
     is_active: bool | None = None
 

@@ -23,6 +23,7 @@ export interface TestimonialDto extends Timestamped, ActiveSortable {
   id: number; client_name_en: string; client_name_he: string;
   message_en: string; message_he: string;
   client_position_en: string | null; client_position_he: string | null;
+  rating: number;
 }
 export interface AdminDto extends Timestamped { id: number; full_name: string; email: string; role: 'admin' | 'super_admin'; is_active: boolean; last_login_at: string | null }
 export interface SiteContentDto extends Timestamped { id: number; section: string; key: string; value: JsonValue; content_type: string; is_active: boolean }

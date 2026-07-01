@@ -29,7 +29,7 @@ export const toPartnerView = (item: PartnerDto, locale: Locale): Partner => ({ i
 export const toTestimonialView = (item: TestimonialDto, locale: Locale): Testimonial => ({
   id: String(item.id), name: pick(locale, item.client_name_he, item.client_name_en),
   role: pick(locale, item.client_position_he, item.client_position_en), company: '',
-  content: pick(locale, item.message_he, item.message_en), rating: undefined,
+  content: pick(locale, item.message_he, item.message_en), rating: item.rating,
 });
 
 const PROJECT_CATEGORIES: ProjectDto['category'][] = ['LOCAL', 'INTERNATIONAL', 'FEATURED'];

@@ -43,6 +43,8 @@ def test_admin_can_crud_testimonial(client: TestClient, auth_headers) -> None:
         json=make_testimonial_payload(is_active=False),
     )
     assert created.status_code == 201
+    # Rating defaults to 5 when not provided.
+    assert created.json()["rating"] == 5
     testimonial_id = created.json()["id"]
     assert client.get("/api/v1/admin/testimonials", headers=headers).status_code == 200
     assert client.get(
@@ -51,13 +53,23 @@ def test_admin_can_crud_testimonial(client: TestClient, auth_headers) -> None:
     updated = client.put(
         f"/api/v1/admin/testimonials/{testimonial_id}",
         headers=headers,
-        json={"client_position_en": None, "message_en": "Updated"},
+        json={"client_position_en": None, "message_en": "Updated", "rating": 4},
     )
     assert updated.json()["client_position_en"] is None
     assert updated.json()["message_en"] == "Updated"
+    assert updated.json()["rating"] == 4
     assert client.delete(
         f"/api/v1/admin/testimonials/{testimonial_id}", headers=headers
     ).status_code == 204
+
+
+def test_testimonial_rating_must_be_1_to_5(client: TestClient, auth_headers) -> None:
+    response = client.post(
+        "/api/v1/admin/testimonials",
+        headers=auth_headers(),
+        json=make_testimonial_payload(rating=6),
+    )
+    assert response.status_code == 422
 
 
 def test_testimonial_requires_all_translations_and_auth(

@@ -22,11 +22,12 @@ describe('QuoteRequestForm public localization', () => {
     vi.unstubAllGlobals();
   });
 
-  it('renders English labels without Arabic public labels in English mode', () => {
+  it('renders English field labels without Arabic public labels in English mode', () => {
     const html = renderInEnglish();
 
-    expect(html).toContain('Personal information');
     expect(html).toContain('Full name');
+    expect(html).toContain('Email');
+    expect(html).toContain('Project type');
     expect(html).toContain('Submit quote request');
     expect(html).not.toContain('Ø§Ù');
   });

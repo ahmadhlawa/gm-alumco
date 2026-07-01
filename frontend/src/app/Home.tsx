@@ -10,8 +10,9 @@ import { FeaturedProjectsShowcase } from '@/components/sections/FeaturedProjects
 import { GeometricHero } from '@/components/sections/GeometricHero';
 import { ServicesShowcase } from '@/components/sections/ServicesShowcase';
 import { getServices, getProjects, getTestimonials } from '@/lib/api';
+import { cn } from '@/lib/utils';
 import { useLanguage } from '@/i18n';
-import { ShieldCheck, Ruler, Clock, LayoutTemplate } from 'lucide-react';
+import { ShieldCheck, Ruler, Clock, LayoutTemplate, ChevronLeft, ChevronRight } from 'lucide-react';
 import { LoadingState } from '@/components/common/LoadingState';
 import { Service, Project, Testimonial } from '@/types';
 import { loadSiteContent } from '@/data/siteContent';
@@ -32,6 +33,7 @@ export function Home() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [publicStats, setPublicStats] = useState<PublicStatsContent>(defaultPublicStats);
   const [loading, setLoading] = useState(true);
+  const [activeTestimonial, setActiveTestimonial] = useState(1);
 
   const stats = publicStats.aboutPreviewStats.map(stat => ({
     value: stat.value,
@@ -67,6 +69,24 @@ export function Home() {
     // Clear the navigation state so the scroll does not repeat on refresh/back.
     window.history.replaceState({}, '');
   }, [loading, scrollTarget]);
+
+  useEffect(() => {
+    setActiveTestimonial((current) => {
+      if (testimonials.length === 0) return 0;
+      return Math.min(current, testimonials.length - 1);
+    });
+  }, [testimonials.length]);
+
+  const activeTestimonialIndex = testimonials.length > 0
+    ? Math.min(activeTestimonial, testimonials.length - 1)
+    : 0;
+  const showTestimonialControls = testimonials.length > 1;
+  const goToTestimonial = (delta: number) => {
+    setActiveTestimonial((current) => {
+      if (testimonials.length === 0) return 0;
+      return (Math.min(current, testimonials.length - 1) + delta + testimonials.length) % testimonials.length;
+    });
+  };
 
   if (loading) {
     return (
@@ -199,20 +219,95 @@ export function Home() {
       {/* Success Partners */}
       <SuccessPartners />
 
-      {/* Testimonials */}
-      <section className="py-24 bg-brand-surface">
-        <div className="container mx-auto px-4">
-          <SectionHeader 
-            title={t(content.testimonials.title.ar, content.testimonials.title.he, content.testimonials.title.en)}
-            centered
+      {/* Testimonials — only rendered when real testimonials exist (no orphan section) */}
+      {testimonials.length > 0 && (
+        <section id="testimonials" className="relative isolate scroll-mt-24 overflow-hidden bg-brand-navy py-24">
+          <img
+            aria-hidden
+            src="/images/backgrounds/tas-bg-about.webp"
+            alt=""
+            className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-[0.16]"
           />
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, idx) => (
-              <TestimonialCard key={testimonial.id} testimonial={testimonial} index={idx} />
-            ))}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-b from-brand-navy/95 via-brand-navy/88 to-brand-navy"
+          />
+          <div className="container mx-auto px-4">
+            <div className="mx-auto mb-14 max-w-4xl text-center">
+              <span className="mb-4 block text-xs font-bold uppercase tracking-[0.3em] text-brand-gold">
+                {t('آراء العملاء', 'לקוחות', 'Testimonials')}
+              </span>
+              <h2 className="text-4xl font-black leading-tight text-white md:text-6xl">
+                {t(content.testimonials.title.ar, content.testimonials.title.he, content.testimonials.title.en)}
+              </h2>
+              <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-brand-silver">
+                {t(content.testimonials.subtitle.ar, content.testimonials.subtitle.he, content.testimonials.subtitle.en)}
+              </p>
+            </div>
+
+            <div className="relative mx-auto flex min-h-[520px] max-w-5xl items-center justify-center [perspective:1200px]">
+              {testimonials.map((testimonial, idx) => {
+                const offset = (idx - activeTestimonialIndex + testimonials.length) % testimonials.length;
+                const isActive = idx === activeTestimonialIndex;
+                const isPrevious = showTestimonialControls && testimonials.length > 2 && offset === testimonials.length - 1;
+                const isNext = showTestimonialControls && offset === 1;
+                const isSide = isPrevious || isNext;
+
+                return (
+                  <TestimonialCard
+                    key={testimonial.id}
+                    testimonial={testimonial}
+                    index={idx}
+                    active={isActive}
+                    className={cn(
+                      'absolute inset-x-0 mx-auto max-w-lg md:max-w-2xl',
+                      isActive && 'z-20 scale-100 opacity-100',
+                      isPrevious && 'z-10 hidden opacity-40 grayscale md:flex ltr:md:-translate-x-[42%] rtl:md:translate-x-[42%] md:scale-[0.82]',
+                      isNext && 'z-10 hidden opacity-40 grayscale md:flex ltr:md:translate-x-[42%] rtl:md:-translate-x-[42%] md:scale-[0.82]',
+                      !isActive && !isSide && 'pointer-events-none hidden opacity-0',
+                    )}
+                  />
+                );
+              })}
+            </div>
+
+            {showTestimonialControls && (
+              <div className="mt-12 flex items-center justify-center gap-6">
+                <button
+                  type="button"
+                  onClick={() => goToTestimonial(-1)}
+                  aria-label={t('السابق', 'הקודם', 'Previous testimonial')}
+                  className="flex h-14 w-14 items-center justify-center rounded-full border border-brand-gold/35 text-brand-gold transition hover:bg-brand-gold hover:text-brand-navy"
+                >
+                  <ChevronLeft className="h-7 w-7 rtl:rotate-180" />
+                </button>
+                <div className="flex items-center gap-3">
+                  {testimonials.map((testimonial, idx) => (
+                    <button
+                      key={testimonial.id}
+                      type="button"
+                      onClick={() => setActiveTestimonial(idx)}
+                      aria-label={t('اختيار التوصية', 'בחר המלצה', 'Select testimonial')}
+                      className={cn(
+                        'h-2 rounded-full transition-all',
+                        idx === activeTestimonialIndex ? 'w-6 bg-brand-gold' : 'w-2 bg-white/25 hover:bg-white/50',
+                      )}
+                    />
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => goToTestimonial(1)}
+                  aria-label={t('التالي', 'הבא', 'Next testimonial')}
+                  className="flex h-14 w-14 items-center justify-center rounded-full border border-brand-gold/35 text-brand-gold transition hover:bg-brand-gold hover:text-brand-navy"
+                >
+                  <ChevronRight className="h-7 w-7 rtl:rotate-180" />
+                </button>
+              </div>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <CTASection />
     </div>

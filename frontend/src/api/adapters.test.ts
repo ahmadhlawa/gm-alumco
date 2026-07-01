@@ -22,12 +22,14 @@ describe('API adapters', () => {
       client_name_en: 'Client', client_name_he: 'לקוח',
       message_en: 'Message', message_he: 'הודעה',
       client_position_en: null, client_position_he: null,
+      rating: 4,
       is_active: true, sort_order: 0, created_at: '', updated_at: '',
     }, 'en');
 
     expect(service).toMatchObject({ id: '4', slug: '4', title: 'Service', image: '' });
     expect(project).toMatchObject({ id: '5', slug: '5', featured: true, location: '', year: '' });
-    expect(testimonial.rating).toBeUndefined();
+    expect(testimonial.rating).toBe(4);
+    expect(testimonial).toMatchObject({ name: 'Client', content: 'Message' });
   });
 
   it('falls back he->en and en->he for public DTOs (no Arabic)', () => {

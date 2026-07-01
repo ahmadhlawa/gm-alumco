@@ -11,6 +11,7 @@ describe('admin navigation', () => {
       '/admin/projects',
       '/admin/services',
       '/admin/partners',
+      '/admin/testimonials',
       '/admin/public-stats',
       '/admin/contact-messages',
       '/admin/quote-requests',

@@ -16,6 +16,7 @@ class Testimonial(Base):
     message_he: Mapped[str] = mapped_column(String(2000))
     client_position_en: Mapped[str | None] = mapped_column(String(255), nullable=True)
     client_position_he: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    rating: Mapped[int] = mapped_column(Integer, default=5, server_default="5")
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     sort_order: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
