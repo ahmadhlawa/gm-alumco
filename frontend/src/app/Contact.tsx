@@ -1,10 +1,14 @@
 import { PageHero } from '@/components/common/PageHero';
 import { SectionHeader } from '@/components/common/SectionHeader';
 import { motion } from 'motion/react';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { ExternalLink, Mail, MapPin, Navigation, Phone } from 'lucide-react';
 import { useLanguage } from '@/i18n';
 import { ContactForm } from '@/components/forms/ContactForm';
 import { ContactActions, WHATSAPP_DISPLAY_NUMBER } from '@/components/common/ContactActions';
+
+const GOOGLE_MAPS_URL = 'https://maps.app.goo.gl/pYcDJeSKoVqDzdrP7';
+const ADDRESS_EN = 'Isefya, Abu Hushi Street 5';
+const ADDRESS_HE = 'עוספיא, רח׳ אבא חושי 5';
 
 export function Contact() {
   const { t } = useLanguage();
@@ -84,11 +88,57 @@ export function Contact() {
         </div>
       </section>
 
-      <div className="h-96 bg-gray-300 w-full relative">
-         <div className="absolute inset-0 flex items-center justify-center h-full text-gray-500 text-xl font-bold bg-white/20">
-           [Google Maps Placeholder]
-         </div>
-      </div>
+      <section className="relative overflow-hidden border-y border-white/5 bg-brand-surface py-20">
+        <div className="container mx-auto px-4">
+          <div className="grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr]">
+            <div>
+              <p className="mb-4 text-sm font-bold uppercase tracking-[0.24em] text-brand-gold">
+                {t('الموقع', 'מיקום', 'Location')}
+              </p>
+              <h2 className="text-3xl font-bold text-white md:text-4xl">
+                {t('زورونا في مقرنا', 'בקרו אותנו במשרד', 'Visit our office')}
+              </h2>
+              <p className="mt-5 max-w-xl text-lg leading-8 text-brand-silver">
+                {t(
+                  'نستقبل العملاء والشركاء في موقعنا في عسفيا لمناقشة المشاريع والتفاصيل الهندسية.',
+                  'אנו מקבלים לקוחות ושותפים במיקום שלנו בעוספיא לתיאום פרויקטים ופרטים הנדסיים.',
+                  'We welcome clients and partners at our Isefya location for project planning and engineering details.',
+                )}
+              </p>
+            </div>
+
+            <div className="rounded-lg border border-brand-gold/30 bg-brand-navy p-8 shadow-2xl shadow-black/30 md:p-10">
+              <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+                <div className="flex gap-5">
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center border border-brand-gold/40 bg-brand-gold text-brand-navy">
+                    <MapPin className="h-8 w-8" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand-gold">
+                      GM Alumco
+                    </p>
+                    <address className="mt-4 space-y-2 not-italic">
+                      <p className="text-2xl font-bold text-white" dir="ltr">{ADDRESS_EN}</p>
+                      <p className="text-2xl font-bold text-white" dir="rtl">{ADDRESS_HE}</p>
+                    </address>
+                  </div>
+                </div>
+
+                <a
+                  href={GOOGLE_MAPS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-12 items-center justify-center gap-3 bg-brand-gold px-6 py-3 font-bold text-brand-navy transition-colors hover:bg-[#e3c458] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold"
+                >
+                  <Navigation className="h-5 w-5" aria-hidden="true" />
+                  <span>Open in Google Maps</span>
+                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
