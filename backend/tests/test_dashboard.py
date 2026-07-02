@@ -42,6 +42,8 @@ def test_dashboard_stats_reflect_data(
     assert body["partners"] == 1
     assert body["contact_messages"] == {"NEW": 1, "READ": 1}
     assert body["quote_requests"] == {"NEW": 1}
+    assert body["unread_contact_messages"] == 2
+    assert body["unread_quote_requests"] == 1
 
 
 def test_dashboard_stats_requires_authentication(client: TestClient) -> None:

@@ -72,10 +72,29 @@ const dateLocale = (language: Language) => (language === 'en' ? 'en-US' : 'he-IL
 const newest = <T extends { created_at: string }>(items: T[]) => [...items].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 5);
 const countStatuses = (values: Record<string, number>) => Object.values(values).reduce((total, value) => total + value, 0);
 
+export async function loadDashboardData(isSuperAdmin: boolean): Promise<{
+  stats: DashboardStats;
+  messages: ContactMessageDto[];
+  quotes: QuoteRequestDto[];
+  logs: AuditLogDto[];
+}> {
+  const emptyActivity = { messages: [], quotes: [], logs: [] };
+  const activity = isSuperAdmin
+    ? listAuditLogs(8)
+        .then((data) => ({ ...emptyActivity, logs: newest(data) }))
+        .catch(() => emptyActivity)
+    : Promise.all([listContactMessages(), listQuoteRequests()])
+        .then(([messages, quotes]) => ({ messages: newest(messages), quotes: newest(quotes), logs: [] }))
+        .catch(() => emptyActivity);
+  const [stats, activityData] = await Promise.all([getDashboardStats(), activity]);
+  return { stats, ...activityData };
+}
+
 export function Dashboard() {
   const { admin, loading: authLoading } = useAdminAuth();
   const { language } = useLanguage();
   const copy = language === 'en' ? COPY.en : COPY.he;
+  const unreadLabel = language === 'en' ? 'New' : 'חדש';
   const isSuperAdmin = admin?.role === 'super_admin';
   const [stats, setStats] = useState<DashboardStats>();
   const [messages, setMessages] = useState<ContactMessageDto[]>([]);
@@ -86,8 +105,15 @@ export function Dashboard() {
   useEffect(() => {
     if (authLoading) return;
     setLoading(true); setError(false);
-    const activity = isSuperAdmin ? listAuditLogs(8).then((data) => setLogs(newest(data))) : Promise.all([listContactMessages(), listQuoteRequests()]).then(([m, q]) => { setMessages(newest(m)); setQuotes(newest(q)); });
-    Promise.all([getDashboardStats(), activity]).then(([data]) => setStats(data)).catch(() => setError(true)).finally(() => setLoading(false));
+    loadDashboardData(isSuperAdmin)
+      .then((data) => {
+        setStats(data.stats);
+        setMessages(data.messages);
+        setQuotes(data.quotes);
+        setLogs(data.logs);
+      })
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
   }, [authLoading, isSuperAdmin]);
 
   if (authLoading || loading) return <LoadingState message={copy.loading} />;
@@ -100,8 +126,8 @@ export function Dashboard() {
     { title: copy.cards.featured, value: stats.featured_projects, icon: Star },
     { title: copy.cards.services, value: stats.services, icon: Layers },
     { title: copy.cards.partners, value: stats.partners, icon: Handshake },
-    { title: copy.cards.messages, value: countStatuses(stats.contact_messages), icon: MessageSquare },
-    { title: copy.cards.quotes, value: countStatuses(stats.quote_requests), icon: ClipboardList },
+    { title: copy.cards.messages, value: countStatuses(stats.contact_messages), icon: MessageSquare, unreadCount: stats.unread_contact_messages, unreadLabel },
+    { title: copy.cards.quotes, value: countStatuses(stats.quote_requests), icon: ClipboardList, unreadCount: stats.unread_quote_requests, unreadLabel },
   ];
   const actions = [
     { label: copy.actions.addProject, to: '/admin/projects/new', icon: Plus },

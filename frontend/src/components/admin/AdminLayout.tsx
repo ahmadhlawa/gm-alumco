@@ -1,8 +1,18 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '@/api/auth';
+import {
+  listContactMessages,
+  listQuoteRequests,
+  markAllContactMessagesRead,
+  markAllQuoteRequestsRead,
+  markContactMessageRead,
+  markQuoteRequestRead,
+} from '@/api/messages';
+import type { ContactMessageDto, QuoteRequestDto } from '@/api/types';
 import { LogOut, Menu, X, ExternalLink, Globe } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAdminAuth } from '@/components/admin/AdminAuthProvider';
+import { AdminNotificationBell, type AdminNotificationItem } from '@/components/admin/AdminNotificationBell';
 import { getAdminNavigation } from '@/components/admin/adminNavigation';
 import { getNextPublicLanguage, useLanguage } from '@/i18n';
 
@@ -26,6 +36,9 @@ export function AdminLayout() {
   const { language, dir, setLanguage } = useLanguage();
   const copy = language === 'en' ? COPY.en : COPY.he;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [contactMessages, setContactMessages] = useState<ContactMessageDto[]>([]);
+  const [quoteRequests, setQuoteRequests] = useState<QuoteRequestDto[]>([]);
 
   const items = getAdminNavigation(admin?.role ?? 'admin', language);
   const bottomAdminPaths = new Set(['/admin/admins', '/admin/audit-logs']);
@@ -37,6 +50,65 @@ export function AdminLayout() {
     logout();
     navigate('/admin/login', { replace: true });
   };
+
+  const refreshNotifications = useCallback(async () => {
+    const [messages, quotes] = await Promise.all([listContactMessages(), listQuoteRequests()]);
+    setContactMessages(messages);
+    setQuoteRequests(quotes);
+  }, []);
+
+  useEffect(() => {
+    void refreshNotifications().catch(() => undefined);
+    const onInboxChanged = () => void refreshNotifications().catch(() => undefined);
+    window.addEventListener('admin-notifications-updated', onInboxChanged);
+    return () => window.removeEventListener('admin-notifications-updated', onInboxChanged);
+  }, [refreshNotifications]);
+
+  const notifications = useMemo<AdminNotificationItem[]>(() => {
+    const contactItems: AdminNotificationItem[] = contactMessages
+      .filter((item) => !item.is_read && item.status !== 'ARCHIVED')
+      .map((item) => ({
+        id: item.id,
+        kind: 'contact',
+        title: language === 'en' ? 'New Contact Message' : 'הודעת צור קשר חדשה',
+        primary: item.name,
+        preview: item.subject || item.message,
+        created_at: item.created_at,
+        is_read: item.is_read,
+      }));
+    const quoteItems: AdminNotificationItem[] = quoteRequests
+      .filter((item) => !item.is_read && item.status !== 'ARCHIVED')
+      .map((item) => ({
+        id: item.id,
+        kind: 'quote',
+        title: language === 'en' ? 'New Quote Request' : 'בקשת הצעת מחיר חדשה',
+        primary: item.service_type || item.name,
+        preview: item.message || item.phone,
+        created_at: item.created_at,
+        is_read: item.is_read,
+      }));
+    return [...contactItems, ...quoteItems].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 8);
+  }, [contactMessages, language, quoteRequests]);
+  const unreadNotificationCount = contactMessages.filter((item) => !item.is_read && item.status !== 'ARCHIVED').length
+    + quoteRequests.filter((item) => !item.is_read && item.status !== 'ARCHIVED').length;
+
+  const handleNotificationOpen = useCallback(async (notification: AdminNotificationItem) => {
+    if (notification.kind === 'contact') {
+      await markContactMessageRead(notification.id);
+      navigate('/admin/contact-messages');
+    } else {
+      await markQuoteRequestRead(notification.id);
+      navigate('/admin/quote-requests');
+    }
+    setIsNotificationsOpen(false);
+    await refreshNotifications();
+  }, [navigate, refreshNotifications]);
+
+  const handleMarkAllRead = useCallback(async () => {
+    await Promise.all([markAllContactMessagesRead(), markAllQuoteRequestsRead()]);
+    setIsNotificationsOpen(false);
+    await refreshNotifications();
+  }, [refreshNotifications]);
 
   // Escape closes the mobile/tablet drawer.
   useEffect(() => {
@@ -153,6 +225,16 @@ export function AdminLayout() {
         <header className="flex justify-between items-center mb-10 pb-6 border-b border-white/5">
           <h1 className="text-2xl font-bold text-white">{copy.dashboard}</h1>
           <div className="flex items-center gap-4">
+             <AdminNotificationBell
+               language={language}
+               notifications={notifications}
+               unreadCount={unreadNotificationCount}
+               isOpen={isNotificationsOpen}
+               onToggle={() => setIsNotificationsOpen((open) => !open)}
+               onClose={() => setIsNotificationsOpen(false)}
+               onNotificationOpen={(notification) => void handleNotificationOpen(notification)}
+               onMarkAllRead={() => void handleMarkAllRead()}
+             />
              <button
                type="button"
                onClick={() => setLanguage(getNextPublicLanguage(language))}

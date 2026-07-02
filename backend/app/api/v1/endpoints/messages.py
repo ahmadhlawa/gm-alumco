@@ -15,6 +15,8 @@ from app.services.inbox_service import (
     delete_inbox_record,
     get_inbox_record_or_404,
     list_inbox_records,
+    mark_all_inbox_records_read,
+    mark_inbox_record_read,
     update_inbox_status,
 )
 
@@ -43,15 +45,36 @@ def read_contact_messages(
     return list_inbox_records(db, ContactMessage)
 
 
+@admin_router.post("/mark-all-read", response_model=list[ContactMessageRead])
+def mark_contact_messages_read(
+    db: Session = Depends(get_db),
+    _: Admin = Depends(require_admin),
+) -> list[ContactMessage]:
+    return mark_all_inbox_records_read(db, ContactMessage)
+
+
 @admin_router.get("/{message_id}", response_model=ContactMessageRead)
 def read_contact_message(
     message_id: int,
     db: Session = Depends(get_db),
     _: Admin = Depends(require_admin),
 ) -> ContactMessage:
-    return get_inbox_record_or_404(
+    message = get_inbox_record_or_404(
         db, ContactMessage, message_id, label="Contact message"
     )
+    return mark_inbox_record_read(db, message)
+
+
+@admin_router.post("/{message_id}/read", response_model=ContactMessageRead)
+def mark_contact_message_read(
+    message_id: int,
+    db: Session = Depends(get_db),
+    _: Admin = Depends(require_admin),
+) -> ContactMessage:
+    message = get_inbox_record_or_404(
+        db, ContactMessage, message_id, label="Contact message"
+    )
+    return mark_inbox_record_read(db, message)
 
 
 @admin_router.patch("/{message_id}/status", response_model=ContactMessageRead)

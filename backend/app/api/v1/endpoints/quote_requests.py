@@ -18,6 +18,8 @@ from app.services.inbox_service import (
     delete_inbox_record,
     get_inbox_record_or_404,
     list_inbox_records,
+    mark_all_inbox_records_read,
+    mark_inbox_record_read,
     update_inbox_status,
 )
 
@@ -56,13 +58,32 @@ def read_quote_requests(
     return list_inbox_records(db, QuoteRequest)
 
 
+@admin_router.post("/mark-all-read", response_model=list[QuoteRequestRead])
+def mark_quote_requests_read(
+    db: Session = Depends(get_db),
+    _: Admin = Depends(require_admin),
+) -> list[QuoteRequest]:
+    return mark_all_inbox_records_read(db, QuoteRequest)
+
+
 @admin_router.get("/{request_id}", response_model=QuoteRequestRead)
 def read_quote_request(
     request_id: int,
     db: Session = Depends(get_db),
     _: Admin = Depends(require_admin),
 ) -> QuoteRequest:
-    return get_inbox_record_or_404(db, QuoteRequest, request_id, label="Quote request")
+    request = get_inbox_record_or_404(db, QuoteRequest, request_id, label="Quote request")
+    return mark_inbox_record_read(db, request)
+
+
+@admin_router.post("/{request_id}/read", response_model=QuoteRequestRead)
+def mark_quote_request_read(
+    request_id: int,
+    db: Session = Depends(get_db),
+    _: Admin = Depends(require_admin),
+) -> QuoteRequest:
+    request = get_inbox_record_or_404(db, QuoteRequest, request_id, label="Quote request")
+    return mark_inbox_record_read(db, request)
 
 
 @admin_router.patch("/{request_id}/status", response_model=QuoteRequestRead)

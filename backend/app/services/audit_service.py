@@ -1,8 +1,18 @@
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
+from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
 from app.models.audit_log import AuditLog
+
+AUDIT_RETENTION_DAYS = 7
+
+
+def cleanup_old_audit_logs(db: Session) -> None:
+    cutoff = datetime.now(UTC).replace(tzinfo=None) - timedelta(days=AUDIT_RETENTION_DAYS)
+    db.execute(delete(AuditLog).where(AuditLog.created_at < cutoff))
+    db.commit()
 
 
 def record_audit(
@@ -21,6 +31,7 @@ def record_audit(
     committed before this is called, so this performs its own commit.
     """
     try:
+        cleanup_old_audit_logs(db)
         entry = AuditLog(
             admin_id=admin_id,
             action=action,

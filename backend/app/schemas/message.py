@@ -21,6 +21,7 @@ class ContactMessageCreate(BaseModel):
 class ContactMessageRead(ContactMessageCreate, ORMModel):
     id: int
     status: ContactMessageStatus
+    is_read: bool
     created_at: datetime
 
 
@@ -52,6 +53,7 @@ class QuoteRequestCreate(BaseModel):
 class QuoteRequestRead(QuoteRequestCreate, ORMModel):
     id: int
     status: QuoteRequestStatus
+    is_read: bool
     created_at: datetime
     updated_at: datetime
 

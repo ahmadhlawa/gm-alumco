@@ -2,8 +2,14 @@ import { apiRequest } from './client'; import type { ContactMessageDto, ContactS
 export const submitContactMessage = (data: Partial<ContactMessageDto>) => apiRequest<ContactMessageDto>('/contact/messages', { method: 'POST', body: JSON.stringify(data) });
 export const submitQuoteRequest = (data: Partial<QuoteRequestDto>) => apiRequest<QuoteRequestDto>('/quote-requests', { method: 'POST', body: JSON.stringify(data) });
 export const listContactMessages = () => apiRequest<ContactMessageDto[]>('/admin/contact-messages', { authenticated: true });
+export const readContactMessage = (id: number) => apiRequest<ContactMessageDto>(`/admin/contact-messages/${id}`, { authenticated: true });
+export const markContactMessageRead = (id: number) => apiRequest<ContactMessageDto>(`/admin/contact-messages/${id}/read`, { method: 'POST', authenticated: true });
+export const markAllContactMessagesRead = () => apiRequest<ContactMessageDto[]>('/admin/contact-messages/mark-all-read', { method: 'POST', authenticated: true });
 export const updateContactStatus = (id: number, status: ContactStatus) => apiRequest<ContactMessageDto>(`/admin/contact-messages/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }), authenticated: true });
 export const deleteContactMessage = (id: number) => apiRequest<void>(`/admin/contact-messages/${id}`, { method: 'DELETE', authenticated: true });
 export const listQuoteRequests = () => apiRequest<QuoteRequestDto[]>('/admin/quote-requests', { authenticated: true });
+export const readQuoteRequest = (id: number) => apiRequest<QuoteRequestDto>(`/admin/quote-requests/${id}`, { authenticated: true });
+export const markQuoteRequestRead = (id: number) => apiRequest<QuoteRequestDto>(`/admin/quote-requests/${id}/read`, { method: 'POST', authenticated: true });
+export const markAllQuoteRequestsRead = () => apiRequest<QuoteRequestDto[]>('/admin/quote-requests/mark-all-read', { method: 'POST', authenticated: true });
 export const updateQuoteStatus = (id: number, status: QuoteStatus) => apiRequest<QuoteRequestDto>(`/admin/quote-requests/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }), authenticated: true });
 export const deleteQuoteRequest = (id: number) => apiRequest<void>(`/admin/quote-requests/${id}`, { method: 'DELETE', authenticated: true });

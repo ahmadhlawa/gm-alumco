@@ -6,16 +6,22 @@ interface StatCardProps {
   icon: React.ElementType;
   trend?: string;
   trendUp?: boolean;
+  unreadCount?: number;
+  unreadLabel?: string;
 }
 
-export function AdminStatCard({ title, value, icon: Icon, trend, trendUp }: StatCardProps) {
+export function AdminStatCard({ title, value, icon: Icon, trend, trendUp, unreadCount = 0, unreadLabel = 'New' }: StatCardProps) {
   return (
-    <div className="bg-brand-navy p-6 rounded-lg border border-white/5">
+    <div className="bg-brand-navy p-6 rounded-lg border border-white/5 shadow-xl shadow-black/10">
        <div className="flex justify-between items-start mb-4">
          <div className="p-3 bg-brand-surface rounded-md">
             <Icon className="w-6 h-6 text-brand-gold" />
          </div>
-         {trend && (
+         {unreadCount > 0 ? (
+            <span className="rounded-full border border-brand-gold/30 bg-brand-gold/10 px-2.5 py-1 text-sm font-black text-brand-gold shadow-[0_0_18px_rgba(212,175,55,0.12)]">
+              {unreadCount} {unreadLabel}
+            </span>
+         ) : trend && (
             <span className={`text-sm font-bold ${trendUp ? 'text-green-400' : 'text-red-400'}`}>
               {trend}
             </span>

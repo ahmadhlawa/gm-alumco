@@ -18,3 +18,5 @@ class DashboardStats(BaseModel):
     testimonials: int
     contact_messages: dict[str, int]
     quote_requests: dict[str, int]
+    unread_contact_messages: int
+    unread_quote_requests: int

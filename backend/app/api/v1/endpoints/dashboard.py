@@ -35,6 +35,14 @@ def _status_counts(db: Session, model: type) -> dict[str, int]:
     return {status_value: count for status_value, count in rows}
 
 
+def _unread_count(db: Session, model: type) -> int:
+    return db.scalar(
+        select(func.count())
+        .select_from(model)
+        .where(model.status != "ARCHIVED", model.is_read.is_(False))
+    ) or 0
+
+
 def _active_project_count(db: Session, category: str) -> int:
     return db.scalar(
         select(func.count())
@@ -59,4 +67,6 @@ def read_dashboard_stats(
         testimonials=_active_count(db, Testimonial),
         contact_messages=_status_counts(db, ContactMessage),
         quote_requests=_status_counts(db, QuoteRequest),
+        unread_contact_messages=_unread_count(db, ContactMessage),
+        unread_quote_requests=_unread_count(db, QuoteRequest),
     )

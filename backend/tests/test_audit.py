@@ -1,3 +1,5 @@
+from datetime import UTC, datetime, timedelta
+
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -57,3 +59,21 @@ def test_audit_logs_endpoint_requires_super_admin(
         "super_admin@example.com",
     }
     assert anonymous.status_code == 401
+
+
+def test_audit_logs_older_than_seven_days_are_cleaned_up(
+    client: TestClient, db: Session, auth_headers
+) -> None:
+    super_headers = auth_headers(role="super_admin")
+    now = datetime.now(UTC).replace(tzinfo=None)
+    old_log = AuditLog(action="old", created_at=now - timedelta(days=8))
+    recent_log = AuditLog(action="recent", created_at=now - timedelta(days=6))
+    db.add_all([old_log, recent_log])
+    db.commit()
+
+    response = client.get("/api/v1/admin/audit-logs", headers=super_headers)
+
+    assert response.status_code == 200
+    assert "old" not in {item["action"] for item in response.json()}
+    assert "recent" in {item["action"] for item in response.json()}
+    assert db.scalar(select(AuditLog).where(AuditLog.action == "old")) is None

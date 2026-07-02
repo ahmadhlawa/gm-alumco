@@ -9,6 +9,8 @@ export interface DashboardStats {
   partners: number;
   contact_messages: Record<string, number>;
   quote_requests: Record<string, number>;
+  unread_contact_messages: number;
+  unread_quote_requests: number;
 }
 
 export const getDashboardStats = () =>

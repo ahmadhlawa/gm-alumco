@@ -7,6 +7,7 @@ from app.db.database import get_db
 from app.models.admin import Admin
 from app.models.audit_log import AuditLog
 from app.schemas.audit_log import AuditLogRead
+from app.services.audit_service import cleanup_old_audit_logs
 
 
 router = APIRouter()
@@ -18,6 +19,7 @@ def read_audit_logs(
     db: Session = Depends(get_db),
     _: Admin = Depends(require_super_admin),
 ) -> list[AuditLog]:
+    cleanup_old_audit_logs(db)
     return list(
         db.scalars(select(AuditLog).order_by(AuditLog.id.desc()).limit(limit)).all()
     )

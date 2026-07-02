@@ -1,7 +1,7 @@
 from typing import TypeVar
 
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 
@@ -34,6 +34,20 @@ def update_inbox_status(db: Session, record: InboxT, new_status: str) -> InboxT:
     db.commit()
     db.refresh(record)
     return record
+
+
+def mark_inbox_record_read(db: Session, record: InboxT) -> InboxT:
+    if not getattr(record, "is_read", False):
+        setattr(record, "is_read", True)
+        db.commit()
+        db.refresh(record)
+    return record
+
+
+def mark_all_inbox_records_read(db: Session, model: type[InboxT]) -> list[InboxT]:
+    db.execute(update(model).where(model.is_read.is_(False)).values(is_read=True))
+    db.commit()
+    return list_inbox_records(db, model)
 
 
 def delete_inbox_record(db: Session, record: InboxT) -> None:

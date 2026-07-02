@@ -37,9 +37,11 @@ def test_public_contact_submission_creates_new_message(
 
     assert response.status_code == 201
     assert response.json()["status"] == "NEW"
+    assert response.json()["is_read"] is False
     stored = db.scalar(select(ContactMessage))
     assert stored is not None
     assert stored.email == "visitor@example.com"
+    assert stored.is_read is False
 
 
 def test_public_contact_submission_validates_email(client: TestClient) -> None:
@@ -57,9 +59,11 @@ def test_public_quote_submission_creates_new_request(
 
     assert response.status_code == 201
     assert response.json()["status"] == "NEW"
+    assert response.json()["is_read"] is False
     stored = db.scalar(select(QuoteRequest))
     assert stored is not None
     assert stored.phone == "+970598000000"
+    assert stored.is_read is False
 
 
 def test_public_quote_submission_stays_successful_when_email_fails(
@@ -155,6 +159,26 @@ def test_admin_manages_contact_messages(client: TestClient, auth_headers) -> Non
     ).status_code == 404
 
 
+def test_admin_marks_contact_messages_read(client: TestClient, auth_headers) -> None:
+    first = client.post("/api/v1/contact/messages", json=contact_payload()).json()
+    second = client.post(
+        "/api/v1/contact/messages",
+        json=contact_payload(email="second@example.com"),
+    ).json()
+    headers = auth_headers()
+
+    detail = client.get(f"/api/v1/admin/contact-messages/{first['id']}", headers=headers)
+    listing_after_detail = client.get("/api/v1/admin/contact-messages", headers=headers)
+    mark_all = client.post("/api/v1/admin/contact-messages/mark-all-read", headers=headers)
+
+    assert detail.status_code == 200
+    assert detail.json()["is_read"] is True
+    states = {item["id"]: item["is_read"] for item in listing_after_detail.json()}
+    assert states == {second["id"]: False, first["id"]: True}
+    assert mark_all.status_code == 200
+    assert all(item["is_read"] for item in mark_all.json())
+
+
 def test_admin_manages_quote_requests(client: TestClient, auth_headers) -> None:
     created = client.post("/api/v1/quote-requests", json=quote_payload()).json()
     headers = auth_headers()
@@ -187,3 +211,23 @@ def test_admin_manages_quote_requests(client: TestClient, auth_headers) -> None:
         headers=headers,
         json={"status": "DONE"},
     ).status_code == 404
+
+
+def test_admin_marks_quote_requests_read(client: TestClient, auth_headers) -> None:
+    first = client.post("/api/v1/quote-requests", json=quote_payload()).json()
+    second = client.post(
+        "/api/v1/quote-requests",
+        json=quote_payload(phone="+970597000000"),
+    ).json()
+    headers = auth_headers()
+
+    detail = client.get(f"/api/v1/admin/quote-requests/{first['id']}", headers=headers)
+    listing_after_detail = client.get("/api/v1/admin/quote-requests", headers=headers)
+    mark_all = client.post("/api/v1/admin/quote-requests/mark-all-read", headers=headers)
+
+    assert detail.status_code == 200
+    assert detail.json()["is_read"] is True
+    states = {item["id"]: item["is_read"] for item in listing_after_detail.json()}
+    assert states == {second["id"]: False, first["id"]: True}
+    assert mark_all.status_code == 200
+    assert all(item["is_read"] for item in mark_all.json())
