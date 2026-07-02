@@ -9,6 +9,28 @@ export class ApiError extends Error {
 
 type ApiRequestOptions = RequestInit & { authenticated?: boolean };
 
+interface ValidationDetail {
+  loc?: Array<string | number>;
+  msg?: string;
+}
+
+function formatDetail(detail: unknown, fallback: string): string {
+  if (typeof detail === 'string') return detail;
+  if (Array.isArray(detail)) {
+    const messages = detail
+      .map((item: unknown) => {
+        if (!item || typeof item !== 'object') return null;
+        const validation = item as ValidationDetail;
+        if (!validation.msg) return null;
+        const field = validation.loc?.filter((part) => part !== 'body').join('.');
+        return field ? `${field}: ${validation.msg}` : validation.msg;
+      })
+      .filter((message): message is string => Boolean(message));
+    if (messages.length) return messages.join('\n');
+  }
+  return fallback;
+}
+
 export async function apiRequest<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
   const baseUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, '');
   if (!baseUrl) throw new ApiError(0, 'VITE_API_URL is not configured');
@@ -28,8 +50,9 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
     globalThis.dispatchEvent?.(new Event('gm-auth-expired'));
   }
   if (!response.ok) {
-    const payload = await response.json().catch(() => null) as { detail?: string } | null;
-    throw new ApiError(response.status, payload?.detail ?? `Request failed (${response.status})`);
+    const fallback = `Request failed (${response.status})`;
+    const payload = await response.json().catch(() => null) as { detail?: unknown } | null;
+    throw new ApiError(response.status, formatDetail(payload?.detail, fallback));
   }
   if (response.status === 204) return undefined as T;
   return response.json() as Promise<T>;

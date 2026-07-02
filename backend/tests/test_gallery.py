@@ -60,3 +60,22 @@ def test_gallery_requires_http_url_and_admin_auth(client: TestClient, auth_heade
     )
     assert response.status_code == 422
     assert client.get("/api/v1/admin/gallery").status_code == 401
+
+
+def test_gallery_rejects_values_that_exceed_database_lengths(
+    client: TestClient, auth_headers
+) -> None:
+    headers = auth_headers()
+    long_title = client.post(
+        "/api/v1/admin/gallery",
+        headers=headers,
+        json=gallery_payload(title_en="x" * 256),
+    )
+    long_category = client.post(
+        "/api/v1/admin/gallery",
+        headers=headers,
+        json=gallery_payload(category="x" * 101),
+    )
+
+    assert long_title.status_code == 422
+    assert long_category.status_code == 422

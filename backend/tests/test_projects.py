@@ -131,5 +131,30 @@ def test_project_rejects_invalid_category_and_url(
     assert bad_url.status_code == 422
 
 
+def test_project_rejects_values_that_exceed_database_lengths(
+    client: TestClient, auth_headers
+) -> None:
+    headers = auth_headers()
+    long_title = client.post(
+        "/api/v1/admin/projects",
+        headers=headers,
+        json=project_payload(title_en="x" * 256),
+    )
+    long_description = client.post(
+        "/api/v1/admin/projects",
+        headers=headers,
+        json=project_payload(description_en="x" * 2001),
+    )
+    long_alt = client.post(
+        "/api/v1/admin/projects/1/images",
+        headers=headers,
+        json={"image_url": "https://x.test/1.jpg", "alt_text_en": "x" * 256},
+    )
+
+    assert long_title.status_code == 422
+    assert long_description.status_code == 422
+    assert long_alt.status_code == 422
+
+
 def test_project_admin_routes_require_authentication(client: TestClient) -> None:
     assert client.get("/api/v1/admin/projects").status_code == 401

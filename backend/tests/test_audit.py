@@ -6,7 +6,9 @@ from sqlalchemy.orm import Session
 
 from app.models.audit_log import AuditLog
 
+from tests.test_partners import partner_payload
 from tests.test_projects import project_payload
+from tests.test_services import service_payload
 
 
 def _actions(db: Session) -> list[str]:
@@ -37,6 +39,43 @@ def test_project_mutations_are_audited(
 
     actions = _actions(db)
     assert actions == ["login", "create", "update", "delete"]
+
+
+def test_service_and_partner_mutations_are_audited(
+    client: TestClient, db: Session, auth_headers
+) -> None:
+    headers = auth_headers()
+
+    service = client.post(
+        "/api/v1/admin/services", headers=headers, json=service_payload()
+    ).json()
+    client.put(
+        f"/api/v1/admin/services/{service['id']}",
+        headers=headers,
+        json={"title_en": "Updated service"},
+    )
+    client.delete(f"/api/v1/admin/services/{service['id']}", headers=headers)
+
+    partner = client.post(
+        "/api/v1/admin/partners", headers=headers, json=partner_payload()
+    ).json()
+    client.put(
+        f"/api/v1/admin/partners/{partner['id']}",
+        headers=headers,
+        json={"website_url": None},
+    )
+    client.delete(f"/api/v1/admin/partners/{partner['id']}", headers=headers)
+
+    logs = list(db.scalars(select(AuditLog).order_by(AuditLog.id)).all())
+    assert [(log.action, log.entity_type) for log in logs] == [
+        ("login", None),
+        ("create", "service"),
+        ("update", "service"),
+        ("delete", "service"),
+        ("create", "partner"),
+        ("update", "partner"),
+        ("delete", "partner"),
+    ]
 
 
 def test_audit_logs_endpoint_requires_super_admin(

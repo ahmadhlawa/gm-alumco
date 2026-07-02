@@ -52,6 +52,33 @@ def test_public_contact_submission_validates_email(client: TestClient) -> None:
     assert response.status_code == 422
 
 
+def test_public_contact_submission_rejects_blank_required_fields(
+    client: TestClient,
+) -> None:
+    blank_name = client.post(
+        "/api/v1/contact/messages",
+        json=contact_payload(name="   "),
+    )
+    blank_message = client.post(
+        "/api/v1/contact/messages",
+        json=contact_payload(message="   "),
+    )
+
+    assert blank_name.status_code == 422
+    assert blank_message.status_code == 422
+
+
+def test_public_contact_submission_rejects_oversized_message(
+    client: TestClient,
+) -> None:
+    response = client.post(
+        "/api/v1/contact/messages",
+        json=contact_payload(message="x" * 5001),
+    )
+
+    assert response.status_code == 422
+
+
 def test_public_quote_submission_creates_new_request(
     client: TestClient, db: Session
 ) -> None:
@@ -112,6 +139,33 @@ def test_public_quote_submission_allows_missing_email_but_requires_valid_supplie
     assert no_email.status_code == 201
     assert no_email.json()["email"] is None
     assert no_phone.status_code == 422
+
+
+def test_public_quote_submission_rejects_blank_required_fields(
+    client: TestClient,
+) -> None:
+    blank_name = client.post(
+        "/api/v1/quote-requests",
+        json=quote_payload(name="   "),
+    )
+    blank_phone = client.post(
+        "/api/v1/quote-requests",
+        json=quote_payload(phone="   "),
+    )
+
+    assert blank_name.status_code == 422
+    assert blank_phone.status_code == 422
+
+
+def test_public_quote_submission_rejects_oversized_message(
+    client: TestClient,
+) -> None:
+    response = client.post(
+        "/api/v1/quote-requests",
+        json=quote_payload(message="x" * 5001),
+    )
+
+    assert response.status_code == 422
 
 
 def test_inbox_admin_routes_require_authentication(client: TestClient) -> None:

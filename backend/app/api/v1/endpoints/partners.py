@@ -13,6 +13,7 @@ from app.services.crud import (
     soft_delete_entity,
     update_entity,
 )
+from app.services.audit_service import record_audit
 
 
 public_router = APIRouter()
@@ -45,9 +46,17 @@ def read_admin_partner(
 def create_partner(
     data: PartnerCreate,
     db: Session = Depends(get_db),
-    _: Admin = Depends(require_admin),
+    current_admin: Admin = Depends(require_admin),
 ) -> Partner:
-    return create_entity(db, Partner, data)
+    partner = create_entity(db, Partner, data)
+    record_audit(
+        db,
+        admin_id=current_admin.id,
+        action="create",
+        entity_type="partner",
+        entity_id=partner.id,
+    )
+    return partner
 
 
 @admin_router.put("/{partner_id}", response_model=PartnerRead)
@@ -55,16 +64,31 @@ def update_partner(
     partner_id: int,
     data: PartnerUpdate,
     db: Session = Depends(get_db),
-    _: Admin = Depends(require_admin),
+    current_admin: Admin = Depends(require_admin),
 ) -> Partner:
-    return update_entity(db, get_entity_or_404(db, Partner, partner_id), data)
+    partner = update_entity(db, get_entity_or_404(db, Partner, partner_id), data)
+    record_audit(
+        db,
+        admin_id=current_admin.id,
+        action="update",
+        entity_type="partner",
+        entity_id=partner.id,
+    )
+    return partner
 
 
 @admin_router.delete("/{partner_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_partner(
     partner_id: int,
     db: Session = Depends(get_db),
-    _: Admin = Depends(require_admin),
+    current_admin: Admin = Depends(require_admin),
 ) -> Response:
     soft_delete_entity(db, get_entity_or_404(db, Partner, partner_id))
+    record_audit(
+        db,
+        admin_id=current_admin.id,
+        action="delete",
+        entity_type="partner",
+        entity_id=partner_id,
+    )
     return Response(status_code=status.HTTP_204_NO_CONTENT)

@@ -44,4 +44,28 @@ describe('apiRequest', () => {
     await expect(apiRequest('/auth/me', { authenticated: true })).rejects.toBeInstanceOf(ApiError);
     expect(getAccessToken()).toBeNull();
   });
+
+  it('formats FastAPI validation errors into readable messages', async () => {
+    const { apiRequest } = await import('./client');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            detail: [
+              {
+                loc: ['body', 'image_url'],
+                msg: 'URL must use HTTP or HTTPS',
+              },
+            ],
+          }),
+          { status: 422, headers: { 'Content-Type': 'application/json' } },
+        ),
+      ),
+    );
+
+    await expect(apiRequest('/admin/services', { method: 'POST' })).rejects.toThrow(
+      'image_url: URL must use HTTP or HTTPS',
+    );
+  });
 });

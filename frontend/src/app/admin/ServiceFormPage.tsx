@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { ApiError } from '@/api/client';
 import { createService, getAdminService, updateService } from '@/api/services';
 import type { ServiceDto } from '@/api/types';
 import { LoadingState } from '@/components/common/LoadingState';
@@ -26,6 +27,7 @@ const COPY = {
     active: 'פעיל ומוצג באתר',
     save: 'שמירת השירות',
     saving: 'שומר…',
+    saveFailed: 'Could not save the service.',
   },
   en: {
     editTitle: 'Edit service',
@@ -39,6 +41,7 @@ const COPY = {
     orderPlaceholder: 'Order',
     active: 'Active and visible on the site',
     save: 'Save service',
+    saveFailed: 'Could not save the service.',
     saving: 'Saving…',
   },
 };
@@ -52,20 +55,29 @@ export function ServiceFormPage() {
   const [loading, setLoading] = useState(Boolean(id));
   const [error, setError] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const set = <K extends keyof Values>(key: K, value: Values[K]) => setValues((v) => ({ ...v, [key]: value }));
 
   useEffect(() => { if (id) getAdminService(id).then((item) => setValues(item)).catch(() => setError(true)).finally(() => setLoading(false)); }, [id]);
 
   const submit = async (event: FormEvent) => {
-    event.preventDefault(); setSaving(true);
+    event.preventDefault(); setSaving(true); setSubmitError(null);
     const payload = { ...values, description_en: values.description_en || null, description_he: values.description_he || null, image_url: values.image_url || null, starting_price: values.starting_price || null };
-    try { if (id) await updateService(id, payload); else await createService(payload); navigate('/admin/services'); } finally { setSaving(false); }
+    try {
+      if (id) await updateService(id, payload); else await createService(payload);
+      navigate('/admin/services');
+    } catch (submitError) {
+      setSubmitError(submitError instanceof ApiError ? submitError.message : copy.saveFailed);
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) return <LoadingState />;
   if (error) return <ErrorState />;
   return <form onSubmit={submit} className="max-w-5xl space-y-6">
     <div><h2 className="text-2xl font-bold text-white">{id ? copy.editTitle : copy.addTitle}</h2><p className="mt-1 text-brand-silver">{copy.description}</p></div>
+    {submitError && <div className="rounded border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-300 whitespace-pre-wrap">{submitError}</div>}
     <div className="grid gap-5 lg:grid-cols-2">{(['he', 'en'] as const).map((lang) => <section key={lang} className="space-y-3">
       <h3 className="font-bold text-brand-gold">{lang === 'en' ? 'English' : 'עברית'}</h3>
       <input required value={values[`title_${lang}`]} onChange={(e) => set(`title_${lang}`, e.target.value)} className={input} placeholder={copy.titlePlaceholder} dir={lang === 'en' ? 'ltr' : 'rtl'} />

@@ -63,3 +63,28 @@ def test_service_validates_url_and_auth(client: TestClient, auth_headers) -> Non
     )
     assert response.status_code == 422
     assert client.get("/api/v1/admin/services").status_code == 401
+
+
+def test_service_rejects_values_that_exceed_database_lengths_or_negative_price(
+    client: TestClient, auth_headers
+) -> None:
+    headers = auth_headers()
+    long_title = client.post(
+        "/api/v1/admin/services",
+        headers=headers,
+        json=service_payload(title_en="x" * 256),
+    )
+    long_description = client.post(
+        "/api/v1/admin/services",
+        headers=headers,
+        json=service_payload(description_en="x" * 2001),
+    )
+    negative_price = client.post(
+        "/api/v1/admin/services",
+        headers=headers,
+        json=service_payload(starting_price="-1.00"),
+    )
+
+    assert long_title.status_code == 422
+    assert long_description.status_code == 422
+    assert negative_price.status_code == 422

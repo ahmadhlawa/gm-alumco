@@ -8,6 +8,23 @@ from app.schemas.common import ORMModel, validate_http_url
 
 ContactMessageStatus = Literal["NEW", "READ", "ARCHIVED"]
 QuoteRequestStatus = Literal["NEW", "IN_PROGRESS", "DONE", "ARCHIVED"]
+MESSAGE_MAX_LENGTH = 5000
+
+
+def _strip_required_text(value: str) -> str:
+    if isinstance(value, str):
+        value = value.strip()
+    if value == "":
+        raise ValueError("Field must not be blank")
+    return value
+
+
+def _strip_optional_text(value: str | None) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, str):
+        value = value.strip()
+    return value or None
 
 
 class ContactMessageCreate(BaseModel):
@@ -15,7 +32,17 @@ class ContactMessageCreate(BaseModel):
     email: EmailStr
     phone: str | None = Field(default=None, max_length=50)
     subject: str | None = Field(default=None, max_length=255)
-    message: str = Field(min_length=1)
+    message: str = Field(min_length=1, max_length=MESSAGE_MAX_LENGTH)
+
+    @field_validator("name", "message", mode="before")
+    @classmethod
+    def _required_text_not_blank(cls, value: str) -> str:
+        return _strip_required_text(value)
+
+    @field_validator("phone", "subject", mode="before")
+    @classmethod
+    def _optional_text_empty_to_none(cls, value: str | None) -> str | None:
+        return _strip_optional_text(value)
 
 
 class ContactMessageRead(ContactMessageCreate, ORMModel):
@@ -34,10 +61,20 @@ class QuoteRequestCreate(BaseModel):
     email: EmailStr | None = None
     phone: str = Field(min_length=1, max_length=50)
     service_type: str | None = Field(default=None, max_length=180)
-    message: str | None = None
+    message: str | None = Field(default=None, max_length=MESSAGE_MAX_LENGTH)
     # Optional link (e.g. Google Drive / cloud folder) to plans or files.
     # Stored only as text — no files are uploaded or stored.
     plans_link: str | None = Field(default=None, max_length=1000)
+
+    @field_validator("name", "phone", mode="before")
+    @classmethod
+    def _required_text_not_blank(cls, value: str) -> str:
+        return _strip_required_text(value)
+
+    @field_validator("service_type", "message", mode="before")
+    @classmethod
+    def _optional_text_empty_to_none(cls, value: str | None) -> str | None:
+        return _strip_optional_text(value)
 
     @field_validator("plans_link")
     @classmethod

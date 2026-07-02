@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.schemas.common import ImageUrlString, ORMModel
 
@@ -10,12 +10,12 @@ ProjectCategory = Literal["LOCAL", "INTERNATIONAL", "FEATURED"]
 
 
 class ProjectBase(BaseModel):
-    title_en: str
-    title_he: str
-    description_en: str | None = None
-    description_he: str | None = None
+    title_en: str = Field(min_length=1, max_length=255)
+    title_he: str = Field(min_length=1, max_length=255)
+    description_en: str | None = Field(default=None, max_length=2000)
+    description_he: str | None = Field(default=None, max_length=2000)
     category: ProjectCategory = "LOCAL"
-    main_image_url: ImageUrlString | None = None
+    main_image_url: ImageUrlString | None = Field(default=None, max_length=500)
     is_active: bool = True
     sort_order: int = 0
 
@@ -25,12 +25,12 @@ class ProjectCreate(ProjectBase):
 
 
 class ProjectUpdate(BaseModel):
-    title_en: str | None = None
-    title_he: str | None = None
-    description_en: str | None = None
-    description_he: str | None = None
+    title_en: str | None = Field(default=None, min_length=1, max_length=255)
+    title_he: str | None = Field(default=None, min_length=1, max_length=255)
+    description_en: str | None = Field(default=None, max_length=2000)
+    description_he: str | None = Field(default=None, max_length=2000)
     category: ProjectCategory | None = None
-    main_image_url: ImageUrlString | None = None
+    main_image_url: ImageUrlString | None = Field(default=None, max_length=500)
     is_active: bool | None = None
     sort_order: int | None = None
 
@@ -42,9 +42,9 @@ class ProjectRead(ProjectBase, ORMModel):
 
 
 class ProjectImageCreate(BaseModel):
-    image_url: ImageUrlString
-    alt_text_en: str | None = None
-    alt_text_he: str | None = None
+    image_url: ImageUrlString = Field(max_length=500)
+    alt_text_en: str | None = Field(default=None, max_length=255)
+    alt_text_he: str | None = Field(default=None, max_length=255)
     sort_order: int = 0
 
 

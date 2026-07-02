@@ -55,3 +55,15 @@ def test_partner_validates_urls_and_auth(client: TestClient, auth_headers) -> No
     )
     assert response.status_code == 422
     assert client.get("/api/v1/admin/partners").status_code == 401
+
+
+def test_partner_rejects_values_that_exceed_database_lengths(
+    client: TestClient, auth_headers
+) -> None:
+    response = client.post(
+        "/api/v1/admin/partners",
+        headers=auth_headers(),
+        json=partner_payload(name_en="x" * 256),
+    )
+
+    assert response.status_code == 422

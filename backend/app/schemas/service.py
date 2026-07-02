@@ -1,18 +1,18 @@
 from datetime import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.schemas.common import ImageUrlString, ORMModel
 
 
 class ServiceBase(BaseModel):
-    title_en: str
-    title_he: str
-    description_en: str | None = None
-    description_he: str | None = None
-    image_url: ImageUrlString | None = None
-    starting_price: Decimal | None = None
+    title_en: str = Field(min_length=1, max_length=255)
+    title_he: str = Field(min_length=1, max_length=255)
+    description_en: str | None = Field(default=None, max_length=2000)
+    description_he: str | None = Field(default=None, max_length=2000)
+    image_url: ImageUrlString | None = Field(default=None, max_length=500)
+    starting_price: Decimal | None = Field(default=None, ge=0, max_digits=12, decimal_places=2)
     is_active: bool = True
     sort_order: int = 0
 
@@ -22,12 +22,12 @@ class ServiceCreate(ServiceBase):
 
 
 class ServiceUpdate(BaseModel):
-    title_en: str | None = None
-    title_he: str | None = None
-    description_en: str | None = None
-    description_he: str | None = None
-    image_url: ImageUrlString | None = None
-    starting_price: Decimal | None = None
+    title_en: str | None = Field(default=None, min_length=1, max_length=255)
+    title_he: str | None = Field(default=None, min_length=1, max_length=255)
+    description_en: str | None = Field(default=None, max_length=2000)
+    description_he: str | None = Field(default=None, max_length=2000)
+    image_url: ImageUrlString | None = Field(default=None, max_length=500)
+    starting_price: Decimal | None = Field(default=None, ge=0, max_digits=12, decimal_places=2)
     is_active: bool | None = None
     sort_order: int | None = None
 

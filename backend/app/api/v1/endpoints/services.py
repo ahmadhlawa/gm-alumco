@@ -13,6 +13,7 @@ from app.services.crud import (
     soft_delete_entity,
     update_entity,
 )
+from app.services.audit_service import record_audit
 
 
 public_router = APIRouter()
@@ -50,9 +51,17 @@ def read_admin_service(
 def create_service(
     data: ServiceCreate,
     db: Session = Depends(get_db),
-    _: Admin = Depends(require_admin),
+    current_admin: Admin = Depends(require_admin),
 ) -> Service:
-    return create_entity(db, Service, data)
+    service = create_entity(db, Service, data)
+    record_audit(
+        db,
+        admin_id=current_admin.id,
+        action="create",
+        entity_type="service",
+        entity_id=service.id,
+    )
+    return service
 
 
 @admin_router.put("/{service_id}", response_model=ServiceRead)
@@ -60,16 +69,31 @@ def update_service(
     service_id: int,
     data: ServiceUpdate,
     db: Session = Depends(get_db),
-    _: Admin = Depends(require_admin),
+    current_admin: Admin = Depends(require_admin),
 ) -> Service:
-    return update_entity(db, get_entity_or_404(db, Service, service_id), data)
+    service = update_entity(db, get_entity_or_404(db, Service, service_id), data)
+    record_audit(
+        db,
+        admin_id=current_admin.id,
+        action="update",
+        entity_type="service",
+        entity_id=service.id,
+    )
+    return service
 
 
 @admin_router.delete("/{service_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_service(
     service_id: int,
     db: Session = Depends(get_db),
-    _: Admin = Depends(require_admin),
+    current_admin: Admin = Depends(require_admin),
 ) -> Response:
     soft_delete_entity(db, get_entity_or_404(db, Service, service_id))
+    record_audit(
+        db,
+        admin_id=current_admin.id,
+        action="delete",
+        entity_type="service",
+        entity_id=service_id,
+    )
     return Response(status_code=status.HTTP_204_NO_CONTENT)

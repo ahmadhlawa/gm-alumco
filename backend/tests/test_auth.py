@@ -26,6 +26,18 @@ def test_login_returns_token_updates_last_login_and_me(
     assert admin.last_login_at is not None
 
 
+def test_login_accepts_seeded_local_admin_email(client: TestClient, make_admin) -> None:
+    make_admin(email="admin@gm-alomco.local", role="super_admin")
+
+    response = client.post(
+        "/api/v1/auth/login",
+        json={"email": "admin@gm-alomco.local", "password": "StrongPass123!"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["access_token"]
+
+
 def test_login_rejects_wrong_password(client: TestClient, make_admin) -> None:
     make_admin()
     response = client.post(
