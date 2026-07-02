@@ -84,11 +84,10 @@ export function Footer({ cmsContent, previewLocale }: FooterProps = {}) {
       active = false;
     };
   }, [locale]);
-  const cmsText = (value: LocalizedText | undefined, ar: string, he: string, en: string) => {
-    if (!value) return t(ar, he, en);
-    if (locale === 'he') return value.he || value.en || value.ar || '';
-    if (locale === 'en') return value.en || value.he || value.ar || '';
-    return value.ar || value.he || value.en || '';
+  const cmsText = (value: LocalizedText | undefined, he: string, en: string) => {
+    if (!value) return t(he, en);
+    if (locale === 'en') return value.en || value.he || '';
+    return value.he || value.en || '';
   };
 
   return (
@@ -98,12 +97,11 @@ export function Footer({ cmsContent, previewLocale }: FooterProps = {}) {
           <div>
             <Link to="/" className="flex items-center gap-2 mb-6">
               <img src="/images/logo-TAS-footer.png" alt="T.A.S" className="w-10 h-10 object-contain" />
-              <span className="font-bold text-xl tracking-tight text-white">{cmsText(cmsContent?.logoText, 'T.A.S', 'T.A.S', 'T.A.S')}</span>
+              <span className="font-bold text-xl tracking-tight text-white">{cmsText(cmsContent?.logoText, 'T.A.S', 'T.A.S')}</span>
             </Link>
             <p className="text-gray-400 mb-6 leading-relaxed">
               {cmsText(
                 cmsContent?.description,
-                'شركة رائدة متخصصة في تصميم وتصنيع وتركيب أنظمة الألمنيوم والزجاج المتطورة للمشاريع السكنية والتجارية ببصمة معمارية فريدة.',
                 'חברה מובילה המתמחה בתכנון, ייצור והתקנה של מערכות אלומיניום וזכוכית מתקדמות לפרויקטים למגורים ולמסחר.',
                 'A leading company specializing in design, fabrication and installation of advanced aluminum and glass systems for residential and commercial projects.',
               )}
@@ -117,28 +115,28 @@ export function Footer({ cmsContent, previewLocale }: FooterProps = {}) {
           </div>
 
           <div>
-            <h3 className="text-lg font-bold mb-6 text-white">{t('روابط سريعة', 'קישורים מהירים', 'Quick links')}</h3>
+            <h3 className="text-lg font-bold mb-6 text-white">{t('קישורים מהירים', 'Quick links')}</h3>
             <ul className="space-y-4">
-              <li><Link to="/about" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('عن الشركة', 'עלינו', 'About')}</Link></li>
-              <li><Link to="/projects" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('معرض المشاريع', 'פרויקטים', 'Projects')}</Link></li>
-              <li><Link to="/careers" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('الوظائف', 'קריירה', 'Careers')}</Link></li>
-              <li><Link to="/contact" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('اتصل بنا', 'צור קשר', 'Contact')}</Link></li>
+              <li><Link to="/about" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('עלינו', 'About')}</Link></li>
+              <li><Link to="/projects" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('פרויקטים', 'Projects')}</Link></li>
+              <li><Link to="/careers" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('קריירה', 'Careers')}</Link></li>
+              <li><Link to="/contact" className="text-gray-400 hover:text-brand-gold transition-colors block">{t('צור קשר', 'Contact')}</Link></li>
             </ul>
           </div>
 
           <FooterServices
             services={services}
             loaded={servicesLoaded}
-            heading={t('خدماتنا', 'שירותים', 'Services')}
-            emptyLabel={t('لا توجد خدمات متاحة حالياً.', 'אין שירותים זמינים כרגע.', 'No services available')}
+            heading={t('שירותים', 'Services')}
+            emptyLabel={t('אין שירותים זמינים כרגע.', 'No services available')}
           />
 
           <div>
-            <h3 className="text-lg font-bold mb-6 text-white">{t('تواصل معنا', 'צור קשר', 'Contact us')}</h3>
+            <h3 className="text-lg font-bold mb-6 text-white">{t('צור קשר', 'Contact us')}</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3 text-gray-400">
                 <MapPin className="w-5 h-5 text-brand-gold shrink-0 mt-0.5" />
-                <span>{cmsText(cmsContent?.address, 'متاح بموعد مسبق', 'זמין בתיאום מראש', 'Available by appointment')}</span>
+                <span>{cmsText(cmsContent?.address, 'זמין בתיאום מראש', 'Available by appointment')}</span>
               </li>
               <li className="flex items-center gap-3 text-gray-400">
                 <Phone className="w-5 h-5 text-brand-gold shrink-0" />
@@ -154,12 +152,12 @@ export function Footer({ cmsContent, previewLocale }: FooterProps = {}) {
 
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:rtl:text-right md:ltr:text-left">
           <p className="text-brand-silver text-sm">
-            &copy; {currentYear} {cmsText(cmsContent?.copyright, 'شركة T.A.S. جميع الحقوق محفوظة.', 'T.A.S. כל הזכויות שמורות.', 'T.A.S. All rights reserved.')}
+            &copy; {currentYear} {cmsText(cmsContent?.copyright, 'T.A.S. כל הזכויות שמורות.', 'T.A.S. All rights reserved.')}
           </p>
           <div className="flex gap-4 text-sm text-brand-silver">
-            <Link to="/admin/login" className="hover:text-brand-gold transition-colors">{t('تسجيل دخول الإدارة', 'התחברות מנהל', 'Admin login')}</Link>
-            <Link to="#" className="hover:text-white transition-colors">{t('الشروط والأحكام', 'תנאים והגבלות', 'Terms')}</Link>
-            <Link to="#" className="hover:text-white transition-colors">{t('سياسة الخصوصية', 'מדיניות פרטיות', 'Privacy policy')}</Link>
+            <Link to="/admin/login" className="hover:text-brand-gold transition-colors">{t('התחברות מנהל', 'Admin login')}</Link>
+            <Link to="#" className="hover:text-white transition-colors">{t('תנאים והגבלות', 'Terms')}</Link>
+            <Link to="#" className="hover:text-white transition-colors">{t('מדיניות פרטיות', 'Privacy policy')}</Link>
           </div>
         </div>
       </div>

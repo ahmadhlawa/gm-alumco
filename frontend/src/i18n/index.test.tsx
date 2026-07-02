@@ -23,10 +23,10 @@ describe('public language system', () => {
     expect(getNextPublicLanguage('en')).toBe('he');
   });
 
-  it('uses Arabic only as a last-resort translation fallback', () => {
-    expect(translatePublic('he', 'Arabic', 'Hebrew', 'English')).toBe('Hebrew');
-    expect(translatePublic('he', 'Arabic', undefined, 'English')).toBe('English');
-    expect(translatePublic('en', 'Arabic', 'Hebrew', 'English')).toBe('English');
-    expect(translatePublic('en', 'Arabic', 'Hebrew')).toBe('Hebrew');
+  it('falls back between Hebrew and English', () => {
+    expect(translatePublic('he', 'Hebrew', 'English')).toBe('Hebrew');
+    expect(translatePublic('he', '', 'English')).toBe('English');
+    expect(translatePublic('en', 'Hebrew', 'English')).toBe('English');
+    expect(translatePublic('en', 'Hebrew')).toBe('Hebrew');
   });
 });

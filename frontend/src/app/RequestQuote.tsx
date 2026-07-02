@@ -10,7 +10,7 @@ export function RequestQuote() {
     <section className="relative isolate min-h-screen overflow-hidden bg-brand-navy">
       {/* Subtle architectural backdrop + premium navy wash */}
       <img
-        src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80"
+        src="/images/backgrounds/tas-bg-cta.webp"
         alt=""
         aria-hidden
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.18]"
@@ -37,23 +37,21 @@ export function RequestQuote() {
 
           <span className="mt-10 inline-flex items-center gap-3 text-sm font-bold uppercase tracking-[0.25em] text-brand-gold">
             <span className="h-px w-8 bg-brand-gold" />
-            {t('اطلب عرض سعر', 'בקשת הצעת מחיר', 'Request a Quote')}
+            {t('בקשת הצעת מחיר', 'Request a Quote')}
           </span>
 
           <h1 className="mt-6 text-4xl font-black leading-[1.1] tracking-tight text-white sm:text-5xl">
-            {t('احصل على عرض سعر لمشروعك', 'קבלת הצעת מחיר לפרויקט שלך', 'Get a quote for your project')}
+            {t('קבלת הצעת מחיר לפרויקט שלך', 'Get a quote for your project')}
           </h1>
 
           <p className="mt-5 max-w-md text-lg leading-8 text-brand-silver">
-            {t(
-              'شاركنا تفاصيل مشروعك وسيقوم فريقنا الهندسي بدراستها وتقديم أفضل عرض سعر يناسب رؤيتك.',
-              'שתפו אותנו בפרטי הפרויקט והצוות ההנדסי שלנו ילמד אותם ויחזור אליכם עם הצעת המחיר הטובה ביותר.',
+            {t('שתפו אותנו בפרטי הפרויקט והצוות ההנדסי שלנו ילמד אותם ויחזור אליכם עם הצעת המחיר הטובה ביותר.',
               'Share your project details and our engineering team will review them and return the best quote tailored to your vision.',
             )}
           </p>
 
           <ContactActions
-            title={t('هل تحتاج إلى مساعدة فورية؟', 'זקוקים לעזרה מיידית?', 'Need immediate help?')}
+            title={t('זקוקים לעזרה מיידית?', 'Need immediate help?')}
             compact
             className="mt-10 max-w-md"
           />
@@ -67,7 +65,7 @@ export function RequestQuote() {
           className="rounded-2xl border border-white/10 bg-brand-surface/60 p-6 shadow-2xl shadow-black/40 backdrop-blur-md sm:p-8 lg:p-10"
         >
           <h2 className="mb-6 text-xl font-bold text-white">
-            {t('تفاصيل المشروع', 'פרטי הפרויקט', 'Project details')}
+            {t('פרטי הפרויקט', 'Project details')}
           </h2>
           <QuoteRequestForm />
         </motion.div>

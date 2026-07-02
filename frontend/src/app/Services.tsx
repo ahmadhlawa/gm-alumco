@@ -28,10 +28,10 @@ export function Services() {
   return (
     <div className="bg-brand-navy">
       <PageHero 
-        title={t("خدماتنا وحلولنا", "השירותים והפתרונות שלנו", "Our services & solutions")} 
-        subtitle={t("مجموعة متكاملة من أرقى الواجهات الزجاجية وأنظمة الألمنيوم المصممة خصيصاً لمشروعك.", "מגוון שלם של חזיתות זכוכית ומערכות אלומיניום מעוצבות במיוחד לפרויקט שלך.", "A complete range of premium glass facades and aluminum systems, designed specifically for your project.")}
-        breadcrumbs={[{ label: t('خدماتنا', 'שירותים', "Services"), path: '/services' }]}
-        image="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80"
+        title={t("השירותים והפתרונות שלנו", "Our services & solutions")} 
+        subtitle={t("מגוון שלם של חזיתות זכוכית ומערכות אלומיניום מעוצבות במיוחד לפרויקט שלך.", "A complete range of premium glass facades and aluminum systems, designed specifically for your project.")}
+        breadcrumbs={[{ label: t('שירותים', "Services"), path: '/services' }]}
+        image="/images/backgrounds/tas-bg-services.webp"
       />
 
       <section className="relative isolate overflow-hidden py-24">
@@ -48,16 +48,16 @@ export function Services() {
         />
         <div className="container relative z-10 mx-auto px-4">
           <SectionHeader
-            title={t("حلول هندسية مصممة للإبداع", "פתרונות הנדסיים מיועדים ליצירתיות", "Engineering solutions built for creativity")}
+            title={t("פתרונות הנדסיים מיועדים ליצירתיות", "Engineering solutions built for creativity")}
             centered
           />
           <div className="min-h-[400px]">
              {loading ? (
-                <LoadingState message={t('جاري تحميل الخدمات...', 'טוען שירותים...', 'Loading services...')} />
+                <LoadingState message={t('טוען שירותים...', 'Loading services...')} />
              ) : error ? (
-                <ErrorState message={t('تعذر تحميل الخدمات. يرجى المحاولة مرة أخرى.', 'טעינת השירותים נכשלה. נסה שוב.', 'Could not load services. Please try again.')} />
+                <ErrorState message={t('טעינת השירותים נכשלה. נסה שוב.', 'Could not load services. Please try again.')} />
              ) : services.length === 0 ? (
-                <EmptyState message={t('لا توجد خدمات لعرضها حالياً.', 'אין שירותים להצגה כעת.', "No services to display at the moment.")} />
+                <EmptyState message={t('אין שירותים להצגה כעת.', "No services to display at the moment.")} />
              ) : (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {services.map((service, idx) => (

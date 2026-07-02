@@ -129,7 +129,7 @@ export function GeometricHero({
             className="mb-6 inline-flex items-center gap-3 border border-brand-gold/35 bg-brand-surface/60 px-4 py-2 text-sm font-semibold text-brand-gold backdrop-blur-md"
           >
             <span className="h-px w-8 bg-brand-gold" />
-            {t(heroSince.label.ar, heroSince.label.he, heroSince.label.en)} {heroSince.value}{heroSince.suffix ?? ''}
+            {t(heroSince.label.he, heroSince.label.en)} {heroSince.value}{heroSince.suffix ?? ''}
           </motion.div>
 
           <motion.p variants={heroItem} className="mb-4 text-xl font-bold tracking-normal text-brand-gold md:text-2xl">
@@ -142,16 +142,14 @@ export function GeometricHero({
               dir === 'rtl' ? 'lg:text-6xl' : 'lg:text-7xl'
             }`}
           >
-            {t('حلول الألمنيوم والزجاج', 'פתרונות אלומיניום וזכוכית', 'Aluminum & glass solutions')}
+            {t('פתרונות אלומיניום וזכוכית', 'Aluminum & glass solutions')}
             <span className="block text-brand-text">
-              {t('لمشاريع معمارية فاخرة', 'לפרויקטים אדריכליים יוקרתיים', 'for premium architectural projects')}
+              {t('לפרויקטים אדריכליים יוקרתיים', 'for premium architectural projects')}
             </span>
           </motion.h1>
 
           <motion.p variants={heroItem} className="mt-6 max-w-2xl text-base leading-8 text-[#A7B0C2] sm:text-lg">
-            {t(
-              'تصميم وتصنيع وتركيب أنظمة الألمنيوم والزجاج وفق معايير هندسية عالمية. واجهات زجاجية، أبواب منزلقة وحلول مصمّمة خصيصاً للفلل والقصور.',
-              'תכנון, ייצור והתקנה של מערכות אלומיניום וזכוכית בסטנדרטים הנדסיים בינלאומיים. קירות מסך, דלתות הזזה ופתרונות מותאמים אישית לווילות וארמונות.',
+            {t('תכנון, ייצור והתקנה של מערכות אלומיניום וזכוכית בסטנדרטים הנדסיים בינלאומיים. קירות מסך, דלתות הזזה ופתרונות מותאמים אישית לווילות וארמונות.',
               'Design, manufacturing and installation of aluminum and glass systems to international engineering standards. Curtain walls, sliding doors and bespoke solutions for villas and palaces.',
             )}
           </motion.p>
@@ -161,14 +159,14 @@ export function GeometricHero({
               href="#projects"
               className="inline-flex items-center justify-center gap-3 bg-brand-gold px-7 py-4 text-sm font-bold text-brand-navy shadow-lg shadow-brand-gold/20 transition hover:-translate-y-0.5 hover:bg-[#e3c454] hover:shadow-xl hover:shadow-brand-gold/30"
             >
-              {t('شاهد مشاريعنا', 'צפה בפרויקטים שלנו', 'View our projects')}
+              {t('צפה בפרויקטים שלנו', 'View our projects')}
               <ArrowLeft className="h-4 w-4 ltr:-scale-x-100" />
             </a>
             <a
               href="#services"
               className="inline-flex items-center justify-center border border-white/20 bg-white/5 px-7 py-4 text-sm font-bold text-white backdrop-blur-md transition hover:-translate-y-0.5 hover:border-brand-gold/60 hover:text-brand-gold"
             >
-              {t('خدماتنا الهندسية', 'השירותים ההנדסיים שלנו', 'Our engineering services')}
+              {t('השירותים ההנדסיים שלנו', 'Our engineering services')}
             </a>
           </motion.div>
 
@@ -181,7 +179,7 @@ export function GeometricHero({
                 <div className="text-2xl font-black text-white sm:text-3xl" dir="ltr">
                   {stat.value}{stat.suffix ?? ''}
                 </div>
-                <div className="mt-1 text-xs font-semibold text-brand-silver">{t(stat.label.ar, stat.label.he, stat.label.en)}</div>
+                <div className="mt-1 text-xs font-semibold text-brand-silver">{t(stat.label.he, stat.label.en)}</div>
               </div>
             ))}
           </motion.div>
@@ -196,7 +194,7 @@ export function GeometricHero({
             return (
             <div key={chip.id} className="flex items-center gap-3 bg-brand-navy/55 px-4 py-5 backdrop-blur-md">
               <Icon className="h-5 w-5 shrink-0 text-brand-gold" />
-              <span className="text-xs font-bold text-brand-text">{t(chip.label.ar, chip.label.he, chip.label.en)}</span>
+              <span className="text-xs font-bold text-brand-text">{t(chip.label.he, chip.label.en)}</span>
             </div>
             );
           })}

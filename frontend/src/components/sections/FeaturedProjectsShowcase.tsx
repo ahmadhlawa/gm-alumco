@@ -64,20 +64,16 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
     return () => window.clearInterval(timer);
   }, [isPaused, total]);
 
-  const title = t(
-    'بعض من أعمالنا التي نفتخر بها',
-    'כמה מהעבודות שאנו גאים בהן',
+  const title = t('כמה מהעבודות שאנו גאים בהן',
     'Some of the work we are proud of',
   );
-  const subtitle = t(
-    'مجموعة مختارة من مشاريع T.A.S التي تعكس التزامنا بالجودة والدقة والابتكار.',
-    'מבחר פרויקטים של T.A.S המשקפים את המחויבות שלנו לאיכות, לדיוק ולחדשנות.',
+  const subtitle = t('מבחר פרויקטים של T.A.S המשקפים את המחויבות שלנו לאיכות, לדיוק ולחדשנות.',
     'A curated selection of T.A.S projects reflecting our commitment to quality, precision and innovation.',
   );
   const fallbackChips = [
-    t('واجهات زجاجية', 'חזיתות זכוכית', 'Glass facades'),
-    t('ألمنيوم عالي الجودة', 'אלומיניום באיכות גבוהה', 'High-quality aluminum'),
-    t('تنفيذ احترافي', 'ביצוע מקצועי', 'Professional execution'),
+    t('חזיתות זכוכית', 'Glass facades'),
+    t('אלומיניום באיכות גבוהה', 'High-quality aluminum'),
+    t('ביצוע מקצועי', 'Professional execution'),
   ];
 
   const current = showcase[active] ?? showcase[0];
@@ -132,7 +128,7 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
               <Building2 className="h-7 w-7 text-brand-gold" />
             </div>
             <p className="text-xl font-bold text-white">
-              {t('سيتم إضافة مشاريعنا قريباً', 'הפרויקטים שלנו יתווספו בקרוב', 'Our projects will be added soon')}
+              {t('הפרויקטים שלנו יתווספו בקרוב', 'Our projects will be added soon')}
             </p>
           </div>
         ) : (
@@ -254,7 +250,7 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
                       <button
                         type="button"
                         onClick={prev}
-                        aria-label={t('السابق', 'הקודם', 'Previous')}
+                        aria-label={t('הקודם', 'Previous')}
                         className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white transition hover:border-brand-gold hover:bg-brand-gold hover:text-brand-navy"
                       >
                         {isLtr ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
@@ -262,7 +258,7 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
                       <button
                         type="button"
                         onClick={next}
-                        aria-label={t('التالي', 'הבא', 'Next')}
+                        aria-label={t('הבא', 'Next')}
                         className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white transition hover:border-brand-gold hover:bg-brand-gold hover:text-brand-navy"
                       >
                         {isLtr ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
@@ -274,7 +270,7 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
                             key={project.id}
                             type="button"
                             onClick={() => goTo(index)}
-                            aria-label={`${t('مشروع', 'פרויקט', 'Project')} ${index + 1}`}
+                            aria-label={`${t('פרויקט', 'Project')} ${index + 1}`}
                             aria-current={index === active}
                             className={cn(
                               'h-2 rounded-full transition-all',

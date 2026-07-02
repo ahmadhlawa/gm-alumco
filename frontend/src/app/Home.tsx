@@ -15,7 +15,7 @@ import { useLanguage } from '@/i18n';
 import { ShieldCheck, Ruler, Clock, LayoutTemplate, ChevronLeft, ChevronRight } from 'lucide-react';
 import { LoadingState } from '@/components/common/LoadingState';
 import { Service, Project, Testimonial } from '@/types';
-import { loadSiteContent } from '@/data/siteContent';
+import { siteContent } from '@/data/siteContent';
 import { defaultPublicStats, type PublicStatsContent } from '@/data/publicStats';
 import { getPublicStatsContent } from '@/api/content';
 import {
@@ -27,7 +27,7 @@ import {
 export function Home() {
   const { t, language } = useLanguage();
   const location = useLocation();
-  const [content] = useState(() => loadSiteContent());
+  const content = siteContent;
   const [services, setServices] = useState<Service[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -37,7 +37,7 @@ export function Home() {
 
   const stats = publicStats.aboutPreviewStats.map(stat => ({
     value: stat.value,
-    label: t(stat.label.ar, stat.label.he, stat.label.en),
+    label: t(stat.label.he, stat.label.en),
     suffix: stat.suffix ?? '',
   }));
 
@@ -91,7 +91,7 @@ export function Home() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-brand-navy">
-        <LoadingState message={t("جاري تحميل الصفحة الرئيسية...", "טוען עמוד ראשית...", "Loading the homepage...")} />
+        <LoadingState message={t("טוען עמוד ראשית...", "Loading the homepage...")} />
       </div>
     );
   }
@@ -121,14 +121,14 @@ export function Home() {
               viewport={{ once: true }}
             >
               <SectionHeader 
-                title={t(content.about.title.ar, content.about.title.he, content.about.title.en)}
-                subtitle={t(content.about.subtitle.ar, content.about.subtitle.he, content.about.subtitle.en)}
+                title={t(content.about.title.he, content.about.title.en)}
+                subtitle={t(content.about.subtitle.he, content.about.subtitle.en)}
               />
               <p className="text-brand-silver mb-8 leading-relaxed text-lg">
-                {t(content.about.description.ar, content.about.description.he, content.about.description.en)}
+                {t(content.about.description.he, content.about.description.en)}
               </p>
               <Button href="/about" variant="outline">
-                {t(content.about.buttonText.ar, content.about.buttonText.he, content.about.buttonText.en)}
+                {t(content.about.buttonText.he, content.about.buttonText.en)}
               </Button>
             </motion.div>
             
@@ -153,10 +153,10 @@ export function Home() {
 
       <ServicesShowcase
         services={services}
-        title={t(content.services.title.ar, content.services.title.he, content.services.title.en)}
-        subtitle={t(content.services.subtitle.ar, content.services.subtitle.he, content.services.subtitle.en)}
-        emptyMessage={t('لا توجد خدمات متاحة حالياً.', 'אין שירותים זמינים כרגע.', "No services available at the moment.")}
-        actionLabel={t('اطلب استشارة', 'בקש ייעוץ', "Request a consultation")}
+        title={t(content.services.title.he, content.services.title.en)}
+        subtitle={t(content.services.subtitle.he, content.services.subtitle.en)}
+        emptyMessage={t('אין שירותים זמינים כרגע.', "No services available at the moment.")}
+        actionLabel={t('בקש ייעוץ', "Request a consultation")}
       />
 
       {/* Featured Projects */}
@@ -187,17 +187,17 @@ export function Home() {
         </div>
         <div className="container mx-auto px-4 relative z-10">
           <SectionHeader 
-            title={t("منهجية العمل", "איך אנחנו עובדים", "How we work")}
-            subtitle={t("نتبع خطوات مدروسة لضمان تنفيذ مشروعك بأعلى المعايير.", "אנו עוקבים אחר צעדים זהירים כדי להבטיח את הסטנדרטים הגבוהים ביותר.", "We follow careful, considered steps to ensure your project is delivered to the highest standards.")}
+            title={t("איך אנחנו עובדים", "How we work")}
+            subtitle={t("אנו עוקבים אחר צעדים זהירים כדי להבטיח את הסטנדרטים הגבוהים ביותר.", "We follow careful, considered steps to ensure your project is delivered to the highest standards.")}
             light
             centered
           />
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { title: t("الاستشارة والتصميم", "ייעוץ ועיצוב", "Consultation & design"), desc: t("دراسة المتطلبات وتقديم مقترحات معمارية هندسية.", "לימוד דרישות והגשת הצעות הנדסיות.", "Studying requirements and presenting architectural engineering proposals."), icon: Ruler },
-              { title: t("الرفع المساحي", "מדידה מסחרית", "Site survey"), desc: t("قياسات دقيقة للموقع باستخدام أحدث الأجهزة.", "מדידות מדויקות לאתר באמצעות המכשירים העדכניים.", "Precise on-site measurements using the latest equipment."), icon: ShieldCheck },
-              { title: t("التصنيع الممتاز", "ייצור מצטיין", "Premium manufacturing"), desc: t("تصنيع عالي الجودة في ورشنا المجهزة.", "ייצור בגובה רב בסדנאות המצוידות שלנו.", "High-quality manufacturing in our fully equipped workshops."), icon: LayoutTemplate },
-              { title: t("التركيب والضمان", "התקנה ואחריות", "Installation & warranty"), desc: t("تركيب احترافي وتسليم مع شهادة ضمان.", "התקנה מקצועית ואספקה עם תעודת אחריות.", "Professional installation and handover with a warranty certificate."), icon: Clock },
+              { title: t("ייעוץ ועיצוב", "Consultation & design"), desc: t("לימוד דרישות והגשת הצעות הנדסיות.", "Studying requirements and presenting architectural engineering proposals."), icon: Ruler },
+              { title: t("מדידה מסחרית", "Site survey"), desc: t("מדידות מדויקות לאתר באמצעות המכשירים העדכניים.", "Precise on-site measurements using the latest equipment."), icon: ShieldCheck },
+              { title: t("ייצור מצטיין", "Premium manufacturing"), desc: t("ייצור בגובה רב בסדנאות המצוידות שלנו.", "High-quality manufacturing in our fully equipped workshops."), icon: LayoutTemplate },
+              { title: t("התקנה ואחריות", "Installation & warranty"), desc: t("התקנה מקצועית ואספקה עם תעודת אחריות.", "Professional installation and handover with a warranty certificate."), icon: Clock },
             ].map((step, idx) => (
               <motion.div 
                 key={idx}
@@ -235,13 +235,13 @@ export function Home() {
           <div className="container mx-auto px-4">
             <div className="mx-auto mb-14 max-w-4xl text-center">
               <span className="mb-4 block text-xs font-bold uppercase tracking-[0.3em] text-brand-gold">
-                {t('آراء العملاء', 'לקוחות', 'Testimonials')}
+                {t('לקוחות', 'Testimonials')}
               </span>
               <h2 className="text-4xl font-black leading-tight text-white md:text-6xl">
-                {t(content.testimonials.title.ar, content.testimonials.title.he, content.testimonials.title.en)}
+                {t(content.testimonials.title.he, content.testimonials.title.en)}
               </h2>
               <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-brand-silver">
-                {t(content.testimonials.subtitle.ar, content.testimonials.subtitle.he, content.testimonials.subtitle.en)}
+                {t(content.testimonials.subtitle.he, content.testimonials.subtitle.en)}
               </p>
             </div>
 
@@ -276,7 +276,7 @@ export function Home() {
                 <button
                   type="button"
                   onClick={() => goToTestimonial(-1)}
-                  aria-label={t('السابق', 'הקודם', 'Previous testimonial')}
+                  aria-label={t('הקודם', 'Previous testimonial')}
                   className="flex h-14 w-14 items-center justify-center rounded-full border border-brand-gold/35 text-brand-gold transition hover:bg-brand-gold hover:text-brand-navy"
                 >
                   <ChevronLeft className="h-7 w-7 rtl:rotate-180" />
@@ -287,7 +287,7 @@ export function Home() {
                       key={testimonial.id}
                       type="button"
                       onClick={() => setActiveTestimonial(idx)}
-                      aria-label={t('اختيار التوصية', 'בחר המלצה', 'Select testimonial')}
+                      aria-label={t('בחר המלצה', 'Select testimonial')}
                       className={cn(
                         'h-2 rounded-full transition-all',
                         idx === activeTestimonialIndex ? 'w-6 bg-brand-gold' : 'w-2 bg-white/25 hover:bg-white/50',
@@ -298,7 +298,7 @@ export function Home() {
                 <button
                   type="button"
                   onClick={() => goToTestimonial(1)}
-                  aria-label={t('التالي', 'הבא', 'Next testimonial')}
+                  aria-label={t('הבא', 'Next testimonial')}
                   className="flex h-14 w-14 items-center justify-center rounded-full border border-brand-gold/35 text-brand-gold transition hover:bg-brand-gold hover:text-brand-navy"
                 >
                   <ChevronRight className="h-7 w-7 rtl:rotate-180" />

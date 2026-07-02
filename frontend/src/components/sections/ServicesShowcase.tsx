@@ -141,7 +141,7 @@ export function ServicesShowcase({
               <button
                 type="button"
                 onClick={() => moveSlide(-1)}
-                aria-label={t('الخدمة السابقة', 'השירות הקודם', 'Previous service')}
+                aria-label={t('השירות הקודם', 'Previous service')}
                 className="absolute left-6 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center border border-brand-gold/40 text-brand-gold transition-colors hover:bg-brand-gold hover:text-brand-navy md:flex"
               >
                 {isLtr ? <ChevronLeft className="h-6 w-6" /> : <ChevronRight className="h-6 w-6" />}
@@ -149,18 +149,18 @@ export function ServicesShowcase({
               <button
                 type="button"
                 onClick={() => moveSlide(1)}
-                aria-label={t('الخدمة التالية', 'השירות הבא', 'Next service')}
+                aria-label={t('השירות הבא', 'Next service')}
                 className="absolute right-6 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center border border-brand-gold/40 text-brand-gold transition-colors hover:bg-brand-gold hover:text-brand-navy md:flex"
               >
                 {isLtr ? <ChevronRight className="h-6 w-6" /> : <ChevronLeft className="h-6 w-6" />}
               </button>
-              <div className="absolute bottom-10 left-1/2 z-20 flex -translate-x-1/2 gap-3" aria-label={t('اختيار الخدمة', 'בחירת שירות', 'Choose service')}>
+              <div className="absolute bottom-10 left-1/2 z-20 flex -translate-x-1/2 gap-3" aria-label={t('בחירת שירות', 'Choose service')}>
                 {services.map((service, index) => (
                   <button
                     key={service.id}
                     type="button"
                     onClick={() => setActiveIndex(index)}
-                    aria-label={`${t('عرض خدمة', 'הצג שירות', 'Show service')} ${service.title}`}
+                    aria-label={`${t('הצג שירות', 'Show service')} ${service.title}`}
                     aria-current={index === activeIndex ? 'true' : undefined}
                     className={cn(
                       'h-2 rounded-full transition-all duration-300',

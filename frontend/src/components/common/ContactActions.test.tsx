@@ -12,7 +12,7 @@ describe('ContactActions', () => {
   it('renders the approved WhatsApp and email destinations', () => {
     const html = renderToStaticMarkup(
       <LanguageProvider>
-        <ContactActions title="هل تحتاج مساعدة فورية؟" compact />
+        <ContactActions title="זקוקים לעזרה מיידית?" compact />
       </LanguageProvider>,
     );
 

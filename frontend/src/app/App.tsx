@@ -38,8 +38,8 @@ const PlaceholderPage = ({ title }: { title: string }) => {
   <div className="bg-brand-navy min-h-screen">
       <PageHero title={title} />
       <section className="py-24 container mx-auto px-4 text-center">
-         <h2 className="text-3xl font-bold text-white mb-8">{t('قريباً', 'בקרוב', "Coming soon")}</h2>
-         <p className="text-xl text-brand-silver">{t('الصفحة قيد الإنشاء.', 'הדף בבנייה.', "This page is under construction.")}</p>
+         <h2 className="text-3xl font-bold text-white mb-8">{t('בקרוב', "Coming soon")}</h2>
+         <p className="text-xl text-brand-silver">{t('הדף בבנייה.', "This page is under construction.")}</p>
       </section>
   </div>
   );
@@ -90,7 +90,7 @@ function AppContent() {
                   <Route path="/projects" element={<Projects />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/request-quote" element={<RequestQuote />} />
-                  <Route path="/careers" element={<PlaceholderPage title={t("الوظائف", "קריירה", "Careers")} />} />
+                  <Route path="/careers" element={<PlaceholderPage title={t("קריירה", "Careers")} />} />
                 </Routes>
               </main>
               <Footer />

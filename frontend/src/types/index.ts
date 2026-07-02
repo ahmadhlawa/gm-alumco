@@ -1,13 +1,8 @@
-export type CmsLocale = 'ar' | 'en' | 'he';
+export type CmsLocale = 'en' | 'he';
 
 export type LocalizedText = {
-  ar: string;
   en: string;
   he: string;
-};
-
-export type LocalizedFields<T, K extends keyof T> = Omit<T, K> & {
-  [P in K]: LocalizedText;
 };
 
 export interface Service {
@@ -53,40 +48,8 @@ export interface Testimonial {
   rating?: number;
 }
 
-export interface GalleryImage {
-  id: string;
-  url: string;
-  alt: string;
-  category: string;
-}
-
 export interface Partner {
   id: string;
   name: string;
   logo: string;
-}
-
-export interface ContactMessage {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  message: string;
-  projectType?: string;
-  date: string;
-  status: 'new' | 'read' | 'replied';
-}
-
-export interface QuoteRequest {
-  id: string;
-  fullName: string;
-  phone: string;
-  email: string;
-  projectType: string;
-  serviceType: string;
-  location: string;
-  approximateArea: string;
-  notes: string;
-  date: string;
-  status: 'new' | 'reviewed' | 'quoted' | 'rejected';
 }

@@ -9,7 +9,7 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   dir: 'rtl' | 'ltr';
-  t: (ar: string, he?: string, en?: string) => string;
+  t: (he: string, en?: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -26,9 +26,9 @@ export function getNextPublicLanguage(language: Language): Language {
   return language === 'he' ? 'en' : 'he';
 }
 
-export function translatePublic(language: Language, ar: string, he?: string, en?: string): string {
-  if (language === 'he') return he || en || ar;
-  return en || he || ar;
+export function translatePublic(language: Language, he: string, en?: string): string {
+  if (language === 'he') return he || en || '';
+  return en || he || '';
 }
 
 interface LanguageProviderProps {
@@ -61,8 +61,8 @@ export function LanguageProvider({
     window.localStorage.setItem(storageKey, language);
   }, [language, dir, storageKey, applyToDocument]);
 
-  const t = (ar: string, he?: string, en?: string) => {
-    return translatePublic(language, ar, he, en);
+  const t = (he: string, en?: string) => {
+    return translatePublic(language, he, en);
   };
 
   return (

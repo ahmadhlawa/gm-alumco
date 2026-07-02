@@ -15,8 +15,8 @@ interface ContactActionsProps {
 
 export function ContactActions({ title, compact = false, className }: ContactActionsProps) {
   const { t } = useLanguage();
-  const whatsappLabel = t('واتساب', 'וואטסאפ', 'WhatsApp');
-  const emailLabel = t('البريد الإلكتروني', 'אימייל', 'Email');
+  const whatsappLabel = t('וואטסאפ', 'WhatsApp');
+  const emailLabel = t('אימייל', 'Email');
   return (
     <aside
       className={cn(

@@ -96,11 +96,6 @@ describe('company numbers adapter', () => {
     });
   });
 
-  it('keeps the legacy Arabic label as an internal fallback', () => {
-    const content = applyCompanyNumbers(undefined, defaultCompanyNumbers);
-    expect(content.heroStats[0].label.ar).toBe(defaultCompanyNumbers.completedProjects.labelAr);
-  });
-
   it('preserves value chips and hero-since when saving numbers', () => {
     const content = applyCompanyNumbers(undefined, defaultCompanyNumbers);
     expect(content.valueChips).toEqual(defaultPublicStats.valueChips);

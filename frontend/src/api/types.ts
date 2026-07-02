@@ -1,4 +1,4 @@
-export type Locale = 'ar' | 'en' | 'he';
+export type Locale = 'en' | 'he';
 export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };
 
 export interface Timestamped { created_at: string; updated_at: string }
@@ -14,10 +14,6 @@ export interface ProjectDto extends Timestamped, ActiveSortable, LocalizedTitle 
 }
 export interface ProjectImageDto { id: number; project_id: number; image_url: string; alt_text_en: string | null; alt_text_he: string | null; sort_order: number; created_at: string }
 export interface ProjectDetailDto extends ProjectDto { images: ProjectImageDto[] }
-export interface GalleryDto extends Timestamped, ActiveSortable {
-  id: number; image_url: string; title_en: string | null; title_he: string | null;
-  alt_text_en: string | null; alt_text_he: string | null; category: string | null;
-}
 export interface PartnerDto extends Timestamped, ActiveSortable { id: number; name_en: string; name_he: string; logo_url: string; website_url: string | null }
 export interface TestimonialDto extends Timestamped, ActiveSortable {
   id: number; client_name_en: string; client_name_he: string;

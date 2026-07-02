@@ -143,10 +143,8 @@ export function SuccessPartners() {
       
       <div className="container mx-auto px-4 relative z-10">
         <SectionHeader 
-          title={t("شركاؤنا في النجاح", "השותפים שלנו להצלחה", "Our Success Partners")}
-          subtitle={t(
-            "نفخر بالتعاون مع نخبة من الموردين والشركاء العالميين لتقديم أفضل جودة",
-            "אנו גאים לשתף פעולה עם ספקים ושותפים גלובליים מובילים כדי לספק את האיכות הטובה ביותר",
+          title={t("השותפים שלנו להצלחה", "Our Success Partners")}
+          subtitle={t("אנו גאים לשתף פעולה עם ספקים ושותפים גלובליים מובילים כדי לספק את האיכות הטובה ביותר",
             "We are proud to collaborate with elite global suppliers and partners to deliver the best quality"
           )}
           centered 

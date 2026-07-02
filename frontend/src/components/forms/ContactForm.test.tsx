@@ -6,7 +6,7 @@ import { ContactForm } from './ContactForm';
 describe('ContactForm public localization', () => {
   it('renders English labels and direction-safe LTR inputs in English mode', () => {
     const html = renderToStaticMarkup(
-      <ContactForm t={(ar: string, he?: string, en?: string) => translatePublic('en', ar, he, en)} />,
+      <ContactForm t={(he: string, en?: string) => translatePublic('en', he, en)} />,
     );
 
     expect(html).toContain('Full name');

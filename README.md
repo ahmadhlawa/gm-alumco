@@ -1,20 +1,19 @@
 # T.A.S Workspace
 
-This repository is organized as a frontend/backend workspace for the T.A.S corporate website and Visual CMS.
+This repository is a frontend/backend workspace for the T.A.S corporate website and its admin CMS.
 
 ```text
 project-root/
-  frontend/   Existing Vite + React frontend
-  backend/    NestJS + PostgreSQL + Prisma backend foundation
-  README.md
-  .gitignore
+  frontend/   Vite + React 19 + TypeScript SPA (public site + admin CMS)
+  backend/    FastAPI + SQLAlchemy + Alembic backend on MySQL
+  docs/       Full project documentation
 ```
 
+## Documentation
+
+See [README_PROJECT.md](README_PROJECT.md) for the complete technical reference, quick-start commands, and the documentation index under `docs/project-documentation/`.
+
 ## Frontend
-
-The complete working frontend is located in `frontend/`. Its UI, routing, theme, animations, and Visual CMS baseline were preserved during the move.
-
-Run it locally from the frontend directory:
 
 ```bash
 cd frontend
@@ -22,19 +21,17 @@ npm install
 npm run dev
 ```
 
-See [frontend/README.md](frontend/README.md) for routes, architecture, limitations, and frontend details.
+See [frontend/README.md](frontend/README.md) for routes, architecture, and frontend details.
 
 ## Backend
 
-The `backend/` directory contains the NestJS + PostgreSQL + Prisma foundation, including validated environment configuration, security middleware, the initial database schema, an admin seed, and cookie-based JWT authentication.
-
-Run backend setup commands from its directory:
-
 ```bash
 cd backend
-npm install
-npm run prisma:generate
-npm run start:dev
+python -m venv .venv && .\.venv\Scripts\Activate.ps1   # or source .venv/bin/activate
+pip install -r requirements.txt
+alembic upgrade head
+python -m app.utils.seed_admin
+uvicorn app.main:app --reload
 ```
 
-See [backend/README.md](backend/README.md) for local database setup and [backend/BACKEND_ROADMAP.md](backend/BACKEND_ROADMAP.md) for the remaining implementation plan.
+See [backend/README.md](backend/README.md) for database setup and environment configuration.

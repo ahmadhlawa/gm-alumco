@@ -18,7 +18,7 @@ export interface PublicStatsContent {
   heroSince: PublicStat;
 }
 
-const text = (ar: string, en: string, he: string): LocalizedText => ({ ar, en, he });
+const text = (en: string, he: string): LocalizedText => ({ en, he });
 
 // Company Numbers: the simplified, customer-facing model edited in the CMS.
 export type CompanyNumberId = 'completed-projects' | 'years-experience' | 'warranty-years';
@@ -28,8 +28,6 @@ export interface CompanyNumber {
   value: string;
   labelHe: string;
   labelEn: string;
-  /** Legacy Arabic label, preserved internally as a fallback. Not edited in the admin UI. */
-  labelAr: string;
 }
 
 export interface CompanyNumbers {
@@ -39,9 +37,9 @@ export interface CompanyNumbers {
 }
 
 export const defaultCompanyNumbers: CompanyNumbers = {
-  completedProjects: { id: 'completed-projects', value: '250+', labelHe: 'פרויקטים שהושלמו', labelEn: 'Completed projects', labelAr: 'مشروع منجز' },
-  yearsExperience: { id: 'years-experience', value: '10+', labelHe: 'שנות ניסיון', labelEn: 'Years of experience', labelAr: 'سنوات خبرة' },
-  warrantyYears: { id: 'warranty-years', value: '5', labelHe: 'שנות אחריות', labelEn: 'Years warranty', labelAr: 'سنوات ضمان' },
+  completedProjects: { id: 'completed-projects', value: '250+', labelHe: 'פרויקטים שהושלמו', labelEn: 'Completed projects' },
+  yearsExperience: { id: 'years-experience', value: '10+', labelHe: 'שנות ניסיון', labelEn: 'Years of experience' },
+  warrantyYears: { id: 'warranty-years', value: '5', labelHe: 'שנות אחריות', labelEn: 'Years warranty' },
 };
 
 // Ordered so the canonical numbers always render in the same sequence everywhere.
@@ -58,7 +56,7 @@ function toStat(number: CompanyNumber, order: number): PublicStat {
     suffix: '',
     sort_order: order,
     is_active: true,
-    label: { ar: number.labelAr, he: number.labelHe, en: number.labelEn },
+    label: { he: number.labelHe, en: number.labelEn },
   };
 }
 
@@ -75,18 +73,17 @@ export const defaultPublicStats: PublicStatsContent = {
   aboutPreviewStats: companyStats(),
   aboutPageStats: companyStats(),
   valueChips: [
-    { id: 'premium-quality', value: '', label: text('جودة فائقة', 'Premium quality', 'איכות פרימיום'), sort_order: 1, is_active: true },
-    { id: 'precise-engineering', value: '', label: text('هندسة دقيقة', 'Precise engineering', 'הנדסה מדויקת'), sort_order: 2, is_active: true },
-    { id: 'durable-performance', value: '', label: text('أداء متين', 'Durable performance', 'ביצועים עמידים'), sort_order: 3, is_active: true },
-    { id: 'modern-aesthetic', value: '', label: text('تصميم عصري', 'Modern aesthetic', 'אסתטיקה מודרנית'), sort_order: 4, is_active: true },
+    { id: 'premium-quality', value: '', label: text('Premium quality', 'איכות פרימיום'), sort_order: 1, is_active: true },
+    { id: 'precise-engineering', value: '', label: text('Precise engineering', 'הנדסה מדויקת'), sort_order: 2, is_active: true },
+    { id: 'durable-performance', value: '', label: text('Durable performance', 'ביצועים עמידים'), sort_order: 3, is_active: true },
+    { id: 'modern-aesthetic', value: '', label: text('Modern aesthetic', 'אסתטיקה מודרנית'), sort_order: 4, is_active: true },
   ],
   aboutHighlight: toStat(defaultCompanyNumbers.yearsExperience, 1),
-  heroSince: { id: 'hero-since-year', value: '2014', label: text('تميّز هندسي منذ', 'Engineering excellence since', 'מצוינות הנדסית מאז'), sort_order: 1, is_active: true },
+  heroSince: { id: 'hero-since-year', value: '2014', label: text('Engineering excellence since', 'מצוינות הנדסית מאז'), sort_order: 1, is_active: true },
 };
 
 function isLocalizedText(value: unknown): value is LocalizedText {
   return typeof value === 'object' && value !== null
-    && typeof (value as LocalizedText).ar === 'string'
     && typeof (value as LocalizedText).en === 'string'
     && typeof (value as LocalizedText).he === 'string';
 }
@@ -118,7 +115,6 @@ function numbersFromContent(content: PublicStatsContent): CompanyNumbers {
       value: stat.value || fallback.value,
       labelHe: stat.label.he || fallback.labelHe,
       labelEn: stat.label.en || fallback.labelEn,
-      labelAr: stat.label.ar || fallback.labelAr,
     };
   };
   return {

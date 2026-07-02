@@ -36,10 +36,10 @@ export function QuoteRequestForm() {
     const messageParts = [
       formData.details.trim(),
       formData.location.trim()
-        ? `${t('الموقع', 'מיקום', 'Location')}: ${formData.location.trim()}`
+        ? `${t('מיקום', 'Location')}: ${formData.location.trim()}`
         : '',
       formData.area.trim()
-        ? `${t('المساحة التقديرية', 'שטח משוער', 'Estimated area')}: ${formData.area.trim()} ${t('م²', 'מ"ר', 'm²')}`
+        ? `${t('שטח משוער', 'Estimated area')}: ${formData.area.trim()} ${t('מ"ר', 'm²')}`
         : '',
     ].filter(Boolean);
 
@@ -62,31 +62,31 @@ export function QuoteRequestForm() {
     return (
       <div className="rounded-2xl border border-green-500/20 bg-green-500/10 p-8 text-center">
         <h3 className="mb-2 text-2xl font-bold text-green-400">
-          {t('تم استلام طلبك!', 'בקשתך התקבלה!', 'Your request was received!')}
+          {t('בקשתך התקבלה!', 'Your request was received!')}
         </h3>
         <p className="text-green-300/70">
-          {t('سيقوم فريق المبيعات بالتواصل معك قريباً لمناقشة التفاصيل.', 'צוות המכירות שלנו יצור איתך קשר בקרוב כדי לדון בפרטים.', 'Our sales team will contact you soon to discuss the details.')}
+          {t('צוות המכירות שלנו יצור איתך קשר בקרוב כדי לדון בפרטים.', 'Our sales team will contact you soon to discuss the details.')}
         </p>
       </div>
     );
   }
 
   const projectTypes = [
-    t('فيلا سكنية', 'וילה למגורים', 'Residential villa'),
-    t('مبنى تجاري', 'מבנה מסחרי', 'Commercial building'),
-    t('شقة / تجديد', 'דירה / שיפוץ', 'Apartment / renovation'),
-    t('واجهات وكيرتن وول', 'חזיתות וקיר מסך', 'Facades & curtain wall'),
-    t('أخرى', 'אחר', 'Other'),
+    t('וילה למגורים', 'Residential villa'),
+    t('מבנה מסחרי', 'Commercial building'),
+    t('דירה / שיפוץ', 'Apartment / renovation'),
+    t('חזיתות וקיר מסך', 'Facades & curtain wall'),
+    t('אחר', 'Other'),
   ];
 
-  const fullNameLabel = t('الاسم الكامل', 'שם מלא', 'Full name');
-  const emailLabel = t('البريد الإلكتروني', 'אימייל', 'Email');
-  const phoneLabel = t('رقم الهاتف', 'מספר טלפון', 'Phone');
-  const projectTypeLabel = t('نوع المشروع', 'סוג הפרויקט', 'Project type');
-  const locationLabel = t('موقع المشروع', 'מיקום הפרויקט', 'Project location');
-  const areaLabel = t('المساحة التقديرية (م²)', 'שטח משוער (מ"ר)', 'Estimated area (m²)');
-  const linkLabel = t('رابط Google Drive / الملفات', 'קישור Google Drive / קבצים', 'Google Drive / files link');
-  const detailsLabel = t('تفاصيل إضافية عن مشروعك', 'פרטים נוספים על הפרויקט שלך', 'Additional details about your project');
+  const fullNameLabel = t('שם מלא', 'Full name');
+  const emailLabel = t('אימייל', 'Email');
+  const phoneLabel = t('מספר טלפון', 'Phone');
+  const projectTypeLabel = t('סוג הפרויקט', 'Project type');
+  const locationLabel = t('מיקום הפרויקט', 'Project location');
+  const areaLabel = t('שטח משוער (מ"ר)', 'Estimated area (m²)');
+  const linkLabel = t('קישור Google Drive / קבצים', 'Google Drive / files link');
+  const detailsLabel = t('פרטים נוספים על הפרויקט שלך', 'Additional details about your project');
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -184,9 +184,7 @@ export function QuoteRequestForm() {
         className={`${field} text-left`}
       />
       <p className="-mt-1 text-xs text-brand-silver">
-        {t(
-          'يمكنك لصق رابط Google Drive أو مجلد سحابي يحتوي على المخططات أو الملفات.',
-          'ניתן להדביק קישור ל-Google Drive או לתיקייה בענן עם תוכניות או קבצים.',
+        {t('ניתן להדביק קישור ל-Google Drive או לתיקייה בענן עם תוכניות או קבצים.',
           'Paste a link to Google Drive or a cloud folder with your plans or files.',
         )}
       </p>
@@ -203,7 +201,7 @@ export function QuoteRequestForm() {
 
       {status === 'error' && (
         <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-center text-sm text-red-300" role="alert">
-          {t('تعذر إرسال الطلب. يرجى المحاولة مرة أخرى.', 'שליחת הבקשה נכשלה. נסה שוב.', 'Could not send the request. Please try again.')}
+          {t('שליחת הבקשה נכשלה. נסה שוב.', 'Could not send the request. Please try again.')}
         </div>
       )}
 
@@ -213,8 +211,8 @@ export function QuoteRequestForm() {
         className="group flex h-14 w-full items-center justify-center gap-3 rounded-lg bg-brand-gold text-base font-bold text-brand-navy transition-colors hover:bg-[#e3c454] disabled:opacity-60"
       >
         {status === 'loading'
-          ? t('جاري الإرسال...', 'שולח...', 'Sending...')
-          : t('إرسال طلب التسعير', 'שלח בקשת הצעת מחיר', 'Submit quote request')}
+          ? t('שולח...', 'Sending...')
+          : t('שלח בקשת הצעת מחיר', 'Submit quote request')}
         {status !== 'loading' && (
           <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1 ltr:-scale-x-100 ltr:group-hover:translate-x-1" />
         )}

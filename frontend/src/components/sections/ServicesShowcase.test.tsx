@@ -9,9 +9,9 @@ import { ServicesShowcase, getServiceSlideIndex } from './ServicesShowcase';
 const service: Service = {
   id: '7',
   slug: 'curtain-wall',
-  title: 'واجهات زجاجية',
-  shortDescription: 'حلول هندسية للواجهات الحديثة.',
-  description: 'تفاصيل الخدمة',
+  title: 'קירות מסך',
+  shortDescription: 'פתרונות הנדסיים לחזיתות מודרניות.',
+  description: 'פרטי השירות',
   image: 'https://example.com/service.jpg',
   benefits: [],
 };
@@ -39,15 +39,15 @@ describe('ServicesShowcase', () => {
     const html = renderWithLanguage(
       <ServicesShowcase
         services={[service]}
-        title="خدماتنا"
-        subtitle="حلول متكاملة"
-        emptyMessage="لا توجد خدمات"
-        actionLabel="اطلب استشارة"
+        title="השירותים שלנו"
+        subtitle="פתרונות משולבים"
+        emptyMessage="אין שירותים"
+        actionLabel="בקש ייעוץ"
       />,
     );
 
     expect(html).toContain('id="services"');
-    expect(html).toContain('واجهات زجاجية');
+    expect(html).toContain('קירות מסך');
     expect(html).toContain('https://example.com/service.jpg');
     expect(html).toContain('href="/contact"');
   });
@@ -56,14 +56,14 @@ describe('ServicesShowcase', () => {
     const html = renderWithLanguage(
       <ServicesShowcase
         services={[]}
-        title="خدماتنا"
-        subtitle="حلول متكاملة"
-        emptyMessage="لا توجد خدمات حالياً"
-        actionLabel="اطلب استشارة"
+        title="השירותים שלנו"
+        subtitle="פתרונות משולבים"
+        emptyMessage="אין שירותים זמינים כרגע"
+        actionLabel="בקש ייעוץ"
       />,
     );
 
-    expect(html).toContain('لا توجد خدمات حالياً');
+    expect(html).toContain('אין שירותים זמינים כרגע');
   });
 
   it('wraps slider navigation in both directions', () => {

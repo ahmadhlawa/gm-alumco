@@ -16,9 +16,9 @@ export function Contact() {
   return (
     <div className="bg-brand-navy">
       <PageHero
-        title={t("اتصل بنا", "צור קשר", "Contact us")}
-        subtitle={t("نحن هنا للرد على استفساراتكم ومناقشة تفاصيل مشاريعكم.", "אנחנו כאן כדי לענות על שאלותיכם ולדון בפרטי הפרויקט שלכם.", "We are here to answer your questions and discuss your project details.")}
-        breadcrumbs={[{ label: t('اتصل بنا', 'צור קשר', 'Contact us'), path: '/contact' }]}
+        title={t("צור קשר", "Contact us")}
+        subtitle={t("אנחנו כאן כדי לענות על שאלותיכם ולדון בפרטי הפרויקט שלכם.", "We are here to answer your questions and discuss your project details.")}
+        breadcrumbs={[{ label: t('צור קשר', 'Contact us'), path: '/contact' }]}
       />
 
       <section className="relative isolate overflow-hidden py-24">
@@ -36,12 +36,12 @@ export function Contact() {
         <div className="container relative z-10 mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16">
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-              <SectionHeader title={t("معلومات التواصل", "פרטי התקשרות", "Contact information")} />
+              <SectionHeader title={t("פרטי התקשרות", "Contact information")} />
               <p className="text-brand-silver mb-12 text-lg">
-                {t('نسعد بتواصلكم معنا في أي وقت. يمكنكم زيارة مقر الشركة أو مراسلتنا عبر القنوات التالية.', 'נשמח להיות איתכם בקשר בכל עת. אתם מוזמנים לבקר במטה החברה או ליצור קשר דרך הערוצים הבאים.', 'We are happy to hear from you at any time. You can visit our office or contact us through the following channels.')}
+                {t('נשמח להיות איתכם בקשר בכל עת. אתם מוזמנים לבקר במטה החברה או ליצור קשר דרך הערוצים הבאים.', 'We are happy to hear from you at any time. You can visit our office or contact us through the following channels.')}
               </p>
 
-              <ContactActions title={t('تواصل معنا مباشرة', 'צרו איתנו קשר ישירות', 'Contact us directly')} className="mb-12" />
+              <ContactActions title={t('צרו איתנו קשר ישירות', 'Contact us directly')} className="mb-12" />
 
               <div className="space-y-8">
                 <div className="flex items-start gap-6 group">
@@ -49,8 +49,8 @@ export function Contact() {
                     <MapPin className="w-8 h-8" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-2">{t('العنوان', 'כתובת', 'Address')}</h3>
-                    <p className="text-brand-silver">{t('متاح بموعد مسبق', 'זמין בתיאום מראש', 'Available by appointment')}</p>
+                    <h3 className="text-xl font-bold text-white mb-2">{t('כתובת', 'Address')}</h3>
+                    <p className="text-brand-silver">{t('זמין בתיאום מראש', 'Available by appointment')}</p>
                   </div>
                 </div>
 
@@ -59,7 +59,7 @@ export function Contact() {
                     <Phone className="w-8 h-8" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-2">{t('الهاتف', 'טלפון', 'Phone')}</h3>
+                    <h3 className="text-xl font-bold text-white mb-2">{t('טלפון', 'Phone')}</h3>
                     <p className="text-brand-silver" dir="ltr">{WHATSAPP_DISPLAY_NUMBER}</p>
                   </div>
                 </div>
@@ -69,7 +69,7 @@ export function Contact() {
                     <Mail className="w-8 h-8" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-2">{t('البريد الإلكتروني', 'אימייל', 'Email')}</h3>
+                    <h3 className="text-xl font-bold text-white mb-2">{t('אימייל', 'Email')}</h3>
                     <p className="text-brand-silver" dir="ltr">Mina@techno-alum.com</p>
                   </div>
                 </div>
@@ -81,7 +81,7 @@ export function Contact() {
               animate={{ opacity: 1, x: 0 }}
               className="bg-brand-surface p-10 shadow-xl shadow-brand-border/50 border border-white/5 rounded-lg"
             >
-              <h3 className="text-2xl font-bold text-white mb-8">{t('أرسل لنا رسالة', 'שלח לנו הודעה', 'Send us a message')}</h3>
+              <h3 className="text-2xl font-bold text-white mb-8">{t('שלח לנו הודעה', 'Send us a message')}</h3>
               <ContactForm t={t} />
             </motion.div>
           </div>
@@ -93,15 +93,13 @@ export function Contact() {
           <div className="grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr]">
             <div>
               <p className="mb-4 text-sm font-bold uppercase tracking-[0.24em] text-brand-gold">
-                {t('الموقع', 'מיקום', 'Location')}
+                {t('מיקום', 'Location')}
               </p>
               <h2 className="text-3xl font-bold text-white md:text-4xl">
-                {t('زورونا في مقرنا', 'בקרו אותנו במשרד', 'Visit our office')}
+                {t('בקרו אותנו במשרד', 'Visit our office')}
               </h2>
               <p className="mt-5 max-w-xl text-lg leading-8 text-brand-silver">
-                {t(
-                  'نستقبل العملاء والشركاء في موقعنا في عسفيا لمناقشة المشاريع والتفاصيل الهندسية.',
-                  'אנו מקבלים לקוחות ושותפים במיקום שלנו בעוספיא לתיאום פרויקטים ופרטים הנדסיים.',
+                {t('אנו מקבלים לקוחות ושותפים במיקום שלנו בעוספיא לתיאום פרויקטים ופרטים הנדסיים.',
                   'We welcome clients and partners at our Isefya location for project planning and engineering details.',
                 )}
               </p>
