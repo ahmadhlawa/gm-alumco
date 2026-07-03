@@ -45,7 +45,6 @@ export function heroBackgroundTransform(dir: 'rtl' | 'ltr'): string {
 export function GeometricHero({
   stats = defaultPublicStats.heroStats,
   valueChips = defaultPublicStats.valueChips,
-  heroSince = defaultPublicStats.heroSince,
 }: GeometricHeroProps) {
   const { t, dir } = useLanguage();
 
@@ -124,18 +123,6 @@ export function GeometricHero({
         animate="show"
       >
         <div className="max-w-4xl">
-          <motion.div
-            variants={heroItem}
-            className="mb-6 inline-flex items-center gap-3 border border-brand-gold/35 bg-brand-surface/60 px-4 py-2 text-sm font-semibold text-brand-gold backdrop-blur-md"
-          >
-            <span className="h-px w-8 bg-brand-gold" />
-            {t(heroSince.label.he, heroSince.label.en)} {heroSince.value}{heroSince.suffix ?? ''}
-          </motion.div>
-
-          <motion.p variants={heroItem} className="mb-4 text-xl font-bold tracking-normal text-brand-gold md:text-2xl">
-            T.A.S
-          </motion.p>
-
           <motion.h1
             variants={heroItem}
             className={`max-w-4xl text-4xl font-black leading-[1.08] tracking-tight text-[#F4F5F7] drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)] sm:text-5xl ${
