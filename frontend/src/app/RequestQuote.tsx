@@ -33,7 +33,7 @@ export function RequestQuote() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <img src="/images/logo-TAS-transparent.png" alt="T.A.S" className="h-14 w-auto object-contain" />
+          <img src="/images/ATS-logo.png" alt="T.A.S" className="h-14 w-auto object-contain" />
 
           <span className="mt-10 inline-flex items-center gap-3 text-sm font-bold uppercase tracking-[0.25em] text-brand-gold">
             <span className="h-px w-8 bg-brand-gold" />

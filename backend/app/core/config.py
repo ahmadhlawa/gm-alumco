@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import SecretStr, ValidationInfo, field_validator
+from pydantic import AliasChoices, Field, SecretStr, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -52,13 +52,22 @@ class Settings(BaseSettings):
 
     frontend_url: str = "http://localhost:5173"
 
+    smtp_enabled: bool = True
     smtp_host: str | None = None
     smtp_port: int = 587
     smtp_username: str | None = None
     smtp_password: SecretStr | None = None
     smtp_from_email: str | None = None
     smtp_from_name: str = "T.A.S"
-    quote_request_recipient_email: str | None = None
+    # QUOTE_NOTIFICATION_EMAIL is the canonical env var; the legacy
+    # QUOTE_REQUEST_RECIPIENT_EMAIL name is still accepted.
+    quote_notification_email: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices(
+            "quote_notification_email",
+            "quote_request_recipient_email",
+        ),
+    )
 
     first_superadmin_name: str = "Super Admin"
     first_superadmin_email: str = "admin@gm-alomco.local"

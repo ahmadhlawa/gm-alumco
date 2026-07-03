@@ -89,8 +89,8 @@ export function AdminLogin() {
           </button>
         </div>
         <div className="text-center mb-8">
-           <div className="w-16 h-16 bg-brand-gold/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-brand-gold/20 p-2">
-             <img src="/images/logo-TAS-navbar.png" alt="T.A.S" className="w-full h-full object-contain" />
+           <div className="mx-auto mb-4 flex items-center justify-center">
+             <img src="/images/ATS-logo.png" alt="T.A.S" className="h-14 w-auto object-contain" />
            </div>
            <h2 className="text-2xl font-bold text-white">{copy.title}</h2>
            <p className="text-gray-400 mt-2 text-sm">{copy.subtitle}</p>

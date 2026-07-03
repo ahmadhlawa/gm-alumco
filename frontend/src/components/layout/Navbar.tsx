@@ -70,18 +70,12 @@ export function Navbar() {
         <div className="flex items-center justify-between">
           
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to="/" className="flex items-center">
             <img
-              src="/images/logo-TAS-navbar.png"
+              src="/images/ATS-logo.png"
               alt="T.A.S"
-              className="w-10 h-10 object-contain transform group-hover:rotate-12 transition-transform"
+              className="h-10 w-auto object-contain"
             />
-            <span className={cn(
-              "font-bold text-xl tracking-tight transition-colors",
-              isScrolled ? "text-white" : "text-white lg:text-white"
-            )}>
-              {t('T.A.S', 'T.A.S')}
-            </span>
           </Link>
 
           {/* Desktop Navigation */}

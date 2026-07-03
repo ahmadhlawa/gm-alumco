@@ -170,7 +170,7 @@ export function AdminLayout() {
         className={`fixed top-0 start-0 z-50 flex h-dvh w-72 flex-col overflow-hidden bg-brand-navy border-e border-white/10 shrink-0 transition-transform duration-300 lg:sticky lg:start-auto lg:w-64 lg:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : closedTranslateClass}`}
       >
         <div className="shrink-0 px-5 py-4 border-b border-white/10 flex items-center gap-3">
-           <img src="/images/logo-TAS-navbar.png" alt="T.A.S" className="w-8 h-8 object-contain" />
+           <img src="/images/ATS-logo.png" alt="T.A.S" className="h-8 w-auto object-contain" />
            <span className="font-bold text-xl text-white">T.A.S</span>
         </div>
 

@@ -121,6 +121,78 @@ def test_public_quote_submission_stays_successful_when_email_fails(
     assert stored.name == "Quote Customer"
 
 
+def test_public_quote_submission_stays_successful_when_confirmation_fails(
+    client: TestClient,
+    db: Session,
+    monkeypatch,
+) -> None:
+    def fail_confirmation(request: QuoteRequest) -> None:
+        raise RuntimeError("internal SMTP detail")
+
+    monkeypatch.setattr(
+        quote_requests_endpoint.email_service,
+        "send_quote_confirmation",
+        fail_confirmation,
+    )
+
+    response = client.post("/api/v1/quote-requests", json=quote_payload())
+
+    assert response.status_code == 201
+    stored = db.scalar(select(QuoteRequest))
+    assert stored is not None
+    assert stored.name == "Quote Customer"
+
+
+def test_public_quote_submission_saves_when_smtp_disabled(
+    client: TestClient,
+    db: Session,
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(
+        quote_requests_endpoint.email_service.settings, "smtp_enabled", False
+    )
+    monkeypatch.setattr(
+        quote_requests_endpoint.email_service,
+        "smtp_factory",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            AssertionError("must not connect")
+        ),
+    )
+
+    response = client.post("/api/v1/quote-requests", json=quote_payload())
+
+    assert response.status_code == 201
+    stored = db.scalar(select(QuoteRequest))
+    assert stored is not None
+    assert stored.name == "Quote Customer"
+
+
+def test_public_quote_submission_attempts_both_emails(
+    client: TestClient,
+    monkeypatch,
+) -> None:
+    sent: list[tuple[str, str | None]] = []
+
+    monkeypatch.setattr(
+        quote_requests_endpoint.email_service,
+        "send_quote_request_notification",
+        lambda request: sent.append(("notification", request.email)) or True,
+    )
+    monkeypatch.setattr(
+        quote_requests_endpoint.email_service,
+        "send_quote_confirmation",
+        lambda request: sent.append(("confirmation", request.email)) or True,
+    )
+
+    response = client.post("/api/v1/quote-requests", json=quote_payload())
+
+    assert response.status_code == 201
+    assert sent == [
+        ("notification", "quote@example.com"),
+        ("confirmation", "quote@example.com"),
+    ]
+
+
 def test_public_quote_submission_allows_missing_email_but_requires_valid_supplied_email_and_phone(
     client: TestClient,
 ) -> None:

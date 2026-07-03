@@ -95,9 +95,8 @@ export function Footer({ cmsContent, previewLocale }: FooterProps = {}) {
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div>
-            <Link to="/" className="flex items-center gap-2 mb-6">
-              <img src="/images/logo-TAS-footer.png" alt="T.A.S" className="w-10 h-10 object-contain" />
-              <span className="font-bold text-xl tracking-tight text-white">{cmsText(cmsContent?.logoText, 'T.A.S', 'T.A.S')}</span>
+            <Link to="/" className="inline-flex items-center mb-6">
+              <img src="/images/ATS-logo.png" alt="T.A.S" className="h-14 md:h-16 w-auto max-w-full object-contain" />
             </Link>
             <p className="text-gray-400 mb-6 leading-relaxed">
               {cmsText(

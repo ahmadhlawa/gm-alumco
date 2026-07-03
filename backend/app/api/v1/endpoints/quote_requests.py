@@ -47,6 +47,14 @@ def create_quote_request(
             request.id,
             type(exc).__name__,
         )
+    try:
+        email_service.send_quote_confirmation(request)
+    except Exception as exc:
+        logger.error(
+            "Unexpected quote confirmation failure after request %s was saved (%s).",
+            request.id,
+            type(exc).__name__,
+        )
     return request
 
 
