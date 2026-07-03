@@ -58,7 +58,7 @@ export function AdminLogin() {
 
   return (
     <div
-      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-linear-to-br from-[#03060c] via-brand-navy to-[#152c4f] p-4"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-linear-to-br from-[#03060c] via-brand-navy to-[#152c4f] px-4 py-10 sm:px-8"
       dir={dir}
     >
       {/* Ambient mixed-color glow + faint geometric grid/accent — no photos, keeps the login screen off flat black */}
@@ -75,7 +75,23 @@ export function AdminLogin() {
         style={{ clipPath: 'polygon(50% 0%, 100% 28%, 100% 72%, 50% 100%, 0% 72%, 0% 28%)' }}
       />
 
-      <div className="relative w-full max-w-md bg-brand-navy border border-white/10 rounded-lg shadow-2xl p-8">
+      {/* Two-column split: logo panel + form card. DOM order is logo-first, so the
+          grid places the logo on the start side (left in LTR, right in RTL) via the
+          container's `dir` — no per-language conditionals needed. Stacks on mobile. */}
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-16">
+        <div className="relative flex items-center justify-center">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-1/2 mx-auto h-48 w-3/4 -translate-y-1/2 rounded-full bg-brand-gold/[0.08] blur-3xl"
+          />
+          <img
+            src="/images/ATS-logo.png"
+            alt="T.A.S — TECHNO ALUM SYSTEM"
+            className="relative h-auto w-full max-w-[280px] object-contain drop-shadow-[0_12px_44px_rgba(0,0,0,0.55)] sm:max-w-md lg:max-w-xl"
+          />
+        </div>
+
+        <div className="w-full max-w-md mx-auto bg-brand-navy border border-white/10 rounded-lg shadow-2xl p-8">
         <div className="flex justify-end mb-2">
           <button
             type="button"
@@ -89,9 +105,6 @@ export function AdminLogin() {
           </button>
         </div>
         <div className="text-center mb-8">
-           <div className="mx-auto mb-4 flex items-center justify-center">
-             <img src="/images/ATS-logo.png" alt="T.A.S" className="h-14 w-auto object-contain" />
-           </div>
            <h2 className="text-2xl font-bold text-white">{copy.title}</h2>
            <p className="text-gray-400 mt-2 text-sm">{copy.subtitle}</p>
         </div>
@@ -136,6 +149,7 @@ export function AdminLogin() {
 
         <div className="mt-6 text-center">
            <a href="/" className="text-brand-silver hover:text-white text-sm transition-colors border-b border-transparent hover:border-white pb-1">{copy.backToSite}</a>
+        </div>
         </div>
       </div>
     </div>
