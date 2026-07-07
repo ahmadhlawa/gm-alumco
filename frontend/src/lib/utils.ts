@@ -42,6 +42,11 @@ export function normalizeImageUrl(
   return value;
 }
 
+// Media (video/image) URLs are normalized the same way: absolute URLs
+// pass through, and backend-served /uploads/... paths resolve to the API origin
+// via VITE_API_URL. Alias kept for call-site clarity at video sites.
+export const normalizeMediaUrl = normalizeImageUrl;
+
 export function handleImageError(event: SyntheticEvent<HTMLImageElement>) {
   event.currentTarget.onerror = null;
   event.currentTarget.src = IMAGE_PLACEHOLDER_URL;

@@ -8,8 +8,11 @@ import { TestimonialCard } from '@/components/cards/TestimonialCard';
 import { SuccessPartners } from '@/components/sections/SuccessPartners';
 import { FeaturedProjectsShowcase } from '@/components/sections/FeaturedProjectsShowcase';
 import { GeometricHero } from '@/components/sections/GeometricHero';
+import { HomepageVideoSection } from '@/components/sections/HomepageVideoSection';
 import { ServicesShowcase } from '@/components/sections/ServicesShowcase';
 import { getServices, getProjects, getTestimonials } from '@/lib/api';
+import { getHomepageVideoSection } from '@/api/homepageVideoSection';
+import type { HomepageVideoSectionDto } from '@/api/types';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/i18n';
 import { ShieldCheck, Ruler, Clock, LayoutTemplate, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -32,6 +35,7 @@ export function Home() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [publicStats, setPublicStats] = useState<PublicStatsContent>(defaultPublicStats);
+  const [videoSection, setVideoSection] = useState<HomepageVideoSectionDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTestimonial, setActiveTestimonial] = useState(1);
 
@@ -47,17 +51,20 @@ export function Home() {
       getServices(language),
       getProjects(language),
       getTestimonials(language),
-      getPublicStatsContent()
-    ]).then(([svcs, projs, tests, statsContent]) => {
+      getPublicStatsContent(),
+      getHomepageVideoSection().catch(() => null)
+    ]).then(([svcs, projs, tests, statsContent, video]) => {
       setServices(svcs);
       setProjects(projs);
       setTestimonials(tests);
       setPublicStats(statsContent);
+      setVideoSection(video);
     }).catch(() => {
       setServices([]);
       setProjects([]);
       setTestimonials([]);
       setPublicStats(defaultPublicStats);
+      setVideoSection(null);
     }).finally(() => setLoading(false));
   }, [language]);
 
@@ -99,6 +106,9 @@ export function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <GeometricHero stats={publicStats.heroStats} valueChips={publicStats.valueChips} heroSince={publicStats.heroSince} />
+
+      {/* Configurable full-width autoplay video (renders nothing when disabled) */}
+      <HomepageVideoSection section={videoSection} />
 
       {/* About Preview */}
       <section id="about" className="relative isolate scroll-mt-24 overflow-hidden py-24 bg-brand-surface">

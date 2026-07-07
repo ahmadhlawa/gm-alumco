@@ -30,6 +30,7 @@ import { AdminContactMessages } from '@/app/admin/AdminContactMessages';
 import { AdminQuoteRequests } from '@/app/admin/AdminQuoteRequests';
 import { AdminAuditLogs } from '@/app/admin/AdminAuditLogs';
 import { AdminPublicStats } from '@/app/admin/AdminPublicStats';
+import { AdminHomepageVideo } from '@/app/admin/AdminHomepageVideo';
 
 const PlaceholderPage = ({ title }: { title: string }) => {
   const { t } = useLanguage();
@@ -111,6 +112,7 @@ function AppContent() {
             <Route path="contact-messages" element={<AdminContactMessages />} />
             <Route path="quote-requests" element={<AdminQuoteRequests />} />
             <Route path="public-stats" element={<AdminPublicStats />} />
+            <Route path="homepage-video" element={<AdminHomepageVideo />} />
             <Route path="messages" element={<Navigate to="/admin/contact-messages" replace />} />
             <Route path="admins" element={<RequireSuperAdmin><AdminAdmins /></RequireSuperAdmin>} />
             <Route path="audit-logs" element={<RequireSuperAdmin><AdminAuditLogs /></RequireSuperAdmin>} />

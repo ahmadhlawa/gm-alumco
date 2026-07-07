@@ -125,3 +125,107 @@ def test_uploaded_relative_url_can_be_saved_on_project(
         assert created.json()["main_image_url"] == uploaded["url"]
     finally:
         (UPLOAD_ROOT / "projects" / uploaded["filename"]).unlink(missing_ok=True)
+
+
+def test_poster_image_can_be_uploaded_to_videos_folder(
+    client: TestClient, auth_headers
+) -> None:
+    response = upload_image(client, auth_headers(), folder="videos")
+    assert response.status_code == 201
+    payload = response.json()
+    assert payload["url"] == f"/uploads/videos/{payload['filename']}"
+    (UPLOAD_ROOT / "videos" / payload["filename"]).unlink(missing_ok=True)
+
+
+# --- Video uploads ---------------------------------------------------------
+
+# Minimal but valid signatures: MP4 carries an "ftyp" box at bytes 4-8; WEBM
+# (Matroska) starts with the EBML header magic.
+MP4_BYTES = b"\x00\x00\x00\x18ftypmp42" + b"\x00" * 16
+WEBM_BYTES = b"\x1a\x45\xdf\xa3" + b"\x00" * 16
+
+
+def upload_video(
+    client: TestClient,
+    headers: dict[str, str],
+    *,
+    filename: str = "clip.mp4",
+    content: bytes = MP4_BYTES,
+    content_type: str = "video/mp4",
+):
+    return client.post(
+        "/api/v1/admin/uploads/video",
+        headers=headers,
+        files={"file": (filename, content, content_type)},
+    )
+
+
+@pytest.mark.parametrize(
+    ("filename", "content", "content_type"),
+    [
+        ("clip.mp4", MP4_BYTES, "video/mp4"),
+        ("clip.webm", WEBM_BYTES, "video/webm"),
+    ],
+)
+def test_admin_uploads_videos(
+    client: TestClient, auth_headers, filename, content, content_type
+) -> None:
+    response = upload_video(
+        client,
+        auth_headers(),
+        filename=filename,
+        content=content,
+        content_type=content_type,
+    )
+    assert response.status_code == 201
+    payload = response.json()
+    extension = filename.rsplit(".", 1)[1]
+    assert payload["url"] == f"/uploads/videos/{payload['filename']}"
+    assert re.fullmatch(rf"[0-9a-f-]{{36}}\.{extension}", payload["filename"])
+    assert payload["content_type"] == content_type
+
+    stored_file = UPLOAD_ROOT / "videos" / payload["filename"]
+    try:
+        assert stored_file.read_bytes() == content
+        served = client.get(payload["url"])
+        assert served.status_code == 200
+    finally:
+        stored_file.unlink(missing_ok=True)
+
+
+def test_video_upload_requires_admin_authentication(client: TestClient) -> None:
+    assert upload_video(client, {}).status_code == 401
+
+
+@pytest.mark.parametrize(
+    ("filename", "content", "content_type"),
+    [
+        # Wrong/blocked types renamed to a video extension.
+        ("clip.mp4", b"<svg xmlns='http://www.w3.org/2000/svg'></svg>", "video/mp4"),
+        ("clip.mp4", b"<html></html>", "video/mp4"),
+        ("clip.webm", b"just text", "video/webm"),
+        # Disallowed container.
+        ("clip.mov", MP4_BYTES, "video/quicktime"),
+        # Extension/MIME mismatch.
+        ("clip.mp4", MP4_BYTES, "video/webm"),
+    ],
+)
+def test_video_upload_rejects_invalid_files(
+    client: TestClient, auth_headers, filename, content, content_type
+) -> None:
+    response = upload_video(
+        client,
+        auth_headers(),
+        filename=filename,
+        content=content,
+        content_type=content_type,
+    )
+    assert response.status_code == 400
+
+
+def test_video_upload_rejects_files_larger_than_eighty_mb(
+    client: TestClient, auth_headers
+) -> None:
+    oversized = MP4_BYTES + b"x" * (80 * 1024 * 1024)
+    response = upload_video(client, auth_headers(), content=oversized)
+    assert response.status_code == 413

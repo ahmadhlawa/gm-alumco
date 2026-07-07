@@ -6,6 +6,7 @@ from app.api.v1.endpoints import (
     auth,
     dashboard,
     gallery,
+    homepage_video_section,
     messages,
     partners,
     projects,
@@ -101,6 +102,16 @@ api_router.include_router(
     site_settings.admin_router,
     prefix="/admin/site-settings",
     tags=["admin: site settings"],
+)
+api_router.include_router(
+    homepage_video_section.public_router,
+    prefix="/homepage-video-section",
+    tags=["homepage video section"],
+)
+api_router.include_router(
+    homepage_video_section.admin_router,
+    prefix="/admin/homepage-video-section",
+    tags=["admin: homepage video section"],
 )
 api_router.include_router(
     messages.public_router,

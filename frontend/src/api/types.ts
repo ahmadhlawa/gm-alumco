@@ -24,6 +24,14 @@ export interface TestimonialDto extends Timestamped, ActiveSortable {
 export interface AdminDto extends Timestamped { id: number; full_name: string; email: string; role: 'admin' | 'super_admin'; is_active: boolean; last_login_at: string | null }
 export interface SiteContentDto extends Timestamped { id: number; section: string; key: string; value: JsonValue; content_type: string; is_active: boolean }
 export interface SiteSettingDto extends Timestamped { id: number; key: string; value: JsonValue }
+// Video-only homepage section. The backend keeps poster/title/description
+// columns nullable for compatibility, but the frontend neither sends nor
+// depends on them.
+export interface HomepageVideoSectionDto {
+  is_enabled: boolean;
+  video_url: string | null;
+  display_order: number;
+}
 export type ContactStatus = 'NEW' | 'READ' | 'ARCHIVED';
 export type QuoteStatus = 'NEW' | 'IN_PROGRESS' | 'DONE' | 'ARCHIVED';
 export interface ContactMessageDto { id: number; name: string; email: string; phone: string | null; subject: string | null; message: string; status: ContactStatus; is_read: boolean; created_at: string }

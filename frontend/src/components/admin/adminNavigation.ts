@@ -1,4 +1,4 @@
-import { BarChart3, Briefcase, ClipboardList, Handshake, Layers, LayoutDashboard, MessageSquare, Quote, ShieldCheck, Users, type LucideIcon } from 'lucide-react';
+import { BarChart3, Briefcase, ClipboardList, Handshake, Layers, LayoutDashboard, MessageSquare, Quote, ShieldCheck, Users, Video, type LucideIcon } from 'lucide-react';
 import type { AdminDto } from '@/api/types';
 import type { Language } from '@/i18n';
 
@@ -13,6 +13,7 @@ const contentItems: AdminNavigationDef[] = [
   { path: '/admin/services', label: { he: 'שירותים', en: 'Services' }, icon: Layers },
   { path: '/admin/partners', label: { he: 'שותפים', en: 'Partners' }, icon: Handshake },
   { path: '/admin/testimonials', label: { he: 'המלצות', en: 'Testimonials' }, icon: Quote },
+  { path: '/admin/homepage-video', label: { he: 'סרטון דף הבית', en: 'Homepage Video' }, icon: Video },
   { path: '/admin/public-stats', label: { he: 'נתוני החברה', en: 'Company numbers' }, icon: BarChart3 },
   { path: '/admin/contact-messages', label: { he: 'הודעות צור קשר', en: 'Contact messages' }, icon: MessageSquare },
   { path: '/admin/quote-requests', label: { he: 'בקשות להצעת מחיר', en: 'Quote requests' }, icon: ClipboardList },

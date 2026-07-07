@@ -1,6 +1,7 @@
 from app.models.admin import Admin
 from app.models.audit_log import AuditLog
 from app.models.gallery import GalleryImage
+from app.models.homepage_video_section import HomepageVideoSection
 from app.models.message import ContactMessage, QuoteRequest
 from app.models.partner import Partner
 from app.models.project import Project, ProjectImage
@@ -14,6 +15,7 @@ __all__ = [
     "AuditLog",
     "ContactMessage",
     "GalleryImage",
+    "HomepageVideoSection",
     "Partner",
     "Project",
     "ProjectImage",
