@@ -39,16 +39,17 @@ describe('AdminLayout sidebar', () => {
     vi.unstubAllGlobals();
   });
 
-  it('keeps desktop sidebar items visible without a scrollbar and preserves small-height fallback', () => {
+  it('keeps sidebar navigation independently scrollable and bottom actions accessible', () => {
     const html = renderAdminLayout('/admin/testimonials');
 
     expect(html).toContain('flex-col');
-    // Mobile scrolls the drawer nav whenever it overflows; desktop keeps the
-    // no-scrollbar polish and only falls back to scrolling on short viewports.
-    expect(html).toContain('flex-1 overflow-y-auto');
-    expect(html).toContain('lg:overflow-visible');
-    expect(html).toContain('lg:[@media(max-height:699px)]:overflow-y-auto');
+    expect(html).toContain('h-screen overflow-hidden');
+    expect(html).toContain('admin-scrollbar flex-1 overflow-y-auto overscroll-contain');
+    expect(html).not.toContain('lg:overflow-visible');
+    expect(html).not.toContain('max-height:699px');
     expect(html).toContain('shrink-0 border-t');
+    expect(html).toContain('min-h-0 flex-1 min-w-0 overflow-y-auto overflow-x-hidden overscroll-contain');
+    expect(html).toContain('lg:pb-24');
     expect(html).not.toContain('absolute bottom-0');
     expect((html.match(/min-h-11/g) ?? []).length).toBeGreaterThanOrEqual(12);
 
@@ -61,6 +62,12 @@ describe('AdminLayout sidebar', () => {
       '/admin/audit-logs',
       '/',
     ].forEach((href) => expect(html).toContain(`href="${href}"`));
+  });
+
+  it('shows the active admin page title in the top header', () => {
+    const html = renderAdminLayout('/admin/projects', 'en');
+    expect(html).toContain('>Projects</h1>');
+    expect(html).not.toContain('>Dashboard</h1>');
   });
 });
 

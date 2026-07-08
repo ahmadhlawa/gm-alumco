@@ -44,6 +44,9 @@ export function AdminLayout() {
   const bottomAdminPaths = new Set(['/admin/admins', '/admin/audit-logs']);
   const mainItems = items.filter((item) => !bottomAdminPaths.has(item.path));
   const bottomAdminItems = items.filter((item) => bottomAdminPaths.has(item.path));
+  const isItemActive = (path: string) =>
+    location.pathname === path || (path !== '/admin' && location.pathname.startsWith(`${path}/`));
+  const activeItem = [...items].sort((a, b) => b.path.length - a.path.length).find((item) => isItemActive(item.path));
 
   const handleLogout = () => {
     setIsMobileMenuOpen(false);
@@ -138,7 +141,7 @@ export function AdminLayout() {
 
   return (
     <div
-      className="relative flex min-h-screen bg-linear-to-br from-[#050b16] via-brand-navy to-[#152c4f] text-brand-text font-sans"
+      className="relative flex h-screen overflow-hidden bg-linear-to-br from-[#050b16] via-brand-navy to-[#152c4f] text-brand-text font-sans"
       dir={dir}
     >
       {/* Ambient mixed-color glow + faint geometric grid — replaces the old flat admin background, no photos */}
@@ -174,10 +177,10 @@ export function AdminLayout() {
            <span className="font-bold text-xl text-white">T.A.S</span>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 py-3 lg:overflow-visible lg:[@media(max-height:699px)]:overflow-y-auto">
+        <nav className="admin-scrollbar flex-1 overflow-y-auto overscroll-contain px-3 py-3">
           <div className="space-y-1">
             {mainItems.map((item) => {
-              const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/admin');
+              const isActive = isItemActive(item.path);
               return (
                 <Link
                   key={item.path}
@@ -195,7 +198,7 @@ export function AdminLayout() {
 
         <div className="shrink-0 border-t border-white/10 px-3 py-3 space-y-1">
           {bottomAdminItems.map((item) => {
-            const isActive = location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
+            const isActive = isItemActive(item.path);
             return (
               <Link
                 key={item.path}
@@ -220,10 +223,10 @@ export function AdminLayout() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 min-w-0 p-6 lg:p-10 pb-24 overflow-x-hidden">
+      <main className="admin-scrollbar min-h-0 flex-1 min-w-0 overflow-y-auto overflow-x-hidden overscroll-contain p-6 pb-24 lg:p-10 lg:pb-24">
         {/* Top Header Mocking */}
         <header className="flex justify-between items-center mb-10 pb-6 border-b border-white/5">
-          <h1 className="text-2xl font-bold text-white">{copy.dashboard}</h1>
+          <h1 className="text-2xl font-bold text-white">{activeItem?.label ?? copy.dashboard}</h1>
           <div className="flex items-center gap-4">
              <AdminNotificationBell
                language={language}
