@@ -39,6 +39,15 @@ export interface Project {
   scope?: string[];
 }
 
+export interface ProductionProject {
+  id: string;
+  title: string;
+  shortDescription: string;
+  manufacturer: string;
+  executionPartner: string;
+  images: string[];
+}
+
 export interface Testimonial {
   id: string;
   name: string;

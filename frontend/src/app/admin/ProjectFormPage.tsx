@@ -211,7 +211,7 @@ export function ProjectFormPage() {
     }
   };
 
-  if (loading) return <LoadingState />;
+  if (loading) return <LoadingState variant="form" />;
   if (loadError) return <ErrorState />;
 
   return (

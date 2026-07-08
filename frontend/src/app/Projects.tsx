@@ -108,7 +108,7 @@ export function Projects() {
           {/* Project Grid */}
           <div className="min-h-[400px]">
             {loading ? (
-              <LoadingState message={t('טוען פרויקטים...', 'Loading projects...')} />
+              <LoadingState variant="card-grid" />
             ) : error ? (
               <ErrorState message={t('טעינת הפרויקטים נכשלה. נסה שוב.', 'Could not load projects. Please try again.')} />
             ) : (

@@ -1,4 +1,4 @@
-import { BarChart3, Briefcase, ClipboardList, Handshake, Layers, LayoutDashboard, MessageSquare, Quote, ShieldCheck, Users, Video, type LucideIcon } from 'lucide-react';
+import { BarChart3, Briefcase, ClipboardList, Factory, Handshake, Layers, LayoutDashboard, MessageSquare, Quote, ShieldCheck, Users, Video, type LucideIcon } from 'lucide-react';
 import type { AdminDto } from '@/api/types';
 import type { Language } from '@/i18n';
 
@@ -10,6 +10,7 @@ interface AdminNavigationDef { path: string; label: { he: string; en: string }; 
 const contentItems: AdminNavigationDef[] = [
   { path: '/admin', label: { he: 'לוח בקרה', en: 'Dashboard' }, icon: LayoutDashboard },
   { path: '/admin/projects', label: { he: 'פרויקטים', en: 'Projects' }, icon: Briefcase },
+  { path: '/admin/production-projects', label: { he: 'פרויקטי ייצור', en: 'Production Projects' }, icon: Factory },
   { path: '/admin/services', label: { he: 'שירותים', en: 'Services' }, icon: Layers },
   { path: '/admin/partners', label: { he: 'שותפים', en: 'Partners' }, icon: Handshake },
   { path: '/admin/testimonials', label: { he: 'המלצות', en: 'Testimonials' }, icon: Quote },

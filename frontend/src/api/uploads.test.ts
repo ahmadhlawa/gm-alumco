@@ -98,6 +98,24 @@ describe('uploadAdminImage', () => {
     expect(progress).toEqual([null]);
   });
 
+  it('allows production project image uploads through the shared uploader', async () => {
+    const { uploadAdminImage } = await import('./uploads');
+    const request = uploadAdminImage(
+      new File(['image'], 'production.webp', { type: 'image/webp' }),
+      'production-projects',
+    );
+    const xhr = FakeXMLHttpRequest.latest;
+    xhr.respond(201, {
+      url: '/uploads/production-projects/id.webp',
+      filename: 'id.webp',
+      content_type: 'image/webp',
+      size: 5,
+    });
+
+    await expect(request).resolves.toEqual(expect.objectContaining({ filename: 'id.webp' }));
+    expect((xhr.body as FormData).get('folder')).toBe('production-projects');
+  });
+
   it('rejects with the backend error message', async () => {
     const { uploadAdminImage } = await import('./uploads');
     const request = uploadAdminImage(

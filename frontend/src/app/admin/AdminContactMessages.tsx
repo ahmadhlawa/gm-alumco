@@ -77,7 +77,7 @@ export function AdminContactMessages() {
     <div className="space-y-6">
       <AdminPageHeader title={copy.title} description={copy.description} />
       {loading ? (
-        <LoadingState />
+        <LoadingState variant="table" />
       ) : error ? (
         <ErrorState />
       ) : items.length === 0 ? (

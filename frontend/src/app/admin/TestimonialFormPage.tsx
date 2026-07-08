@@ -91,7 +91,7 @@ export function TestimonialFormPage() {
     }
   };
 
-  if (loading) return <LoadingState />;
+  if (loading) return <LoadingState variant="form" />;
   if (error) return <ErrorState />;
 
   return <form onSubmit={submit} className="max-w-5xl space-y-6">

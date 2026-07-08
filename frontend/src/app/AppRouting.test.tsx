@@ -5,6 +5,19 @@ import { LanguageProvider } from '@/i18n';
 import { PublicSiteRoutes } from './App';
 
 describe('public routing', () => {
+  it('renders the standalone production page route', () => {
+    const html = renderToStaticMarkup(
+      <LanguageProvider>
+        <MemoryRouter initialEntries={['/production']}>
+          <PublicSiteRoutes />
+        </MemoryRouter>
+      </LanguageProvider>,
+    );
+
+    expect(html).toContain('data-page="production-projects"');
+    expect(html).not.toContain('Page not found');
+  });
+
   it('renders a real 404 screen for unknown public routes', () => {
     const html = renderToStaticMarkup(
       <LanguageProvider>

@@ -15,7 +15,14 @@ MAX_IMAGE_SIZE = 5 * 1024 * 1024
 MAX_VIDEO_SIZE = 80 * 1024 * 1024
 # "videos" is included so poster/still images for the homepage video section can
 # be stored alongside their video under /uploads/videos.
-UploadFolder = Literal["projects", "services", "partners", "gallery", "videos"]
+UploadFolder = Literal[
+    "projects",
+    "services",
+    "partners",
+    "gallery",
+    "videos",
+    "production-projects",
+]
 
 CONTENT_TYPES = {
     ".jpg": "image/jpeg",

@@ -48,7 +48,7 @@ export function AdminPartners() {
 
   return <div className="space-y-6">
     <AdminPageHeader title={copy.title} description={copy.description} action={<Link to="/admin/partners/new" className="flex items-center gap-2 rounded bg-brand-gold px-5 py-2.5 font-bold text-white"><Plus className="h-5 w-5" />{copy.add}</Link>} />
-    {loading ? <LoadingState /> : error ? <ErrorState /> : items.length === 0 ? <EmptyState message={copy.empty} /> : <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{items.map((item) => {
+    {loading ? <LoadingState variant="admin-grid" /> : error ? <ErrorState /> : items.length === 0 ? <EmptyState message={copy.empty} /> : <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{items.map((item) => {
       const name = pickAdminText(language, item.name_he, item.name_en) || copy.untitled;
       return <article key={item.id} className="flex items-center gap-4 rounded-lg border border-white/10 bg-brand-navy p-5">
         <div className="flex h-16 w-20 shrink-0 items-center justify-center bg-white p-2"><img src={normalizeImageUrl(item.logo_url)} onError={handleImageError} alt={name} className="max-h-full max-w-full object-contain" /></div>

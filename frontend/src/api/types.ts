@@ -14,6 +14,15 @@ export interface ProjectDto extends Timestamped, ActiveSortable, LocalizedTitle 
 }
 export interface ProjectImageDto { id: number; project_id: number; image_url: string; alt_text_en: string | null; alt_text_he: string | null; sort_order: number; created_at: string }
 export interface ProjectDetailDto extends ProjectDto { images: ProjectImageDto[] }
+export interface ProductionProjectImageDto { id: number; project_id: number; image_url: string; alt_text_en: string | null; alt_text_he: string | null; sort_order: number; created_at: string }
+export interface ProductionProjectDto extends Timestamped, ActiveSortable, LocalizedTitle {
+  id: number;
+  manufacturer_en: string | null;
+  manufacturer_he: string | null;
+  execution_partner_en: string | null;
+  execution_partner_he: string | null;
+  images: ProductionProjectImageDto[];
+}
 export interface PartnerDto extends Timestamped, ActiveSortable { id: number; name_en: string; name_he: string; logo_url: string; website_url: string | null }
 export interface TestimonialDto extends Timestamped, ActiveSortable {
   id: number; client_name_en: string; client_name_he: string;

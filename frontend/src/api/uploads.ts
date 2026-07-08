@@ -1,7 +1,7 @@
 import { ApiError } from './client';
 import { clearAccessToken, getAccessToken } from './token';
 
-export type UploadFolder = 'projects' | 'services' | 'partners' | 'gallery' | 'videos';
+export type UploadFolder = 'projects' | 'services' | 'partners' | 'gallery' | 'videos' | 'production-projects';
 
 export interface ImageUploadResult {
   url: string;

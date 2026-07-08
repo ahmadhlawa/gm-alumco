@@ -191,7 +191,7 @@ export function AdminAdmins() {
 
       {/* List */}
       {loading ? (
-        <LoadingState message={copy.loading} />
+        <LoadingState variant="table" />
       ) : loadError ? (
         <ErrorState />
       ) : (

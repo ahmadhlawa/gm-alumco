@@ -116,7 +116,7 @@ export function Dashboard() {
       .finally(() => setLoading(false));
   }, [authLoading, isSuperAdmin]);
 
-  if (authLoading || loading) return <LoadingState message={copy.loading} />;
+  if (authLoading || loading) return <LoadingState variant="dashboard" />;
   if (error || !stats) return <ErrorState />;
 
   const cards = [

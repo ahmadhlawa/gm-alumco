@@ -73,7 +73,7 @@ export function ServiceFormPage() {
     }
   };
 
-  if (loading) return <LoadingState />;
+  if (loading) return <LoadingState variant="form" />;
   if (error) return <ErrorState />;
   return <form onSubmit={submit} className="max-w-5xl space-y-6">
     <div><h2 className="text-2xl font-bold text-white">{id ? copy.editTitle : copy.addTitle}</h2><p className="mt-1 text-brand-silver">{copy.description}</p></div>

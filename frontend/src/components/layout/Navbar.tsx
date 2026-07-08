@@ -42,6 +42,7 @@ export function Navbar() {
     { name: t('עלינו', "About"), path: '/', scrollTarget: 'about' },
     { name: t('שירותים', "Services"), path: '/', scrollTarget: 'services' },
     { name: t('פרויקטים', "Projects"), path: '/', scrollTarget: 'projects' },
+    { name: t('פרויקטי ייצור', "Production"), path: '/production' },
     { name: t('השותפים שלנו', "Partners"), path: '/', scrollTarget: 'partners' },
     { name: t('צור קשר', "Contact"), path: '/contact' },
   ];

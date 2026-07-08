@@ -98,7 +98,7 @@ export function Home() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-brand-navy">
-        <LoadingState message={t("טוען עמוד ראשית...", "Loading the homepage...")} />
+        <LoadingState variant="page" />
       </div>
     );
   }

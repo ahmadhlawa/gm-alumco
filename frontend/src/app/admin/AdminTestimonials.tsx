@@ -70,7 +70,7 @@ export function AdminTestimonials() {
     <AdminPageHeader title={copy.title} description={copy.description} action={
       <Link to="/admin/testimonials/new" className="flex items-center gap-2 rounded bg-brand-gold px-5 py-2.5 font-bold text-white"><Plus className="h-5 w-5" />{copy.add}</Link>
     } />
-    {loading ? <LoadingState /> : error ? <ErrorState /> : items.length === 0 ? <EmptyState message={copy.empty} /> :
+    {loading ? <LoadingState variant="table" /> : error ? <ErrorState /> : items.length === 0 ? <EmptyState message={copy.empty} /> :
       <div className="overflow-x-auto rounded-lg border border-white/10 bg-brand-navy">
         <table className="w-full min-w-[820px] text-start text-sm" dir={dir}>
           <thead className="border-b border-white/10 text-brand-silver"><tr><th className="p-4">{copy.cols.client}</th><th className="p-4">{copy.cols.message}</th><th className="p-4">{copy.cols.rating}</th><th className="p-4">{copy.cols.order}</th><th className="p-4">{copy.cols.status}</th><th className="p-4">{copy.cols.actions}</th></tr></thead>

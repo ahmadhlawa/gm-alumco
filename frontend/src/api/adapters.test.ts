@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assembleSiteContent, toPartnerView, toProjectView, toServiceView, toTestimonialView } from './adapters';
+import { assembleSiteContent, toPartnerView, toProductionProjectView, toProjectView, toServiceView, toTestimonialView } from './adapters';
 
 describe('API adapters', () => {
   it('localizes resource DTOs without inventing unavailable data', () => {
@@ -64,5 +64,29 @@ describe('API adapters', () => {
     ]);
 
     expect(result.hero).toEqual({ headline: { he: 'T.A.S', en: 'T.A.S' } });
+  });
+
+  it('adapts production projects with localized metadata and ordered images', () => {
+    const result = toProductionProjectView({
+      id: 9,
+      title_en: 'Production', title_he: 'ייצור',
+      description_en: 'Industrial work', description_he: '',
+      manufacturer_en: 'Factory', manufacturer_he: '',
+      execution_partner_en: '', execution_partner_he: 'שותף',
+      is_active: true, sort_order: 0, created_at: '', updated_at: '',
+      images: [
+        { id: 2, project_id: 9, image_url: '/uploads/production-projects/2.webp', alt_text_en: null, alt_text_he: null, sort_order: 2, created_at: '' },
+        { id: 1, project_id: 9, image_url: '/uploads/production-projects/1.webp', alt_text_en: null, alt_text_he: null, sort_order: 1, created_at: '' },
+      ],
+    }, 'en');
+
+    expect(result).toMatchObject({
+      id: '9',
+      title: 'Production',
+      shortDescription: 'Industrial work',
+      manufacturer: 'Factory',
+      executionPartner: 'שותף',
+      images: ['/uploads/production-projects/1.webp', '/uploads/production-projects/2.webp'],
+    });
   });
 });

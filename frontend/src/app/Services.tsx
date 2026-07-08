@@ -53,7 +53,7 @@ export function Services() {
           />
           <div className="min-h-[400px]">
              {loading ? (
-                <LoadingState message={t('טוען שירותים...', 'Loading services...')} />
+                <LoadingState variant="card-grid" />
              ) : error ? (
                 <ErrorState message={t('טעינת השירותים נכשלה. נסה שוב.', 'Could not load services. Please try again.')} />
              ) : services.length === 0 ? (

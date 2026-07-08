@@ -29,7 +29,7 @@ def upload_image(
     )
 
 
-@pytest.mark.parametrize("folder", ["projects", "services", "partners", "gallery"])
+@pytest.mark.parametrize("folder", ["projects", "services", "partners", "gallery", "production-projects"])
 def test_admin_uploads_images_to_allowed_folders(
     client: TestClient, auth_headers, folder: str
 ) -> None:

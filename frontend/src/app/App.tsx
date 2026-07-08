@@ -6,6 +6,7 @@ import { Home } from '@/app/Home';
 import { About } from '@/app/About';
 import { Services } from '@/app/Services';
 import { Projects } from '@/app/Projects';
+import { Production } from '@/app/Production';
 import { Contact } from '@/app/Contact';
 import { RequestQuote } from '@/app/RequestQuote';
 import { PageHero } from '@/components/common/PageHero';
@@ -17,8 +18,10 @@ import { RequireSuperAdmin } from '@/components/admin/RequireSuperAdmin';
 import { AdminAuthProvider } from '@/components/admin/AdminAuthProvider';
 import { Dashboard } from '@/app/admin/Dashboard';
 import { AdminProjects } from '@/app/admin/AdminProjects';
+import { AdminProductionProjects } from '@/app/admin/AdminProductionProjects';
 import { AdminAdmins } from '@/app/admin/AdminAdmins';
 import { ProjectFormPage } from '@/app/admin/ProjectFormPage';
+import { ProductionProjectFormPage } from '@/app/admin/ProductionProjectFormPage';
 import { AdminServices } from '@/app/admin/AdminServices';
 import { ServiceFormPage } from '@/app/admin/ServiceFormPage';
 import { AdminLogin } from '@/app/admin/AdminLogin';
@@ -76,6 +79,7 @@ export function PublicSiteRoutes() {
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/production" element={<Production />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/request-quote" element={<RequestQuote />} />
           <Route path="/careers" element={<PlaceholderPage title={t('קריירה', 'Careers')} />} />
@@ -100,6 +104,9 @@ function AppContent() {
             <Route path="projects" element={<AdminProjects />} />
             <Route path="projects/new" element={<ProjectFormPage />} />
             <Route path="projects/:id/edit" element={<ProjectFormPage />} />
+            <Route path="production-projects" element={<AdminProductionProjects />} />
+            <Route path="production-projects/new" element={<ProductionProjectFormPage />} />
+            <Route path="production-projects/:id/edit" element={<ProductionProjectFormPage />} />
             <Route path="services" element={<AdminServices />} />
             <Route path="services/new" element={<ServiceFormPage />} />
             <Route path="services/:id/edit" element={<ServiceFormPage />} />

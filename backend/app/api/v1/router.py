@@ -9,6 +9,7 @@ from app.api.v1.endpoints import (
     homepage_video_section,
     messages,
     partners,
+    production_projects,
     projects,
     quote_requests,
     services,
@@ -54,6 +55,21 @@ api_router.include_router(
     projects.admin_image_router,
     prefix="/admin/project-images",
     tags=["admin: project images"],
+)
+api_router.include_router(
+    production_projects.public_router,
+    prefix="/production-projects",
+    tags=["production projects"],
+)
+api_router.include_router(
+    production_projects.admin_router,
+    prefix="/admin/production-projects",
+    tags=["admin: production projects"],
+)
+api_router.include_router(
+    production_projects.admin_image_router,
+    prefix="/admin/production-project-images",
+    tags=["admin: production project images"],
 )
 api_router.include_router(services.public_router, prefix="/services", tags=["services"])
 api_router.include_router(
