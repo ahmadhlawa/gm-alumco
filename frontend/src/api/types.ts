@@ -41,6 +41,31 @@ export interface HomepageVideoSectionDto {
   video_url: string | null;
   display_order: number;
 }
+export interface AboutPageContentDto {
+  title_en: string | null; title_he: string | null;
+  subtitle_en: string | null; subtitle_he: string | null;
+  paragraph_1_en: string | null; paragraph_1_he: string | null;
+  paragraph_2_en: string | null; paragraph_2_he: string | null;
+  bullet_1_en: string | null; bullet_1_he: string | null;
+  bullet_2_en: string | null; bullet_2_he: string | null;
+  bullet_3_en: string | null; bullet_3_he: string | null;
+  bullet_4_en: string | null; bullet_4_he: string | null;
+  image_url: string | null;
+  experience_number: string | null;
+  experience_label_en: string | null; experience_label_he: string | null;
+  vision_title_en: string | null; vision_title_he: string | null;
+  vision_text_en: string | null; vision_text_he: string | null;
+  mission_title_en: string | null; mission_title_he: string | null;
+  mission_text_en: string | null; mission_text_he: string | null;
+  difference_title_en: string | null; difference_title_he: string | null;
+  difference_intro_en: string | null; difference_intro_he: string | null;
+  difference_paragraph_en: string | null; difference_paragraph_he: string | null;
+  cta_text_en: string | null; cta_text_he: string | null;
+  cta_link: string | null;
+  stat_1_number: string | null; stat_1_label_en: string | null; stat_1_label_he: string | null;
+  stat_2_number: string | null; stat_2_label_en: string | null; stat_2_label_he: string | null;
+  stat_3_number: string | null; stat_3_label_en: string | null; stat_3_label_he: string | null;
+}
 export type ContactStatus = 'NEW' | 'READ' | 'ARCHIVED';
 export type QuoteStatus = 'NEW' | 'IN_PROGRESS' | 'DONE' | 'ARCHIVED';
 export interface ContactMessageDto { id: number; name: string; email: string; phone: string | null; subject: string | null; message: string; status: ContactStatus; is_read: boolean; created_at: string }
