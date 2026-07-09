@@ -3,6 +3,7 @@ build/
 dist/
 coverage/
 .worktrees/
+.superpowers/
 .DS_Store
 *.log
 backend/uploads/*
