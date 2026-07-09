@@ -22,7 +22,7 @@ const COPY = {
     error: 'שמירת הנתונים נכשלה. נסו שוב.', loadError: 'טעינת הנתונים נכשלה.',
     overLimit: 'החריגה ממכסת התווים תמנע שמירה.',
     heCol: 'עברית', enCol: 'אנגלית',
-    sectionSuccess: 'סיפור ההצלחה', sectionVisionMission: 'חזון ומשימה', sectionDifference: 'ההבדל שלנו וסטטיסטיקות',
+    sectionSuccess: 'סיפור ההצלחה', sectionVisionMission: 'חזון ומשימה',
     imageLabel: 'תמונת סיפור ההצלחה',
     fields: {
       title: 'כותרת', subtitle: 'כותרת משנה', paragraph1: 'פסקה 1', paragraph2: 'פסקה 2',
@@ -30,11 +30,6 @@ const COPY = {
       experienceNumber: 'מספר ותק', experienceLabel: 'תווית ותק',
       visionTitle: 'כותרת החזון', visionText: 'טקסט החזון',
       missionTitle: 'כותרת המשימה', missionText: 'טקסט המשימה',
-      differenceTitle: 'כותרת', differenceIntro: 'טקסט מבוא', differenceParagraph: 'פסקה',
-      ctaText: 'טקסט כפתור', ctaLink: 'קישור כפתור',
-      stat1Number: 'סטטיסטיקה 1 — מספר', stat1Label: 'סטטיסטיקה 1 — תווית',
-      stat2Number: 'סטטיסטיקה 2 — מספר', stat2Label: 'סטטיסטיקה 2 — תווית',
-      stat3Number: 'סטטיסטיקה 3 — מספר', stat3Label: 'סטטיסטיקה 3 — תווית',
     },
   },
   en: {
@@ -43,7 +38,7 @@ const COPY = {
     error: 'Could not save. Please try again.', loadError: 'Could not load. Please try again.',
     overLimit: 'Fields over the character limit will block saving.',
     heCol: 'Hebrew', enCol: 'English',
-    sectionSuccess: 'Success Story', sectionVisionMission: 'Vision & Mission', sectionDifference: 'Difference & Stats',
+    sectionSuccess: 'Success Story', sectionVisionMission: 'Vision & Mission',
     imageLabel: 'Success Story image',
     fields: {
       title: 'Title', subtitle: 'Subtitle', paragraph1: 'Paragraph 1', paragraph2: 'Paragraph 2',
@@ -51,11 +46,6 @@ const COPY = {
       experienceNumber: 'Experience number', experienceLabel: 'Experience label',
       visionTitle: 'Vision title', visionText: 'Vision text',
       missionTitle: 'Mission title', missionText: 'Mission text',
-      differenceTitle: 'Title', differenceIntro: 'Intro text', differenceParagraph: 'Paragraph',
-      ctaText: 'Button text', ctaLink: 'Button link',
-      stat1Number: 'Stat 1 — number', stat1Label: 'Stat 1 — label',
-      stat2Number: 'Stat 2 — number', stat2Label: 'Stat 2 — label',
-      stat3Number: 'Stat 3 — number', stat3Label: 'Stat 3 — label',
     },
   },
 };
@@ -139,27 +129,26 @@ export function AdminAboutContent() {
     { keyHe: 'mission_text_he', keyEn: 'mission_text_en', label: copy.fields.missionText, max: 250, multiline: true },
   ];
 
-  const differencePairs: PairField[] = [
-    { keyHe: 'difference_title_he', keyEn: 'difference_title_en', label: copy.fields.differenceTitle, max: 60 },
-    { keyHe: 'difference_intro_he', keyEn: 'difference_intro_en', label: copy.fields.differenceIntro, max: 120 },
-    { keyHe: 'difference_paragraph_he', keyEn: 'difference_paragraph_en', label: copy.fields.differenceParagraph, max: 350, multiline: true },
-    { keyHe: 'cta_text_he', keyEn: 'cta_text_en', label: copy.fields.ctaText, max: 40 },
-    { keyHe: 'stat_1_label_he', keyEn: 'stat_1_label_en', label: copy.fields.stat1Label, max: 40 },
-    { keyHe: 'stat_2_label_he', keyEn: 'stat_2_label_en', label: copy.fields.stat2Label, max: 40 },
-    { keyHe: 'stat_3_label_he', keyEn: 'stat_3_label_en', label: copy.fields.stat3Label, max: 40 },
-  ];
-  const differenceSingles: SingleField[] = [
-    { key: 'cta_link', label: copy.fields.ctaLink, max: 255 },
-    { key: 'stat_1_number', label: copy.fields.stat1Number, max: 12 },
-    { key: 'stat_2_number', label: copy.fields.stat2Number, max: 12 },
-    { key: 'stat_3_number', label: copy.fields.stat3Number, max: 12 },
-  ];
+  // Difference/Stats/CTA are fixed website structure, not admin-editable
+  // content — no field-group config exists for them here. See About.tsx
+  // (public_stats-driven stats grid, bare <CTASection />) and CTASection.tsx
+  // for the fixed-in-code implementation.
 
-  const allPairs = [...successPairs, ...visionMissionPairs, ...differencePairs];
-  const allSingles = [...successSingles, ...differenceSingles];
+  const allPairs = [...successPairs, ...visionMissionPairs];
+  const allSingles = successSingles;
   const hasOverLimit =
     allPairs.some((f) => get(f.keyHe).length > f.max || get(f.keyEn).length > f.max) ||
     allSingles.some((f) => get(f.key).length > f.max);
+
+  // The save payload is derived from the same field-group config the form
+  // renders, so it can never drift from what's actually shown — and it can
+  // never include the Difference/Stats/CTA fields, since no config for them
+  // exists on this page.
+  const editableKeys: FieldKey[] = [
+    'image_url',
+    ...allPairs.flatMap((f) => [f.keyHe, f.keyEn]),
+    ...allSingles.map((f) => f.key),
+  ];
 
   const renderPair = (field: PairField) => (
     <div key={field.keyHe} className="grid gap-4 md:grid-cols-2">
@@ -201,7 +190,10 @@ export function AdminAboutContent() {
     setSaving(true);
     setFeedback(null);
     try {
-      const saved = await updateAboutPageContent(form);
+      const payload = Object.fromEntries(
+        editableKeys.map((key) => [key, form[key]]),
+      ) as Partial<AboutPageContentDto>;
+      const saved = await updateAboutPageContent(payload);
       setForm(saved);
       setFeedback({ kind: 'success', message: copy.saved });
     } catch (err) {
@@ -255,12 +247,6 @@ export function AdminAboutContent() {
       <section className="space-y-4 rounded-xl border border-white/5 bg-brand-surface-alt p-5">
         <h2 className="text-lg font-bold text-brand-gold">{copy.sectionVisionMission}</h2>
         {visionMissionPairs.map(renderPair)}
-      </section>
-
-      <section className="space-y-4 rounded-xl border border-white/5 bg-brand-surface-alt p-5">
-        <h2 className="text-lg font-bold text-brand-gold">{copy.sectionDifference}</h2>
-        {differencePairs.map(renderPair)}
-        {differenceSingles.map(renderSingle)}
       </section>
     </div>
   );

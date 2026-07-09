@@ -27,4 +27,22 @@ describe('AdminAboutContent page', () => {
     expect(html).not.toMatch(/ערבית/);
     expect(html).not.toMatch(/Arabic/i);
   });
+
+  it('does not expose the Difference & Stats group — it is fixed website structure', () => {
+    const html = renderToStaticMarkup(
+      <LanguageProvider>
+        <AdminAboutContent />
+      </LanguageProvider>,
+    );
+
+    // Section header and field labels for the removed group.
+    expect(html).not.toContain('Difference & Stats');
+    expect(html).not.toContain('ההבדל שלנו וסטטיסטיקות');
+    // CTA button link field.
+    expect(html).not.toContain('Button link');
+    expect(html).not.toContain('קישור כפתור');
+    // Stat number/label fields.
+    expect(html).not.toMatch(/Stat \d — (number|label)/);
+    expect(html).not.toMatch(/סטטיסטיקה \d/);
+  });
 });

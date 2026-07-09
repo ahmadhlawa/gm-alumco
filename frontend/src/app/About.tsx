@@ -6,6 +6,8 @@ import { getAboutPageContent } from '@/api/aboutPageContent';
 import { toAboutContentView } from '@/api/adapters';
 import { defaultAboutPageContent } from '@/data/aboutPageContent';
 import type { AboutPageContentDto } from '@/api/types';
+import { getPublicStatsContent } from '@/api/content';
+import { defaultPublicStats, type PublicStatsContent } from '@/data/publicStats';
 import { motion } from 'motion/react';
 import { CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '@/i18n';
@@ -14,11 +16,22 @@ import { normalizeImageUrl } from '@/lib/utils';
 export function About() {
   const { t, language } = useLanguage();
   const [aboutContent, setAboutContent] = useState<AboutPageContentDto>(defaultAboutPageContent);
+  // The Difference/Stats/CTA band is fixed website structure, not admin
+  // content — it keeps reading from the pre-existing public_stats system
+  // (also used by the Home page hero and the "Company numbers" admin page),
+  // not from about_page_content.
+  const [publicStats, setPublicStats] = useState<PublicStatsContent>(defaultPublicStats);
+  const stats = publicStats.aboutPageStats.map((stat) => ({
+    value: stat.value,
+    label: t(stat.label.he, stat.label.en),
+    suffix: stat.suffix ?? '',
+  }));
 
   useEffect(() => {
     getAboutPageContent()
       .then(setAboutContent)
       .catch(() => setAboutContent(defaultAboutPageContent));
+    getPublicStatsContent().then(setPublicStats).catch(() => setPublicStats(defaultPublicStats));
     // Run once on mount; the view below re-derives from `language` on every
     // render, so a language toggle updates instantly without refetching.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,7 +108,7 @@ export function About() {
 
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-24">
-            {content.stats.map((stat, idx) => (
+            {stats.map((stat, idx) => (
                <motion.div
                  key={idx}
                  initial={{ opacity: 0, y: 20 }}
@@ -104,7 +117,7 @@ export function About() {
                  transition={{ delay: idx * 0.1 }}
                  className="bg-brand-navy p-8 text-center border-b-4 border-transparent hover:border-brand-gold transition-colors"
                >
-                 <div className="text-4xl lg:text-5xl font-bold text-white mb-4" dir="ltr">{stat.number}</div>
+                 <div className="text-4xl lg:text-5xl font-bold text-white mb-4" dir="ltr">{stat.value}{stat.suffix}</div>
                  <div className="text-brand-silver font-bold">{stat.label}</div>
                </motion.div>
             ))}
@@ -139,13 +152,7 @@ export function About() {
         </div>
       </section>
 
-      <CTASection
-        title={content.differenceTitle}
-        subtitle={content.differenceIntro}
-        description={content.differenceParagraph}
-        buttonText={content.ctaText}
-        buttonLink={content.ctaLink}
-      />
+      <CTASection />
     </div>
   );
 }

@@ -123,20 +123,17 @@ describe('toAboutContentView', () => {
     const view = toAboutContentView(dto, 'en');
     expect(view).toMatchObject({
       title: 'Success',
-      differenceTitle: 'Difference',
-      ctaLink: '/contact',
-      stats: [
-        { number: '1', label: 'One' },
-        { number: '2', label: 'Two' },
-        { number: '3', label: 'Three' },
-      ],
+      visionTitle: 'Vision',
+      missionTitle: 'Mission',
+      imageUrl: '/images/success.png',
+      experienceNumber: '10+',
     });
   });
 
   it('localizes to Hebrew', () => {
     const view = toAboutContentView(dto, 'he');
     expect(view.title).toBe('הצלחה');
-    expect(view.stats[0].label).toBe('אחד');
+    expect(view.visionTitle).toBe('חזון');
   });
 
   it('falls back to the other language when one is empty', () => {
@@ -144,15 +141,19 @@ describe('toAboutContentView', () => {
     expect(toAboutContentView(partial, 'he').title).toBe('Success');
   });
 
-  it('falls back to the default image and CTA link when empty or null', () => {
-    const empty: AboutPageContentDto = { ...dto, image_url: '', cta_link: '' };
-    const view = toAboutContentView(empty, 'en');
-    expect(view.imageUrl).toBe('/images/our-success-story.png');
-    expect(view.ctaLink).toBe('/request-quote');
+  it('falls back to the default image when empty or null', () => {
+    const empty: AboutPageContentDto = { ...dto, image_url: '' };
+    expect(toAboutContentView(empty, 'en').imageUrl).toBe('/images/our-success-story.png');
 
-    const nulled: AboutPageContentDto = { ...dto, image_url: null, cta_link: null };
-    const nulledView = toAboutContentView(nulled, 'en');
-    expect(nulledView.imageUrl).toBe('/images/our-success-story.png');
-    expect(nulledView.ctaLink).toBe('/request-quote');
+    const nulled: AboutPageContentDto = { ...dto, image_url: null };
+    expect(toAboutContentView(nulled, 'en').imageUrl).toBe('/images/our-success-story.png');
+  });
+
+  it('never exposes the fixed Difference/Stats/CTA fields — they are website structure, not admin content', () => {
+    const view = toAboutContentView(dto, 'en');
+    const keys = Object.keys(view);
+    for (const forbidden of ['differenceTitle', 'differenceIntro', 'differenceParagraph', 'ctaText', 'ctaLink', 'stats']) {
+      expect(keys).not.toContain(forbidden);
+    }
   });
 });

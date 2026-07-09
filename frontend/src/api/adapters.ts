@@ -57,14 +57,12 @@ export interface AboutContentView {
   visionText: string;
   missionTitle: string;
   missionText: string;
-  differenceTitle: string;
-  differenceIntro: string;
-  differenceParagraph: string;
-  ctaText: string;
-  ctaLink: string;
-  stats: { number: string; label: string }[];
 }
 
+// The Difference/Stats/CTA band is fixed website structure, not admin
+// content — it is intentionally excluded from this view model. See
+// components/sections that render it directly (CTASection, the About page's
+// public_stats-driven stats grid), not about_page_content.
 export const toAboutContentView = (dto: AboutPageContentDto, locale: Locale): AboutContentView => ({
   title: pick(locale, dto.title_he, dto.title_en),
   subtitle: pick(locale, dto.subtitle_he, dto.subtitle_en),
@@ -83,14 +81,4 @@ export const toAboutContentView = (dto: AboutPageContentDto, locale: Locale): Ab
   visionText: pick(locale, dto.vision_text_he, dto.vision_text_en),
   missionTitle: pick(locale, dto.mission_title_he, dto.mission_title_en),
   missionText: pick(locale, dto.mission_text_he, dto.mission_text_en),
-  differenceTitle: pick(locale, dto.difference_title_he, dto.difference_title_en),
-  differenceIntro: pick(locale, dto.difference_intro_he, dto.difference_intro_en),
-  differenceParagraph: pick(locale, dto.difference_paragraph_he, dto.difference_paragraph_en),
-  ctaText: pick(locale, dto.cta_text_he, dto.cta_text_en),
-  ctaLink: nonEmpty(dto.cta_link) ?? '/request-quote',
-  stats: [
-    { number: dto.stat_1_number ?? '', label: pick(locale, dto.stat_1_label_he, dto.stat_1_label_en) },
-    { number: dto.stat_2_number ?? '', label: pick(locale, dto.stat_2_label_he, dto.stat_2_label_en) },
-    { number: dto.stat_3_number ?? '', label: pick(locale, dto.stat_3_label_he, dto.stat_3_label_en) },
-  ],
 });

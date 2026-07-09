@@ -23,4 +23,25 @@ describe('About page', () => {
     expect(html).toContain('המשימה שלנו');
     expect(html).toContain('/images/our-success-story.png');
   });
+
+  it('renders the Difference/Stats/CTA band from the fixed public_stats + CTASection defaults, not about_page_content', () => {
+    // Same no-effects render as above: the stats grid falls back to
+    // defaultPublicStats (a different module from about_page_content's
+    // fallback), and <CTASection /> is called with no props at all, so it
+    // shows its own hardcoded default copy. This is the fixed-in-code
+    // implementation the Difference/Stats/CTA band must keep using.
+    const html = renderToStaticMarkup(
+      <MemoryRouter>
+        <LanguageProvider>
+          <About />
+        </LanguageProvider>
+      </MemoryRouter>,
+    );
+
+    // Stats grid: defaultCompanyNumbers labels (public_stats source).
+    expect(html).toContain('פרויקטים שהושלמו');
+    expect(html).toContain('שנות אחריות');
+    // CTASection's own internal default title (no props passed from About).
+    expect(html).toContain('האם יש לך פרויקט חדש? תן לנו לעזור לך לממש אותו.');
+  });
 });
