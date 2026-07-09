@@ -14,6 +14,7 @@ describe('admin navigation', () => {
       '/admin/partners',
       '/admin/testimonials',
       '/admin/homepage-video',
+      '/admin/about-content',
       '/admin/public-stats',
       '/admin/contact-messages',
       '/admin/quote-requests',
