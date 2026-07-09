@@ -8,6 +8,7 @@ import { WHATSAPP_URL } from "./ContactActions";
 interface CTASectionProps {
   title?: string;
   subtitle?: string;
+  description?: string;
   buttonText?: string;
   buttonLink?: string;
   className?: string;
@@ -16,6 +17,7 @@ interface CTASectionProps {
 export function CTASection({
   title,
   subtitle,
+  description,
   buttonText,
   buttonLink = "/request-quote",
   className
@@ -62,6 +64,11 @@ export function CTASection({
           <p className="text-xl text-gray-300 mb-10 font-light">
             {finalSubtitle}
           </p>
+          {description && (
+            <p className="text-base text-gray-400 mb-10 font-light max-w-2xl mx-auto">
+              {description}
+            </p>
+          )}
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button href={buttonLink} variant="secondary" size="lg" className="min-w-[200px]">
               {finalButtonText}
