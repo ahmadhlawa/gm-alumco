@@ -82,9 +82,9 @@ export function About() {
                viewport={{ once: true }}
                className="relative"
             >
-              <img 
-                src="/images/main.jpeg"
-                alt="Our Engineering Team" 
+              <img
+                src="/images/our-success-story.png"
+                alt="Our Engineering Team"
                 className="w-full h-[500px] object-cover rounded-sm shadow-2xl shadow-brand-border/50"
               />
               <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-brand-navy border-8 border-brand-surface p-6 hidden md:flex flex-col justify-center text-center">
