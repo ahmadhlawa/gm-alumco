@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
+    about_page_content,
     admins,
     audit_logs,
     auth,
@@ -28,6 +29,16 @@ def health_check() -> dict[str, str]:
     return {"status": "ok"}
 
 
+api_router.include_router(
+    about_page_content.public_router,
+    prefix="/about-page-content",
+    tags=["about page content"],
+)
+api_router.include_router(
+    about_page_content.admin_router,
+    prefix="/admin/about-page-content",
+    tags=["admin: about page content"],
+)
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
 api_router.include_router(
     uploads.router,

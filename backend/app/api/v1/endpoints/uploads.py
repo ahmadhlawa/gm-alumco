@@ -22,6 +22,7 @@ UploadFolder = Literal[
     "gallery",
     "videos",
     "production-projects",
+    "about",
 ]
 
 CONTENT_TYPES = {
