@@ -225,7 +225,7 @@ export function AdminLayout() {
       {/* Main Content */}
       <main className="admin-scrollbar min-h-0 flex-1 min-w-0 overflow-y-auto overflow-x-hidden overscroll-contain p-6 pb-24 lg:p-10 lg:pb-24">
         {/* Top Header Mocking */}
-        <header className="flex justify-between items-center mb-10 pb-6 border-b border-white/5">
+        <header className="flex justify-between items-center mb-10 pb-6 pr-20 border-b border-white/5 lg:pr-0">
           <h1 className="text-2xl font-bold text-white">{activeItem?.label ?? copy.dashboard}</h1>
           <div className="flex items-center gap-4">
              <AdminNotificationBell
