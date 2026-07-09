@@ -18,6 +18,12 @@ class AboutPageContent(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
+    # The `default=` values below are the same seed content as the migration's
+    # insert (alembic/versions/20260709_0001_add_about_page_content.py). Kept
+    # in sync manually: migrations here never import the ORM model (so they
+    # stay valid even as the model evolves), so this is a deliberate second
+    # copy for any environment that provisions the schema without running
+    # Alembic (e.g. this project's pytest fixtures). Edit both together.
     title_en: Mapped[str | None] = mapped_column(String(60), nullable=True, default="Our success story")
     title_he: Mapped[str | None] = mapped_column(String(60), nullable=True, default="סיפור ההצלחה שלנו")
     subtitle_en: Mapped[str | None] = mapped_column(
