@@ -30,8 +30,8 @@ export function HomepageVideoSection({ section }: HomepageVideoSectionProps) {
   if (!section?.is_enabled || !section?.video_url) return null;
 
   return (
-    <section aria-label="Video" className="w-full overflow-hidden bg-brand-navy px-4 sm:px-6 lg:px-8">
-      <div className="relative mx-auto h-[52vh] min-h-[320px] w-full max-w-[1700px] md:h-[70vh]">
+    <section aria-label="Video" className="w-full overflow-hidden bg-brand-navy">
+      <div className="relative h-[52vh] min-h-[320px] w-full md:h-[65vh] lg:h-[75vh] xl:h-[80vh]">
         <video
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover"

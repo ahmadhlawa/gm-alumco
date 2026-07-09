@@ -39,15 +39,22 @@ describe('HomepageVideoSection', () => {
     expect(html).not.toContain('poster=');
   });
 
-  it('renders a wide centered cinematic container with the original heights', () => {
+  it('renders full-bleed edge-to-edge — no max-width, centering, or horizontal padding', () => {
     const html = render(enabled);
-    expect(html).toContain('max-w-[1700px]');
-    expect(html).toContain('mx-auto');
-    expect(html).toContain('px-4');
-    expect(html).toContain('sm:px-6');
-    expect(html).toContain('lg:px-8');
+    expect(html).not.toContain('max-w-');
+    expect(html).not.toContain('mx-auto');
+    expect(html).not.toContain('px-4');
+    expect(html).not.toContain('sm:px-6');
+    expect(html).not.toContain('lg:px-8');
+    expect(html).toContain('w-full');
+  });
+
+  it('renders the responsive cinematic height ramp and object-cover', () => {
+    const html = render(enabled);
     expect(html).toContain('h-[52vh]');
-    expect(html).toContain('md:h-[70vh]');
+    expect(html).toContain('md:h-[65vh]');
+    expect(html).toContain('lg:h-[75vh]');
+    expect(html).toContain('xl:h-[80vh]');
     expect(html).toContain('object-cover');
   });
 
