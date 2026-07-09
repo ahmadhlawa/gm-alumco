@@ -143,4 +143,16 @@ describe('toAboutContentView', () => {
     const partial: AboutPageContentDto = { ...dto, title_he: '' };
     expect(toAboutContentView(partial, 'he').title).toBe('Success');
   });
+
+  it('falls back to the default image and CTA link when empty or null', () => {
+    const empty: AboutPageContentDto = { ...dto, image_url: '', cta_link: '' };
+    const view = toAboutContentView(empty, 'en');
+    expect(view.imageUrl).toBe('/images/our-success-story.png');
+    expect(view.ctaLink).toBe('/request-quote');
+
+    const nulled: AboutPageContentDto = { ...dto, image_url: null, cta_link: null };
+    const nulledView = toAboutContentView(nulled, 'en');
+    expect(nulledView.imageUrl).toBe('/images/our-success-story.png');
+    expect(nulledView.ctaLink).toBe('/request-quote');
+  });
 });

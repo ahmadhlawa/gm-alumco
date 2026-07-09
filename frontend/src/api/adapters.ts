@@ -1,4 +1,5 @@
 import type { Partner, ProductionProject, Project, Service, Testimonial } from '@/types';
+import { defaultAboutPageContent } from '@/data/aboutPageContent';
 import type { AboutPageContentDto, Locale, PartnerDto, ProductionProjectDto, ProjectDto, ServiceDto, SiteContentDto, TestimonialDto } from './types';
 
 function nonEmpty(value: string | null | undefined): string | undefined {
@@ -75,7 +76,7 @@ export const toAboutContentView = (dto: AboutPageContentDto, locale: Locale): Ab
     pick(locale, dto.bullet_3_he, dto.bullet_3_en),
     pick(locale, dto.bullet_4_he, dto.bullet_4_en),
   ],
-  imageUrl: dto.image_url ?? '',
+  imageUrl: nonEmpty(dto.image_url) ?? defaultAboutPageContent.image_url ?? '',
   experienceNumber: dto.experience_number ?? '',
   experienceLabel: pick(locale, dto.experience_label_he, dto.experience_label_en),
   visionTitle: pick(locale, dto.vision_title_he, dto.vision_title_en),
@@ -86,7 +87,7 @@ export const toAboutContentView = (dto: AboutPageContentDto, locale: Locale): Ab
   differenceIntro: pick(locale, dto.difference_intro_he, dto.difference_intro_en),
   differenceParagraph: pick(locale, dto.difference_paragraph_he, dto.difference_paragraph_en),
   ctaText: pick(locale, dto.cta_text_he, dto.cta_text_en),
-  ctaLink: dto.cta_link ?? '/request-quote',
+  ctaLink: nonEmpty(dto.cta_link) ?? '/request-quote',
   stats: [
     { number: dto.stat_1_number ?? '', label: pick(locale, dto.stat_1_label_he, dto.stat_1_label_en) },
     { number: dto.stat_2_number ?? '', label: pick(locale, dto.stat_2_label_he, dto.stat_2_label_en) },
