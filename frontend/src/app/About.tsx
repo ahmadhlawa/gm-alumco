@@ -2,29 +2,33 @@ import { PageHero } from '@/components/common/PageHero';
 import { SectionHeader } from '@/components/common/SectionHeader';
 import { CTASection } from '@/components/common/CTASection';
 import { useEffect, useState } from 'react';
-import { getPublicStatsContent } from '@/api/content';
-import { defaultPublicStats, type PublicStatsContent } from '@/data/publicStats';
+import { getAboutPageContent } from '@/api/aboutPageContent';
+import { toAboutContentView } from '@/api/adapters';
+import { defaultAboutPageContent } from '@/data/aboutPageContent';
+import type { AboutPageContentDto } from '@/api/types';
 import { motion } from 'motion/react';
 import { CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '@/i18n';
+import { normalizeImageUrl } from '@/lib/utils';
 
 export function About() {
-  const { t } = useLanguage();
-  const [publicStats, setPublicStats] = useState<PublicStatsContent>(defaultPublicStats);
-  const stats = publicStats.aboutPageStats.map((stat) => ({
-    value: stat.value,
-    label: t(stat.label.he, stat.label.en),
-    suffix: stat.suffix ?? '',
-  }));
-  const highlight = publicStats.aboutHighlight;
+  const { t, language } = useLanguage();
+  const [aboutContent, setAboutContent] = useState<AboutPageContentDto>(defaultAboutPageContent);
 
   useEffect(() => {
-    getPublicStatsContent().then(setPublicStats).catch(() => setPublicStats(defaultPublicStats));
+    getAboutPageContent()
+      .then(setAboutContent)
+      .catch(() => setAboutContent(defaultAboutPageContent));
+    // Run once on mount; the view below re-derives from `language` on every
+    // render, so a language toggle updates instantly without refetching.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const content = toAboutContentView(aboutContent, language);
 
   return (
     <div className="bg-brand-surface">
-      <PageHero 
+      <PageHero
         title={t("על T.A.S", "About T.A.S")}
         subtitle={t("השותף המהימן שלך במתן פתרונות חזית זכוכית ואלומיניום.", "Your trusted partner in delivering the finest glass and aluminum facade solutions.")}
         breadcrumbs={[{ label: t('אודות', "About"), path: '/about' }]}
@@ -50,24 +54,19 @@ export function About() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <SectionHeader 
-                title={t("סיפור ההצלחה שלנו", "Our success story")} 
-                subtitle={t("מסע של תשוקה בעולם האדריכלות למען איכות.", "A journey of passion in architecture, begun to deliver the quality you deserve.")}
+              <SectionHeader
+                title={content.title}
+                subtitle={content.subtitle}
               />
               <p className="text-brand-silver mb-6 leading-relaxed text-lg">
-                {t('T.A.S הוקמה בחזון ברור לחולל שינוי מהותי בתעשיית קירוי מבנים ומערכות אלומיניום.', "T.A.S was founded with a clear vision to drive a real shift in the building cladding and aluminum systems industry. From day one we have focused on superior quality, strict engineering standards and on-time delivery.")}
+                {content.paragraph1}
               </p>
               <p className="text-brand-silver mb-8 leading-relaxed text-lg">
-                {t('אנו גאים להעסיק אנשי מקצוע ומהנדסים מובילים לפיתוח בר קיימא עבור המגזר הפרטי והעסקי.', "We are proud to employ leading professionals and engineers, and we continually adopt the latest manufacturing technology to deliver sustainable, safe solutions for the residential and commercial sectors.")}
+                {content.paragraph2}
               </p>
-              
+
               <ul className="space-y-4">
-                {[
-                  t('יישום תקני בטיחות ואיכות מחמירים', "Applying the strictest safety and quality standards"),
-                  t('שימוש בחומרי גלם באישור בינלאומי', "Using internationally certified raw materials"),
-                  t('צוות טכני מיומן ומנוסה', "A skilled and experienced technical team"),
-                  t('שירותי לאחר המכירה ואחריות מקיפה', "Comprehensive after-sales service and genuine warranty")
-                ].map((item, i) => (
+                {content.bullets.map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-white font-medium">
                     <CheckCircle2 className="text-brand-gold w-5 h-5 flex-shrink-0" />
                     <span>{item}</span>
@@ -75,29 +74,29 @@ export function About() {
                 ))}
               </ul>
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
                initial={{ opacity: 0, x: -20 }}
                whileInView={{ opacity: 1, x: 0 }}
                viewport={{ once: true }}
                className="relative"
             >
               <img
-                src="/images/our-success-story.png"
+                src={normalizeImageUrl(content.imageUrl)}
                 alt="Our Engineering Team"
                 className="w-full h-[500px] object-cover rounded-sm shadow-2xl shadow-brand-border/50"
               />
               <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-brand-navy border-8 border-brand-surface p-6 hidden md:flex flex-col justify-center text-center">
-                <span className="text-brand-gold text-5xl font-bold mb-2" dir="ltr">{highlight.value}{highlight.suffix ?? ''}</span>
-                <span className="text-white">{t(highlight.label.he, highlight.label.en)}</span>
+                <span className="text-brand-gold text-5xl font-bold mb-2" dir="ltr">{content.experienceNumber}</span>
+                <span className="text-white">{content.experienceLabel}</span>
               </div>
             </motion.div>
           </div>
-          
+
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-24">
-            {stats.map((stat, idx) => (
-               <motion.div 
+            {content.stats.map((stat, idx) => (
+               <motion.div
                  key={idx}
                  initial={{ opacity: 0, y: 20 }}
                  whileInView={{ opacity: 1, y: 0 }}
@@ -105,7 +104,7 @@ export function About() {
                  transition={{ delay: idx * 0.1 }}
                  className="bg-brand-navy p-8 text-center border-b-4 border-transparent hover:border-brand-gold transition-colors"
                >
-                 <div className="text-4xl lg:text-5xl font-bold text-white mb-4" dir="ltr">{stat.value}{stat.suffix}</div>
+                 <div className="text-4xl lg:text-5xl font-bold text-white mb-4" dir="ltr">{stat.number}</div>
                  <div className="text-brand-silver font-bold">{stat.label}</div>
                </motion.div>
             ))}
@@ -113,34 +112,40 @@ export function About() {
 
           {/* Vision & Mission */}
           <div className="grid md:grid-cols-2 gap-8">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="bg-brand-navy text-white p-12"
             >
-              <h3 className="text-3xl font-bold mb-6 text-brand-gold">{t('החזון שלנו', "Our vision")}</h3>
+              <h3 className="text-3xl font-bold mb-6 text-brand-gold">{content.visionTitle}</h3>
               <p className="text-gray-300 leading-relaxed text-lg">
-                {t('להיות הבחירה הראשונה והחברה המובילה במתן פתרונות אלומיניום וזכוכית חדשניים ואיכותיים ביות', "To be the first choice and leading company providing innovative aluminum and glass solutions in the region, setting new standards for quality, design and reliability.")}
+                {content.visionText}
               </p>
             </motion.div>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
               className="bg-brand-navy border border-white/5 p-12"
             >
-              <h3 className="text-3xl font-bold mb-6 text-white">{t('המשימה שלנו', "Our mission")}</h3>
+              <h3 className="text-3xl font-bold mb-6 text-white">{content.missionTitle}</h3>
               <p className="text-brand-silver leading-relaxed text-lg">
-                {t('לספק מענה מלא לדרישות הלקוחות בעזרת ייצור מתקדם ואמינות מתמשכת לפני, תוך ולאחר הייצור.', "To fully meet our clients' aspirations through advanced, time-resistant systems, with the highest professional integrity and exceptional service before, during and after execution.")}
+                {content.missionText}
               </p>
             </motion.div>
           </div>
         </div>
       </section>
 
-      <CTASection />
+      <CTASection
+        title={content.differenceTitle}
+        subtitle={content.differenceIntro}
+        description={content.differenceParagraph}
+        buttonText={content.ctaText}
+        buttonLink={content.ctaLink}
+      />
     </div>
   );
 }
