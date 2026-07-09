@@ -45,4 +45,17 @@ describe('AdminAboutContent page', () => {
     expect(html).not.toMatch(/Stat \d — (number|label)/);
     expect(html).not.toMatch(/סטטיסטיקה \d/);
   });
+
+  it('does not expose the Experience fields — they are edited on the Company Numbers page', () => {
+    const html = renderToStaticMarkup(
+      <LanguageProvider>
+        <AdminAboutContent />
+      </LanguageProvider>,
+    );
+
+    expect(html).not.toContain('Experience number');
+    expect(html).not.toContain('מספר ותק');
+    expect(html).not.toContain('Experience label');
+    expect(html).not.toContain('תווית ותק');
+  });
 });

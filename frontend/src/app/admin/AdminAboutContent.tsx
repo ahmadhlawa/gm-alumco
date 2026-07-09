@@ -27,7 +27,6 @@ const COPY = {
     fields: {
       title: 'כותרת', subtitle: 'כותרת משנה', paragraph1: 'פסקה 1', paragraph2: 'פסקה 2',
       bullet1: 'נקודה 1', bullet2: 'נקודה 2', bullet3: 'נקודה 3', bullet4: 'נקודה 4',
-      experienceNumber: 'מספר ותק', experienceLabel: 'תווית ותק',
       visionTitle: 'כותרת החזון', visionText: 'טקסט החזון',
       missionTitle: 'כותרת המשימה', missionText: 'טקסט המשימה',
     },
@@ -43,7 +42,6 @@ const COPY = {
     fields: {
       title: 'Title', subtitle: 'Subtitle', paragraph1: 'Paragraph 1', paragraph2: 'Paragraph 2',
       bullet1: 'Bullet 1', bullet2: 'Bullet 2', bullet3: 'Bullet 3', bullet4: 'Bullet 4',
-      experienceNumber: 'Experience number', experienceLabel: 'Experience label',
       visionTitle: 'Vision title', visionText: 'Vision text',
       missionTitle: 'Mission title', missionText: 'Mission text',
     },
@@ -116,11 +114,12 @@ export function AdminAboutContent() {
     { keyHe: 'bullet_2_he', keyEn: 'bullet_2_en', label: copy.fields.bullet2, max: 90 },
     { keyHe: 'bullet_3_he', keyEn: 'bullet_3_en', label: copy.fields.bullet3, max: 90 },
     { keyHe: 'bullet_4_he', keyEn: 'bullet_4_en', label: copy.fields.bullet4, max: 90 },
-    { keyHe: 'experience_label_he', keyEn: 'experience_label_en', label: copy.fields.experienceLabel, max: 40 },
   ];
-  const successSingles: SingleField[] = [
-    { key: 'experience_number', label: copy.fields.experienceNumber, max: 12 },
-  ];
+  // Experience number/label are edited on the Company Numbers page — see
+  // publicStats.ts's aboutHighlight, which the public About page reads
+  // directly. No field-group config exists for them here, so they can never
+  // be rendered or saved from this page.
+  const successSingles: SingleField[] = [];
 
   const visionMissionPairs: PairField[] = [
     { keyHe: 'vision_title_he', keyEn: 'vision_title_en', label: copy.fields.visionTitle, max: 60 },

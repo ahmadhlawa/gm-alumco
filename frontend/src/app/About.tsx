@@ -16,16 +16,22 @@ import { normalizeImageUrl } from '@/lib/utils';
 export function About() {
   const { t, language } = useLanguage();
   const [aboutContent, setAboutContent] = useState<AboutPageContentDto>(defaultAboutPageContent);
-  // The Difference/Stats/CTA band is fixed website structure, not admin
-  // content — it keeps reading from the pre-existing public_stats system
-  // (also used by the Home page hero and the "Company numbers" admin page),
-  // not from about_page_content.
+  // The Difference/Stats/CTA band and the Experience card are fixed website
+  // structure / single-source-of-truth company numbers, not admin content —
+  // they read from the pre-existing public_stats system (also used by the
+  // Home page hero and the "Company numbers" admin page), not from
+  // about_page_content. This avoids the "years of experience" value being
+  // stored (and able to drift) in two places.
   const [publicStats, setPublicStats] = useState<PublicStatsContent>(defaultPublicStats);
   const stats = publicStats.aboutPageStats.map((stat) => ({
     value: stat.value,
     label: t(stat.label.he, stat.label.en),
     suffix: stat.suffix ?? '',
   }));
+  const experience = {
+    value: publicStats.aboutHighlight.value,
+    label: t(publicStats.aboutHighlight.label.he, publicStats.aboutHighlight.label.en),
+  };
 
   useEffect(() => {
     getAboutPageContent()
@@ -100,8 +106,8 @@ export function About() {
                 className="w-full h-[500px] object-cover rounded-sm shadow-2xl shadow-brand-border/50"
               />
               <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-brand-navy border-8 border-brand-surface p-6 hidden md:flex flex-col justify-center text-center">
-                <span className="text-brand-gold text-5xl font-bold mb-2" dir="ltr">{content.experienceNumber}</span>
-                <span className="text-white">{content.experienceLabel}</span>
+                <span className="text-brand-gold text-5xl font-bold mb-2" dir="ltr">{experience.value}</span>
+                <span className="text-white">{experience.label}</span>
               </div>
             </motion.div>
           </div>

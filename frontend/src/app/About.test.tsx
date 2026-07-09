@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { About } from './About';
 import { LanguageProvider } from '@/i18n';
+import { defaultCompanyNumbers } from '@/data/publicStats';
 
 describe('About page', () => {
   it('renders the hardcoded fallback content when the API has not resolved', () => {
@@ -43,5 +44,23 @@ describe('About page', () => {
     expect(html).toContain('שנות אחריות');
     // CTASection's own internal default title (no props passed from About).
     expect(html).toContain('האם יש לך פרויקט חדש? תן לנו לעזור לך לממש אותו.');
+  });
+
+  it('renders the Experience card from Company Numbers (public_stats), not from about_page_content', () => {
+    // The Experience card used to duplicate this value in about_page_content
+    // (experience_number/experience_label_*). It now reads exclusively from
+    // publicStats.aboutHighlight, which is projected from the same
+    // yearsExperience Company Number shown on the Home page and edited only
+    // on the Company Numbers admin page — there is a single source of truth.
+    const html = renderToStaticMarkup(
+      <MemoryRouter>
+        <LanguageProvider>
+          <About />
+        </LanguageProvider>
+      </MemoryRouter>,
+    );
+
+    expect(html).toContain(defaultCompanyNumbers.yearsExperience.value);
+    expect(html).toContain(defaultCompanyNumbers.yearsExperience.labelHe);
   });
 });

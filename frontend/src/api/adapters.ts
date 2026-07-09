@@ -51,8 +51,6 @@ export interface AboutContentView {
   paragraph2: string;
   bullets: string[];
   imageUrl: string;
-  experienceNumber: string;
-  experienceLabel: string;
   visionTitle: string;
   visionText: string;
   missionTitle: string;
@@ -63,6 +61,13 @@ export interface AboutContentView {
 // content — it is intentionally excluded from this view model. See
 // components/sections that render it directly (CTASection, the About page's
 // public_stats-driven stats grid), not about_page_content.
+//
+// The Experience card (number + label) is likewise excluded: it duplicated
+// the "years of experience" Company Number, so the About page now reads that
+// value directly from publicStats.aboutHighlight (single source of truth)
+// instead of from about_page_content. The backend DTO still carries
+// experience_number/experience_label_* for backward compatibility, but this
+// view model never surfaces them.
 export const toAboutContentView = (dto: AboutPageContentDto, locale: Locale): AboutContentView => ({
   title: pick(locale, dto.title_he, dto.title_en),
   subtitle: pick(locale, dto.subtitle_he, dto.subtitle_en),
@@ -75,8 +80,6 @@ export const toAboutContentView = (dto: AboutPageContentDto, locale: Locale): Ab
     pick(locale, dto.bullet_4_he, dto.bullet_4_en),
   ],
   imageUrl: nonEmpty(dto.image_url) ?? defaultAboutPageContent.image_url ?? '',
-  experienceNumber: dto.experience_number ?? '',
-  experienceLabel: pick(locale, dto.experience_label_he, dto.experience_label_en),
   visionTitle: pick(locale, dto.vision_title_he, dto.vision_title_en),
   visionText: pick(locale, dto.vision_text_he, dto.vision_text_en),
   missionTitle: pick(locale, dto.mission_title_he, dto.mission_title_en),

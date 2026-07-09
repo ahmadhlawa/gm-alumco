@@ -126,7 +126,6 @@ describe('toAboutContentView', () => {
       visionTitle: 'Vision',
       missionTitle: 'Mission',
       imageUrl: '/images/success.png',
-      experienceNumber: '10+',
     });
   });
 
@@ -153,6 +152,14 @@ describe('toAboutContentView', () => {
     const view = toAboutContentView(dto, 'en');
     const keys = Object.keys(view);
     for (const forbidden of ['differenceTitle', 'differenceIntro', 'differenceParagraph', 'ctaText', 'ctaLink', 'stats']) {
+      expect(keys).not.toContain(forbidden);
+    }
+  });
+
+  it('never exposes the Experience fields — they duplicate the Company Numbers "years of experience" value', () => {
+    const view = toAboutContentView(dto, 'en');
+    const keys = Object.keys(view);
+    for (const forbidden of ['experienceNumber', 'experienceLabel']) {
       expect(keys).not.toContain(forbidden);
     }
   });
