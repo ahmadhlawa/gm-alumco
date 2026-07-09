@@ -1,5 +1,5 @@
 import type { Partner, ProductionProject, Project, Service, Testimonial } from '@/types';
-import type { Locale, PartnerDto, ProductionProjectDto, ProjectDto, ServiceDto, SiteContentDto, TestimonialDto } from './types';
+import type { AboutPageContentDto, Locale, PartnerDto, ProductionProjectDto, ProjectDto, ServiceDto, SiteContentDto, TestimonialDto } from './types';
 
 function nonEmpty(value: string | null | undefined): string | undefined {
   return value && value.trim() ? value : undefined;
@@ -42,3 +42,54 @@ export const toTestimonialView = (item: TestimonialDto, locale: Locale): Testimo
 export function assembleSiteContent(rows: SiteContentDto[]): Record<string, unknown> {
   return Object.fromEntries(rows.filter((row) => row.key === 'content' && row.is_active).map((row) => [row.section, row.value]));
 }
+
+export interface AboutContentView {
+  title: string;
+  subtitle: string;
+  paragraph1: string;
+  paragraph2: string;
+  bullets: string[];
+  imageUrl: string;
+  experienceNumber: string;
+  experienceLabel: string;
+  visionTitle: string;
+  visionText: string;
+  missionTitle: string;
+  missionText: string;
+  differenceTitle: string;
+  differenceIntro: string;
+  differenceParagraph: string;
+  ctaText: string;
+  ctaLink: string;
+  stats: { number: string; label: string }[];
+}
+
+export const toAboutContentView = (dto: AboutPageContentDto, locale: Locale): AboutContentView => ({
+  title: pick(locale, dto.title_he, dto.title_en),
+  subtitle: pick(locale, dto.subtitle_he, dto.subtitle_en),
+  paragraph1: pick(locale, dto.paragraph_1_he, dto.paragraph_1_en),
+  paragraph2: pick(locale, dto.paragraph_2_he, dto.paragraph_2_en),
+  bullets: [
+    pick(locale, dto.bullet_1_he, dto.bullet_1_en),
+    pick(locale, dto.bullet_2_he, dto.bullet_2_en),
+    pick(locale, dto.bullet_3_he, dto.bullet_3_en),
+    pick(locale, dto.bullet_4_he, dto.bullet_4_en),
+  ],
+  imageUrl: dto.image_url ?? '',
+  experienceNumber: dto.experience_number ?? '',
+  experienceLabel: pick(locale, dto.experience_label_he, dto.experience_label_en),
+  visionTitle: pick(locale, dto.vision_title_he, dto.vision_title_en),
+  visionText: pick(locale, dto.vision_text_he, dto.vision_text_en),
+  missionTitle: pick(locale, dto.mission_title_he, dto.mission_title_en),
+  missionText: pick(locale, dto.mission_text_he, dto.mission_text_en),
+  differenceTitle: pick(locale, dto.difference_title_he, dto.difference_title_en),
+  differenceIntro: pick(locale, dto.difference_intro_he, dto.difference_intro_en),
+  differenceParagraph: pick(locale, dto.difference_paragraph_he, dto.difference_paragraph_en),
+  ctaText: pick(locale, dto.cta_text_he, dto.cta_text_en),
+  ctaLink: dto.cta_link ?? '/request-quote',
+  stats: [
+    { number: dto.stat_1_number ?? '', label: pick(locale, dto.stat_1_label_he, dto.stat_1_label_en) },
+    { number: dto.stat_2_number ?? '', label: pick(locale, dto.stat_2_label_he, dto.stat_2_label_en) },
+    { number: dto.stat_3_number ?? '', label: pick(locale, dto.stat_3_label_he, dto.stat_3_label_en) },
+  ],
+});

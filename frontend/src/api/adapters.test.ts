@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { assembleSiteContent, toPartnerView, toProductionProjectView, toProjectView, toServiceView, toTestimonialView } from './adapters';
+import { assembleSiteContent, toAboutContentView, toPartnerView, toProductionProjectView, toProjectView, toServiceView, toTestimonialView } from './adapters';
+import type { AboutPageContentDto } from './types';
 
 describe('API adapters', () => {
   it('localizes resource DTOs without inventing unavailable data', () => {
@@ -88,5 +89,58 @@ describe('API adapters', () => {
       executionPartner: 'שותף',
       images: ['/uploads/production-projects/1.webp', '/uploads/production-projects/2.webp'],
     });
+  });
+});
+
+describe('toAboutContentView', () => {
+  const dto: AboutPageContentDto = {
+    title_en: 'Success', title_he: 'הצלחה',
+    subtitle_en: 'Sub EN', subtitle_he: 'תת כותרת',
+    paragraph_1_en: 'P1 EN', paragraph_1_he: 'פסקה 1',
+    paragraph_2_en: 'P2 EN', paragraph_2_he: 'פסקה 2',
+    bullet_1_en: 'B1', bullet_1_he: 'נ1',
+    bullet_2_en: 'B2', bullet_2_he: 'נ2',
+    bullet_3_en: 'B3', bullet_3_he: 'נ3',
+    bullet_4_en: 'B4', bullet_4_he: 'נ4',
+    image_url: '/images/success.png',
+    experience_number: '10+',
+    experience_label_en: 'Years', experience_label_he: 'שנים',
+    vision_title_en: 'Vision', vision_title_he: 'חזון',
+    vision_text_en: 'Vision text', vision_text_he: 'טקסט חזון',
+    mission_title_en: 'Mission', mission_title_he: 'משימה',
+    mission_text_en: 'Mission text', mission_text_he: 'טקסט משימה',
+    difference_title_en: 'Difference', difference_title_he: 'הבדל',
+    difference_intro_en: 'Intro EN', difference_intro_he: 'מבוא',
+    difference_paragraph_en: 'Diff paragraph', difference_paragraph_he: 'פסקת הבדל',
+    cta_text_en: 'Go', cta_text_he: 'לך',
+    cta_link: '/contact',
+    stat_1_number: '1', stat_1_label_en: 'One', stat_1_label_he: 'אחד',
+    stat_2_number: '2', stat_2_label_en: 'Two', stat_2_label_he: 'שתיים',
+    stat_3_number: '3', stat_3_label_en: 'Three', stat_3_label_he: 'שלוש',
+  };
+
+  it('localizes to English', () => {
+    const view = toAboutContentView(dto, 'en');
+    expect(view).toMatchObject({
+      title: 'Success',
+      differenceTitle: 'Difference',
+      ctaLink: '/contact',
+      stats: [
+        { number: '1', label: 'One' },
+        { number: '2', label: 'Two' },
+        { number: '3', label: 'Three' },
+      ],
+    });
+  });
+
+  it('localizes to Hebrew', () => {
+    const view = toAboutContentView(dto, 'he');
+    expect(view.title).toBe('הצלחה');
+    expect(view.stats[0].label).toBe('אחד');
+  });
+
+  it('falls back to the other language when one is empty', () => {
+    const partial: AboutPageContentDto = { ...dto, title_he: '' };
+    expect(toAboutContentView(partial, 'he').title).toBe('Success');
   });
 });
