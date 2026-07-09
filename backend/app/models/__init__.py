@@ -1,3 +1,4 @@
+from app.models.about_page_content import AboutPageContent
 from app.models.admin import Admin
 from app.models.audit_log import AuditLog
 from app.models.gallery import GalleryImage
@@ -12,6 +13,7 @@ from app.models.site_settings import SiteSettings
 from app.models.testimonial import Testimonial
 
 __all__ = [
+    "AboutPageContent",
     "Admin",
     "AuditLog",
     "ContactMessage",

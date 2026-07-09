@@ -24,8 +24,10 @@ def validate_image_url(value: str) -> str:
         and not parsed.netloc
         and not parsed.query
         and not parsed.fragment
-        and len(parts) >= 4
-        and parts[1] == "uploads"
+        and len(parts) >= 3
+        # "uploads" covers admin-uploaded files; "images" covers the frontend's
+        # bundled static assets (e.g. seeded defaults that predate the uploader).
+        and parts[1] in {"uploads", "images"}
         and ".." not in parts
         and "\\" not in value
     ):
@@ -34,6 +36,16 @@ def validate_image_url(value: str) -> str:
 
 
 ImageUrlString = Annotated[str, AfterValidator(validate_image_url)]
+
+
+def validate_safe_link(value: str) -> str:
+    parsed = urlsplit(value)
+    if parsed.scheme and parsed.scheme not in {"http", "https"}:
+        raise ValueError("Link must use HTTP or HTTPS, or be a relative path")
+    return value
+
+
+SafeLinkString = Annotated[str, AfterValidator(validate_safe_link)]
 
 
 class LocalizedText(BaseModel):
