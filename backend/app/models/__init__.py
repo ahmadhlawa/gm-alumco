@@ -7,6 +7,7 @@ from app.models.message import ContactMessage, QuoteRequest
 from app.models.partner import Partner
 from app.models.project import Project, ProjectImage
 from app.models.production_project import ProductionProject, ProductionProjectImage
+from app.models.revoked_token import RevokedToken
 from app.models.service import Service
 from app.models.site_content import SiteContent
 from app.models.site_settings import SiteSettings
@@ -25,6 +26,7 @@ __all__ = [
     "ProductionProject",
     "ProductionProjectImage",
     "QuoteRequest",
+    "RevokedToken",
     "Service",
     "SiteContent",
     "SiteSettings",

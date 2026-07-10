@@ -3,10 +3,10 @@ from decimal import Decimal
 
 from pydantic import BaseModel, Field
 
-from app.schemas.common import ImageUrlString, ORMModel
+from app.schemas.common import ImageUrlString, ORMModel, TextSanitizedModel
 
 
-class ServiceBase(BaseModel):
+class ServiceBase(TextSanitizedModel):
     title_en: str = Field(min_length=1, max_length=255)
     title_he: str = Field(min_length=1, max_length=255)
     description_en: str | None = Field(default=None, max_length=2000)
@@ -21,7 +21,7 @@ class ServiceCreate(ServiceBase):
     pass
 
 
-class ServiceUpdate(BaseModel):
+class ServiceUpdate(TextSanitizedModel):
     title_en: str | None = Field(default=None, min_length=1, max_length=255)
     title_he: str | None = Field(default=None, min_length=1, max_length=255)
     description_en: str | None = Field(default=None, max_length=2000)

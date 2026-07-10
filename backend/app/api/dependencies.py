@@ -1,11 +1,12 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt
+from jwt import InvalidTokenError
 from sqlalchemy.orm import Session
 
-from app.core.config import settings
+from app.core.security import decode_access_token
 from app.db.database import get_db
 from app.models.admin import Admin
+from app.models.revoked_token import RevokedToken
 
 
 bearer_scheme = HTTPBearer(auto_error=False)
@@ -24,13 +25,12 @@ def get_current_admin(
     if credentials is None:
         raise error
     try:
-        payload = jwt.decode(
-            credentials.credentials,
-            settings.jwt_secret_key,
-            algorithms=[settings.jwt_algorithm],
-        )
+        payload = decode_access_token(credentials.credentials)
         admin_id = int(payload["sub"])
-    except (JWTError, KeyError, TypeError, ValueError) as exc:
+        jti = payload["jti"]
+        if not isinstance(jti, str) or db.get(RevokedToken, jti) is not None:
+            raise InvalidTokenError("Token has been revoked")
+    except (InvalidTokenError, KeyError, TypeError, ValueError) as exc:
         raise error from exc
     admin = db.get(Admin, admin_id)
     if admin is None or not admin.is_active:

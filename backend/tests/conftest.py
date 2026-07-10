@@ -5,10 +5,20 @@ from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
 from app.core.security import get_password_hash
+from app.core.rate_limit import login_rate_limiter, public_submission_rate_limiter
 from app.db.base import Base
 from app.db.database import get_db
 from app.main import app
 from app.models import Admin  # noqa: F401 - imports all model metadata
+
+
+@pytest.fixture(autouse=True)
+def reset_rate_limiters():
+    login_rate_limiter.reset_all()
+    public_submission_rate_limiter.reset_all()
+    yield
+    login_rate_limiter.reset_all()
+    public_submission_rate_limiter.reset_all()
 
 
 @pytest.fixture

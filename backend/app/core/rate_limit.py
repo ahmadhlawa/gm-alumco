@@ -61,3 +61,35 @@ class LoginRateLimiter:
 
 # Shared instance: max 5 failed attempts per 5 minutes per client IP.
 login_rate_limiter = LoginRateLimiter(max_attempts=5, window_seconds=300)
+
+
+class RequestRateLimiter:
+    def __init__(self, max_requests: int, window_seconds: int) -> None:
+        self._max = max_requests
+        self._window = window_seconds
+        self._requests: dict[str, deque[float]] = defaultdict(deque)
+        self._lock = threading.Lock()
+
+    def _prune(self, key: str, now: float) -> None:
+        bucket = self._requests[key]
+        while bucket and now - bucket[0] > self._window:
+            bucket.popleft()
+
+    def register_request(self, key: str) -> int | None:
+        """Record a request; return Retry-After seconds when blocked."""
+        now = time.monotonic()
+        with self._lock:
+            self._prune(key, now)
+            bucket = self._requests[key]
+            if len(bucket) >= self._max:
+                return max(1, int(self._window - (now - bucket[0])) + 1)
+            bucket.append(now)
+            return None
+
+    def reset_all(self) -> None:
+        with self._lock:
+            self._requests.clear()
+
+
+# Public inbox forms: max 10 accepted submissions per minute per endpoint/IP.
+public_submission_rate_limiter = RequestRateLimiter(max_requests=10, window_seconds=60)

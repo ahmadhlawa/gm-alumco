@@ -2,10 +2,10 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from app.schemas.common import ORMModel
+from app.schemas.common import ORMModel, TextSanitizedModel
 
 
-class TestimonialBase(BaseModel):
+class TestimonialBase(TextSanitizedModel):
     client_name_en: str = Field(max_length=180)
     client_name_he: str = Field(max_length=180)
     message_en: str = Field(max_length=2000)
@@ -21,7 +21,7 @@ class TestimonialCreate(TestimonialBase):
     pass
 
 
-class TestimonialUpdate(BaseModel):
+class TestimonialUpdate(TextSanitizedModel):
     client_name_en: str | None = Field(default=None, max_length=180)
     client_name_he: str | None = Field(default=None, max_length=180)
     message_en: str | None = Field(default=None, max_length=2000)

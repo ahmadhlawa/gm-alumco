@@ -3,28 +3,19 @@ from typing import Literal
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
-from app.schemas.common import ORMModel, validate_http_url
+from app.schemas.common import (
+    ORMModel,
+    normalize_optional_text,
+    normalize_required_text,
+    validate_http_url,
+    validate_optional_phone_number,
+    validate_phone_number,
+)
 
 
 ContactMessageStatus = Literal["NEW", "READ", "ARCHIVED"]
 QuoteRequestStatus = Literal["NEW", "IN_PROGRESS", "DONE", "ARCHIVED"]
 MESSAGE_MAX_LENGTH = 5000
-
-
-def _strip_required_text(value: str) -> str:
-    if isinstance(value, str):
-        value = value.strip()
-    if value == "":
-        raise ValueError("Field must not be blank")
-    return value
-
-
-def _strip_optional_text(value: str | None) -> str | None:
-    if value is None:
-        return None
-    if isinstance(value, str):
-        value = value.strip()
-    return value or None
 
 
 class ContactMessageCreate(BaseModel):
@@ -37,12 +28,17 @@ class ContactMessageCreate(BaseModel):
     @field_validator("name", "message", mode="before")
     @classmethod
     def _required_text_not_blank(cls, value: str) -> str:
-        return _strip_required_text(value)
+        return normalize_required_text(value)
 
-    @field_validator("phone", "subject", mode="before")
+    @field_validator("subject", mode="before")
     @classmethod
     def _optional_text_empty_to_none(cls, value: str | None) -> str | None:
-        return _strip_optional_text(value)
+        return normalize_optional_text(value)
+
+    @field_validator("phone", mode="before")
+    @classmethod
+    def _valid_phone_or_none(cls, value: str | None) -> str | None:
+        return validate_optional_phone_number(value)
 
 
 class ContactMessageRead(ContactMessageCreate, ORMModel):
@@ -69,12 +65,17 @@ class QuoteRequestCreate(BaseModel):
     @field_validator("name", "phone", mode="before")
     @classmethod
     def _required_text_not_blank(cls, value: str) -> str:
-        return _strip_required_text(value)
+        return normalize_required_text(value)
 
     @field_validator("service_type", "message", mode="before")
     @classmethod
     def _optional_text_empty_to_none(cls, value: str | None) -> str | None:
-        return _strip_optional_text(value)
+        return normalize_optional_text(value)
+
+    @field_validator("phone", mode="before")
+    @classmethod
+    def _valid_phone(cls, value: str) -> str:
+        return validate_phone_number(value)
 
     @field_validator("plans_link")
     @classmethod

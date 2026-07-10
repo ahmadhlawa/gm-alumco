@@ -2,10 +2,10 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from app.schemas.common import HttpUrlString, ImageUrlString, ORMModel
+from app.schemas.common import HttpUrlString, ImageUrlString, ORMModel, TextSanitizedModel
 
 
-class PartnerBase(BaseModel):
+class PartnerBase(TextSanitizedModel):
     name_en: str = Field(min_length=1, max_length=255)
     name_he: str = Field(min_length=1, max_length=255)
     logo_url: ImageUrlString = Field(max_length=500)
@@ -18,7 +18,7 @@ class PartnerCreate(PartnerBase):
     pass
 
 
-class PartnerUpdate(BaseModel):
+class PartnerUpdate(TextSanitizedModel):
     name_en: str | None = Field(default=None, min_length=1, max_length=255)
     name_he: str | None = Field(default=None, min_length=1, max_length=255)
     logo_url: ImageUrlString | None = Field(default=None, max_length=500)

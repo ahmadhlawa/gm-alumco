@@ -2,10 +2,10 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from app.schemas.common import ImageUrlString, ORMModel
+from app.schemas.common import ImageUrlString, ORMModel, TextSanitizedModel
 
 
-class GalleryBase(BaseModel):
+class GalleryBase(TextSanitizedModel):
     image_url: ImageUrlString = Field(max_length=500)
     title_en: str | None = Field(default=None, max_length=255)
     title_he: str | None = Field(default=None, max_length=255)
@@ -20,7 +20,7 @@ class GalleryCreate(GalleryBase):
     pass
 
 
-class GalleryUpdate(BaseModel):
+class GalleryUpdate(TextSanitizedModel):
     image_url: ImageUrlString | None = Field(default=None, max_length=500)
     title_en: str | None = Field(default=None, max_length=255)
     title_he: str | None = Field(default=None, max_length=255)

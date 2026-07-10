@@ -3,13 +3,13 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from app.schemas.common import ImageUrlString, ORMModel
+from app.schemas.common import ImageUrlString, ORMModel, TextSanitizedModel
 
 
 ProjectCategory = Literal["LOCAL", "INTERNATIONAL", "FEATURED"]
 
 
-class ProjectBase(BaseModel):
+class ProjectBase(TextSanitizedModel):
     title_en: str = Field(min_length=1, max_length=255)
     title_he: str = Field(min_length=1, max_length=255)
     description_en: str | None = Field(default=None, max_length=2000)
@@ -24,7 +24,7 @@ class ProjectCreate(ProjectBase):
     pass
 
 
-class ProjectUpdate(BaseModel):
+class ProjectUpdate(TextSanitizedModel):
     title_en: str | None = Field(default=None, min_length=1, max_length=255)
     title_he: str | None = Field(default=None, min_length=1, max_length=255)
     description_en: str | None = Field(default=None, max_length=2000)
@@ -41,7 +41,7 @@ class ProjectRead(ProjectBase, ORMModel):
     updated_at: datetime
 
 
-class ProjectImageCreate(BaseModel):
+class ProjectImageCreate(TextSanitizedModel):
     image_url: ImageUrlString = Field(max_length=500)
     alt_text_en: str | None = Field(default=None, max_length=255)
     alt_text_he: str | None = Field(default=None, max_length=255)

@@ -52,6 +52,14 @@ def test_public_contact_submission_validates_email(client: TestClient) -> None:
     assert response.status_code == 422
 
 
+def test_public_contact_submission_validates_phone(client: TestClient) -> None:
+    response = client.post(
+        "/api/v1/contact/messages",
+        json=contact_payload(phone="call-me-now"),
+    )
+    assert response.status_code == 422
+
+
 def test_public_contact_submission_rejects_blank_required_fields(
     client: TestClient,
 ) -> None:
@@ -211,6 +219,49 @@ def test_public_quote_submission_allows_missing_email_but_requires_valid_supplie
     assert no_email.status_code == 201
     assert no_email.json()["email"] is None
     assert no_phone.status_code == 422
+
+
+def test_public_quote_submission_validates_phone(client: TestClient) -> None:
+    response = client.post(
+        "/api/v1/quote-requests",
+        json=quote_payload(phone="not-a-phone"),
+    )
+    assert response.status_code == 422
+
+
+def test_public_submissions_are_rate_limited(client: TestClient) -> None:
+    for index in range(10):
+        response = client.post(
+            "/api/v1/contact/messages",
+            json=contact_payload(email=f"visitor{index}@example.com"),
+        )
+        assert response.status_code == 201
+
+    blocked = client.post(
+        "/api/v1/contact/messages",
+        json=contact_payload(email="blocked@example.com"),
+    )
+
+    assert blocked.status_code == 429
+    assert blocked.headers["Retry-After"].isdigit()
+
+
+def test_malformed_public_submissions_are_rate_limited(client: TestClient) -> None:
+    for _ in range(10):
+        response = client.post(
+            "/api/v1/contact/messages",
+            content="{",
+            headers={"Content-Type": "application/json"},
+        )
+        assert response.status_code == 422
+
+    blocked = client.post(
+        "/api/v1/contact/messages",
+        content="{",
+        headers={"Content-Type": "application/json"},
+    )
+
+    assert blocked.status_code == 429
 
 
 def test_public_quote_submission_rejects_blank_required_fields(

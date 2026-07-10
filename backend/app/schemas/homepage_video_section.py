@@ -2,10 +2,10 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from app.schemas.common import ImageUrlString, ORMModel
+from app.schemas.common import ImageUrlString, ORMModel, TextSanitizedModel
 
 
-class HomepageVideoSectionBase(BaseModel):
+class HomepageVideoSectionBase(TextSanitizedModel):
     is_enabled: bool = False
     # Reuses the shared media-URL validator: accepts local /uploads/... paths or
     # absolute HTTP(S) URLs. Both video and poster live under /uploads.
@@ -20,7 +20,7 @@ class HomepageVideoSectionBase(BaseModel):
     display_order: int = 0
 
 
-class HomepageVideoSectionUpdate(BaseModel):
+class HomepageVideoSectionUpdate(TextSanitizedModel):
     is_enabled: bool | None = None
     video_url: ImageUrlString | None = None
     poster_image_url: ImageUrlString | None = None

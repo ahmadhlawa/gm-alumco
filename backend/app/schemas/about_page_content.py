@@ -2,10 +2,10 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from app.schemas.common import ImageUrlString, ORMModel, SafeLinkString
+from app.schemas.common import ImageUrlString, ORMModel, SafeLinkString, TextSanitizedModel
 
 
-class AboutPageContentBase(BaseModel):
+class AboutPageContentBase(TextSanitizedModel):
     title_en: str | None = Field(default=None, max_length=60)
     title_he: str | None = Field(default=None, max_length=60)
     subtitle_en: str | None = Field(default=None, max_length=120)
