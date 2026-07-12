@@ -20,7 +20,7 @@ const COPY = {
     add: 'פרויקט ייצור חדש',
     loading: 'טוען פרויקטי ייצור...',
     empty: 'אין עדיין פרויקטי ייצור.',
-    confirmDelete: (name: string) => `למחוק את פרויקט הייצור "${name}"?`,
+    confirmDelete: (name: string) => `מחיקת פרויקט הייצור "${name}" היא קבועה ואי אפשר לבטל אותה. להמשיך?`,
     deleteFailed: 'מחיקת פרויקט הייצור נכשלה.',
     active: 'פעיל',
     hidden: 'מוסתר',
@@ -34,7 +34,7 @@ const COPY = {
     add: 'New production project',
     loading: 'Loading production projects...',
     empty: 'No production projects yet.',
-    confirmDelete: (name: string) => `Delete the production project "${name}"?`,
+    confirmDelete: (name: string) => `Permanently delete the production project "${name}"? This cannot be undone.`,
     deleteFailed: 'Could not delete the production project.',
     active: 'Active',
     hidden: 'Hidden',
@@ -70,7 +70,7 @@ export function AdminProductionProjects() {
     setActionError(null);
     try {
       await deleteProductionProject(project.id);
-      load();
+      setProjects((current) => current.filter((currentProject) => currentProject.id !== project.id));
     } catch (deleteError) {
       setActionError(deleteError instanceof ApiError ? deleteError.message : copy.deleteFailed);
     }

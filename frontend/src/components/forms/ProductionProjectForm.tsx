@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, type ReactNode } from 'react';
 import { useLanguage } from '@/i18n';
 
 export interface ProductionProjectFormValues {
@@ -65,11 +65,13 @@ const inputClass =
 interface Props {
   initialValues?: ProductionProjectFormValues;
   submitting?: boolean;
+  disabled?: boolean;
   error?: string | null;
+  children?: ReactNode;
   onSubmit: (values: ProductionProjectFormValues) => void | Promise<void>;
 }
 
-export function ProductionProjectForm({ initialValues, submitting, error, onSubmit }: Props) {
+export function ProductionProjectForm({ initialValues, submitting, disabled, error, onSubmit, children }: Props) {
   const { language } = useLanguage();
   const copy = language === 'en' ? COPY.en : COPY.he;
   const [values, setValues] = useState<ProductionProjectFormValues>(initialValues ?? EMPTY_PRODUCTION_PROJECT);
@@ -189,10 +191,12 @@ export function ProductionProjectForm({ initialValues, submitting, error, onSubm
         </div>
       </div>
 
+      {children}
+
       <div className="border-t border-white/10 pt-4">
         <button
           type="submit"
-          disabled={submitting}
+          disabled={submitting || disabled}
           className="rounded bg-brand-gold px-8 py-3 font-bold text-white transition-colors hover:bg-[#b8962e] disabled:opacity-60"
         >
           {submitting ? copy.saving : copy.save}

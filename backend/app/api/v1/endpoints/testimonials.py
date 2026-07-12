@@ -12,9 +12,9 @@ from app.schemas.testimonial import (
 )
 from app.services.crud import (
     create_entity,
+    delete_entity,
     get_entity_or_404,
     list_entities,
-    soft_delete_entity,
     update_entity,
 )
 
@@ -74,5 +74,5 @@ def delete_testimonial(
     db: Session = Depends(get_db),
     _: Admin = Depends(require_admin),
 ) -> Response:
-    soft_delete_entity(db, get_entity_or_404(db, Testimonial, testimonial_id))
+    delete_entity(db, get_entity_or_404(db, Testimonial, testimonial_id))
     return Response(status_code=status.HTTP_204_NO_CONTENT)

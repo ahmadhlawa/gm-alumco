@@ -9,6 +9,7 @@ import {
   getAdminProductionProject,
   updateProductionProject,
 } from '@/api/productionProjects';
+import type { ProductionProjectImageInput } from '@/api/productionProjects';
 import type { ProductionProjectDto, ProductionProjectImageDto } from '@/api/types';
 import {
   EMPTY_PRODUCTION_PROJECT,
@@ -65,7 +66,10 @@ function toValues(dto: ProductionProjectDto): ProductionProjectFormValues {
   };
 }
 
-export function productionProjectPayload(values: ProductionProjectFormValues): Partial<ProductionProjectDto> {
+export function productionProjectPayload(
+  values: ProductionProjectFormValues,
+  images?: ProductionProjectImageInput[],
+) {
   return {
     title_en: values.title_en.trim(),
     title_he: values.title_he.trim(),
@@ -77,6 +81,7 @@ export function productionProjectPayload(values: ProductionProjectFormValues): P
     execution_partner_he: values.execution_partner_he.trim() || null,
     is_active: values.is_active,
     sort_order: values.sort_order,
+    ...(images ? { images } : {}),
   };
 }
 
@@ -177,6 +182,102 @@ function ImagesManager({ projectId, initialImages }: { projectId: number; initia
   );
 }
 
+export function StagedImagesManager({
+  images,
+  onChange,
+  onUploadingChange,
+  disabled,
+}: {
+  images: ProductionProjectImageInput[];
+  onChange: (images: ProductionProjectImageInput[]) => void;
+  onUploadingChange: (uploading: boolean) => void;
+  disabled: boolean;
+}) {
+  const { language } = useLanguage();
+  const copy = language === 'en' ? COPY.en : COPY.he;
+  const [url, setUrl] = useState('');
+
+  const add = (imageUrl: string) => {
+    const trimmedUrl = imageUrl.trim();
+    if (!trimmedUrl) return;
+    onChange([
+      ...images,
+      { image_url: trimmedUrl, alt_text_en: null, alt_text_he: null, sort_order: images.length },
+    ]);
+    setUrl('');
+  };
+
+  const remove = (index: number) => {
+    onChange(
+      images
+        .filter((_, imageIndex) => imageIndex !== index)
+        .map((image, sort_order) => ({ ...image, sort_order })),
+    );
+  };
+
+  return (
+    <section className="border-t border-white/10 pt-8">
+      <h3 className="mb-4 text-lg font-bold text-white">{copy.gallery}</h3>
+      <div className="mb-6 space-y-3">
+        <ImageUploadField
+          label={copy.upload}
+          folder="production-projects"
+          onUploaded={add}
+          onUploadingChange={onUploadingChange}
+          disabled={disabled}
+        />
+        <details className="rounded border border-white/10 p-3">
+          <summary className="cursor-pointer text-sm text-brand-silver">{copy.manual}</summary>
+          <div className="mt-3 flex gap-3">
+            <input
+              type="text"
+              inputMode="url"
+              dir="ltr"
+              placeholder="https://drive.google.com/image.jpg"
+              value={url}
+              disabled={disabled}
+              onChange={(event) => setUrl(event.target.value)}
+              className="h-12 flex-1 rounded border border-white/10 bg-brand-navy px-4 text-left text-white focus:border-brand-gold focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={() => add(url)}
+              disabled={disabled}
+              className="rounded bg-brand-gold px-6 font-bold text-white hover:bg-[#b8962e]"
+            >
+              {copy.add}
+            </button>
+          </div>
+        </details>
+      </div>
+      {images.length === 0 ? (
+        <p className="text-sm text-brand-silver">{copy.noImages}</p>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {images.map((image, index) => (
+            <div key={`${image.image_url}-${index}`} className="group relative overflow-hidden rounded border border-white/10">
+              <img
+                src={normalizeImageUrl(image.image_url)}
+                onError={handleImageError}
+                alt=""
+                className="h-32 w-full object-cover"
+              />
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className="absolute top-2 right-2 rounded bg-red-500/80 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                title={copy.deleteTooltip}
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
 export function ProductionProjectFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -187,6 +288,8 @@ export function ProductionProjectFormPage() {
   const [loading, setLoading] = useState(isEdit);
   const [loadError, setLoadError] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [stagedImages, setStagedImages] = useState<ProductionProjectImageInput[]>([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -203,7 +306,7 @@ export function ProductionProjectFormPage() {
     setSubmitting(true);
     setSubmitError(null);
     try {
-      const payload = productionProjectPayload(values);
+      const payload = productionProjectPayload(values, isEdit ? undefined : stagedImages);
       if (isEdit && id) {
         await updateProductionProject(id, payload);
         navigate('/admin/production-projects');
@@ -227,9 +330,19 @@ export function ProductionProjectFormPage() {
       <ProductionProjectForm
         initialValues={detail ? toValues(detail) : EMPTY_PRODUCTION_PROJECT}
         submitting={submitting}
+        disabled={uploadingImages}
         error={submitError}
         onSubmit={submit}
-      />
+      >
+        {!isEdit && (
+          <StagedImagesManager
+            images={stagedImages}
+            onChange={setStagedImages}
+            onUploadingChange={setUploadingImages}
+            disabled={submitting}
+          />
+        )}
+      </ProductionProjectForm>
       {isEdit && detail && <ImagesManager projectId={detail.id} initialImages={detail.images} />}
     </div>
   );

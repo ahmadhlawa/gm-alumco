@@ -9,6 +9,8 @@ interface ImageUploadFieldProps {
   folder: UploadFolder;
   value?: string | null;
   onUploaded: (url: string) => void | Promise<void>;
+  onUploadingChange?: (uploading: boolean) => void;
+  disabled?: boolean;
 }
 
 // Admin image upload copy — Hebrew + English only (Hebrew is the default).
@@ -34,6 +36,8 @@ export function ImageUploadField({
   folder,
   value,
   onUploaded,
+  onUploadingChange,
+  disabled,
 }: ImageUploadFieldProps) {
   const { language } = useLanguage();
   const copy = language === 'en' ? COPY.en : COPY.he;
@@ -48,6 +52,7 @@ export function ImageUploadField({
     if (!file) return;
 
     setUploading(true);
+    onUploadingChange?.(true);
     setProgress(null);
     setError(null);
     setSuccess(false);
@@ -63,6 +68,7 @@ export function ImageUploadField({
       );
     } finally {
       setUploading(false);
+      onUploadingChange?.(false);
       input.value = '';
     }
   };
@@ -73,7 +79,7 @@ export function ImageUploadField({
       <input
         type="file"
         accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-        disabled={uploading}
+        disabled={uploading || disabled}
         onChange={(event) => void upload(event)}
         className="block w-full text-sm text-brand-silver file:mr-4 file:rounded file:border-0 file:bg-brand-gold file:px-4 file:py-2 file:font-bold file:text-white disabled:opacity-60"
       />

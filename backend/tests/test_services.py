@@ -55,6 +55,41 @@ def test_admin_can_crud_service_and_read_inactive(client: TestClient, auth_heade
     assert client.get(f"/api/v1/services/{service_id}").status_code == 404
 
 
+def test_deleting_service_removes_it_from_database_and_all_listings(
+    client: TestClient, db: Session, auth_headers
+) -> None:
+    headers = auth_headers()
+    service_id = client.post(
+        "/api/v1/admin/services", headers=headers, json=service_payload()
+    ).json()["id"]
+
+    assert client.delete(f"/api/v1/admin/services/{service_id}", headers=headers).status_code == 204
+
+    assert db.get(Service, service_id) is None
+    assert client.get("/api/v1/admin/services", headers=headers).json() == []
+    assert client.get("/api/v1/services").json() == []
+    assert client.get("/api/v1/admin/dashboard/stats", headers=headers).json()["services"] == 0
+
+
+def test_setting_service_inactive_keeps_it_in_admin_listing(
+    client: TestClient, db: Session, auth_headers
+) -> None:
+    headers = auth_headers()
+    service_id = client.post(
+        "/api/v1/admin/services", headers=headers, json=service_payload()
+    ).json()["id"]
+
+    assert client.put(
+        f"/api/v1/admin/services/{service_id}",
+        headers=headers,
+        json={"is_active": False},
+    ).status_code == 200
+
+    assert db.get(Service, service_id) is not None
+    assert [item["id"] for item in client.get("/api/v1/admin/services", headers=headers).json()] == [service_id]
+    assert client.get("/api/v1/services").json() == []
+
+
 def test_service_validates_url_and_auth(client: TestClient, auth_headers) -> None:
     response = client.post(
         "/api/v1/admin/services",

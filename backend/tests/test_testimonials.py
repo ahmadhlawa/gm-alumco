@@ -63,6 +63,22 @@ def test_admin_can_crud_testimonial(client: TestClient, auth_headers) -> None:
     ).status_code == 204
 
 
+def test_deleting_testimonial_removes_it_from_database(
+    client: TestClient, db: Session, auth_headers
+) -> None:
+    headers = auth_headers()
+    testimonial_id = client.post(
+        "/api/v1/admin/testimonials", headers=headers, json=make_testimonial_payload()
+    ).json()["id"]
+
+    assert client.delete(
+        f"/api/v1/admin/testimonials/{testimonial_id}", headers=headers
+    ).status_code == 204
+
+    assert db.get(testimonial_model, testimonial_id) is None
+    assert client.get("/api/v1/admin/testimonials", headers=headers).json() == []
+
+
 def test_testimonial_rating_must_be_1_to_5(client: TestClient, auth_headers) -> None:
     response = client.post(
         "/api/v1/admin/testimonials",

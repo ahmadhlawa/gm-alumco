@@ -13,9 +13,10 @@ from app.schemas.production_project import (
     ProductionProjectUpdate,
 )
 from app.services.audit_service import record_audit
-from app.services.crud import create_entity, get_entity_or_404, soft_delete_entity, update_entity
+from app.services.crud import delete_entity, get_entity_or_404, update_entity
 from app.services.production_project_service import (
     add_production_project_image,
+    create_production_project as create_production_project_entity,
     delete_production_project_image,
     get_production_project_or_404,
     list_production_projects,
@@ -60,7 +61,7 @@ def create_production_project(
     db: Session = Depends(get_db),
     current_admin: Admin = Depends(require_admin),
 ) -> ProductionProject:
-    project = create_entity(db, ProductionProject, data)
+    project = create_production_project_entity(db, data)
     record_audit(
         db,
         admin_id=current_admin.id,
@@ -95,7 +96,7 @@ def delete_production_project(
     db: Session = Depends(get_db),
     current_admin: Admin = Depends(require_admin),
 ) -> Response:
-    soft_delete_entity(db, get_entity_or_404(db, ProductionProject, project_id))
+    delete_entity(db, get_production_project_or_404(db, project_id))
     record_audit(
         db,
         admin_id=current_admin.id,

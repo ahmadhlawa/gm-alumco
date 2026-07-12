@@ -8,9 +8,9 @@ from app.models.partner import Partner
 from app.schemas.partner import PartnerCreate, PartnerRead, PartnerUpdate
 from app.services.crud import (
     create_entity,
+    delete_entity,
     get_entity_or_404,
     list_entities,
-    soft_delete_entity,
     update_entity,
 )
 from app.services.audit_service import record_audit
@@ -83,7 +83,7 @@ def delete_partner(
     db: Session = Depends(get_db),
     current_admin: Admin = Depends(require_admin),
 ) -> Response:
-    soft_delete_entity(db, get_entity_or_404(db, Partner, partner_id))
+    delete_entity(db, get_entity_or_404(db, Partner, partner_id))
     record_audit(
         db,
         admin_id=current_admin.id,

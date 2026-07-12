@@ -47,6 +47,19 @@ def test_admin_can_crud_partner(client: TestClient, auth_headers) -> None:
     assert client.delete(f"/api/v1/admin/partners/{partner_id}", headers=headers).status_code == 204
 
 
+def test_deleting_partner_removes_it_from_database(
+    client: TestClient, db: Session, auth_headers
+) -> None:
+    headers = auth_headers()
+    partner_id = client.post(
+        "/api/v1/admin/partners", headers=headers, json=partner_payload()
+    ).json()["id"]
+
+    assert client.delete(f"/api/v1/admin/partners/{partner_id}", headers=headers).status_code == 204
+    assert db.get(Partner, partner_id) is None
+    assert client.get("/api/v1/admin/partners", headers=headers).json() == []
+
+
 def test_partner_validates_urls_and_auth(client: TestClient, auth_headers) -> None:
     response = client.post(
         "/api/v1/admin/partners",

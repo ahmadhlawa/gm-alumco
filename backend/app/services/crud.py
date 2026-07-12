@@ -64,3 +64,8 @@ def update_entity(db: Session, entity: ModelT, data: BaseModel) -> ModelT:
 def soft_delete_entity(db: Session, entity: ModelT) -> None:
     entity.is_active = False
     db.commit()
+
+
+def delete_entity(db: Session, entity: ModelT) -> None:
+    db.delete(entity)
+    db.commit()

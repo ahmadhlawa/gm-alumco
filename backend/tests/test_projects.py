@@ -113,6 +113,24 @@ def test_admin_can_add_and_delete_project_image(
     assert deleted.status_code == 204
 
 
+def test_deleting_project_removes_its_image_rows(client: TestClient, db: Session, auth_headers) -> None:
+    headers = auth_headers()
+    project_id = client.post(
+        "/api/v1/admin/projects", headers=headers, json=project_payload()
+    ).json()["id"]
+    image_id = client.post(
+        f"/api/v1/admin/projects/{project_id}/images",
+        headers=headers,
+        json={"image_url": "https://x.test/project.jpg"},
+    ).json()["id"]
+
+    assert client.delete(f"/api/v1/admin/projects/{project_id}", headers=headers).status_code == 204
+
+    assert db.get(Project, project_id) is None
+    assert db.get(ProjectImage, image_id) is None
+    assert client.get("/api/v1/admin/projects", headers=headers).json() == []
+
+
 def test_project_rejects_invalid_category_and_url(
     client: TestClient, auth_headers
 ) -> None:

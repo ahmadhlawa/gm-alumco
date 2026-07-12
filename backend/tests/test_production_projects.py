@@ -1,4 +1,7 @@
 from fastapi.testclient import TestClient
+from sqlalchemy.orm import Session
+
+from app.models.production_project import ProductionProject, ProductionProjectImage
 
 
 def production_project_payload(**overrides) -> dict:
@@ -94,6 +97,45 @@ def test_admin_can_crud_production_projects_and_images(
     assert image.status_code == 201
     assert deleted_image.status_code == 204
     assert deleted.status_code == 204
+
+
+def test_create_production_project_persists_initial_images_atomically(
+    client: TestClient, auth_headers
+) -> None:
+    response = client.post(
+        "/api/v1/admin/production-projects",
+        headers=auth_headers(),
+        json=production_project_payload(
+            images=[
+                {"image_url": "https://x.test/first.jpg", "sort_order": 0},
+                {"image_url": "https://x.test/second.jpg", "sort_order": 1},
+            ]
+        ),
+    )
+
+    assert response.status_code == 201
+    assert [image["image_url"] for image in response.json()["images"]] == [
+        "https://x.test/first.jpg",
+        "https://x.test/second.jpg",
+    ]
+
+
+def test_deleting_production_project_removes_its_image_rows(
+    client: TestClient, db: Session, auth_headers
+) -> None:
+    headers = auth_headers()
+    project_id = create_production_project(client, headers)["id"]
+    image_id = client.post(
+        f"/api/v1/admin/production-projects/{project_id}/images",
+        headers=headers,
+        json={"image_url": "https://x.test/production.jpg"},
+    ).json()["id"]
+
+    assert client.delete(f"/api/v1/admin/production-projects/{project_id}", headers=headers).status_code == 204
+
+    assert db.get(ProductionProject, project_id) is None
+    assert db.get(ProductionProjectImage, image_id) is None
+    assert client.get("/api/v1/admin/production-projects", headers=headers).json() == []
 
 
 def test_production_project_validation_and_authentication(

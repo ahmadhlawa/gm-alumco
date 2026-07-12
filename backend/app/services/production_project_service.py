@@ -3,7 +3,24 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models.production_project import ProductionProject, ProductionProjectImage
-from app.schemas.production_project import ProductionProjectImageCreate
+from app.schemas.production_project import (
+    ProductionProjectCreate,
+    ProductionProjectImageCreate,
+)
+
+
+def create_production_project(
+    db: Session,
+    data: ProductionProjectCreate,
+) -> ProductionProject:
+    project = ProductionProject(
+        **data.model_dump(exclude={"images"}),
+        images=[ProductionProjectImage(**image.model_dump()) for image in data.images],
+    )
+    db.add(project)
+    db.commit()
+    db.refresh(project)
+    return project
 
 
 def list_production_projects(
