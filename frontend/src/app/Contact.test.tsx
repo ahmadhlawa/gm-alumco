@@ -15,6 +15,8 @@ describe('Contact location section', () => {
     );
 
     expect(html).toContain('Isefya, Abu Hushi Street 5');
+    expect(html).toContain('TECHNO ALUM SYSTEM');
+    expect(html).not.toContain('GM Alumco');
     expect(html).toContain('עוספיא, רח׳ אבא חושי 5');
     expect(html).toContain('href="https://maps.app.goo.gl/pYcDJeSKoVqDzdrP7"');
     expect(html).toContain('Open in Google Maps');

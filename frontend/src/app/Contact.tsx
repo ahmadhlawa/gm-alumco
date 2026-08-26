@@ -113,7 +113,7 @@ export function Contact() {
                   </div>
                   <div>
                     <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand-gold">
-                      GM Alumco
+                      TECHNO ALUM SYSTEM
                     </p>
                     <address className="mt-4 space-y-2 not-italic">
                       <p className="text-2xl font-bold text-white" dir="ltr">{ADDRESS_EN}</p>
