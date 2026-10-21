@@ -71,13 +71,9 @@ export function productionProjectPayload(
   images?: ProductionProjectImageInput[],
 ) {
   return {
-    title_en: values.title_en.trim(),
     title_he: values.title_he.trim(),
-    description_en: values.description_en.trim() || null,
     description_he: values.description_he.trim() || null,
-    manufacturer_en: values.manufacturer_en.trim() || null,
     manufacturer_he: values.manufacturer_he.trim() || null,
-    execution_partner_en: values.execution_partner_en.trim() || null,
     execution_partner_he: values.execution_partner_he.trim() || null,
     is_active: values.is_active,
     sort_order: values.sort_order,

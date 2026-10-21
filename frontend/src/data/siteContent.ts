@@ -26,7 +26,7 @@ export const siteContent: SiteContent = {
       he: "אנחנו עושים את ההבדל בכל פרט"
     },
     subtitle: {
-      en: "We are GM Aluminum Manufacturing & Trading Co., combining rich experience and modern technologies to deliver sustainable architectural solutions.",
+      en: "We are T.A.S, combining rich experience and modern technologies to deliver sustainable architectural solutions.",
       he: "אנחנו T.A.S, משלבים ניסיון עשיר וטכנולוגיות מתקדמות כדי לספק פתרונות אדריכליים בני קיימא."
     },
     description: {

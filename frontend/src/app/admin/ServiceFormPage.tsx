@@ -1,3 +1,4 @@
+import { hebrewContentPayload } from './adminMappers';
 import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ApiError } from '@/api/client';
@@ -17,7 +18,7 @@ const COPY = {
   he: {
     editTitle: 'עריכת שירות',
     addTitle: 'הוספת שירות',
-    description: 'הזינו את תוכן השירות בעברית ובאנגלית.',
+    description: 'הזינו את תוכן השירות בעברית. האנגלית נוצרת אוטומטית.',
     titlePlaceholder: 'כותרת',
     descPlaceholder: 'תיאור',
     image: 'תמונת השירות',
@@ -32,7 +33,7 @@ const COPY = {
   en: {
     editTitle: 'Edit service',
     addTitle: 'Add service',
-    description: 'Enter the service content in Hebrew and English.',
+    description: 'Enter the service content in Hebrew.',
     titlePlaceholder: 'Title',
     descPlaceholder: 'Description',
     image: 'Service image',
@@ -62,7 +63,7 @@ export function ServiceFormPage() {
 
   const submit = async (event: FormEvent) => {
     event.preventDefault(); setSaving(true); setSubmitError(null);
-    const payload = { ...values, description_en: values.description_en || null, description_he: values.description_he || null, image_url: values.image_url || null, starting_price: values.starting_price || null };
+    const payload = hebrewContentPayload({ ...values, description_en: values.description_en || null, description_he: values.description_he || null, image_url: values.image_url || null, starting_price: values.starting_price || null });
     try {
       if (id) await updateService(id, payload); else await createService(payload);
       navigate('/admin/services');
@@ -78,10 +79,10 @@ export function ServiceFormPage() {
   return <form onSubmit={submit} className="max-w-5xl space-y-6">
     <div><h2 className="text-2xl font-bold text-white">{id ? copy.editTitle : copy.addTitle}</h2><p className="mt-1 text-brand-silver">{copy.description}</p></div>
     {submitError && <div className="rounded border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-300 whitespace-pre-wrap">{submitError}</div>}
-    <div className="grid gap-5 lg:grid-cols-2">{(['he', 'en'] as const).map((lang) => <section key={lang} className="space-y-3">
-      <h3 className="font-bold text-brand-gold">{lang === 'en' ? 'English' : 'עברית'}</h3>
-      <input required value={values[`title_${lang}`]} onChange={(e) => set(`title_${lang}`, e.target.value)} className={input} placeholder={copy.titlePlaceholder} dir={lang === 'en' ? 'ltr' : 'rtl'} />
-      <textarea value={values[`description_${lang}`] ?? ''} onChange={(e) => set(`description_${lang}`, e.target.value)} className={input} rows={6} placeholder={copy.descPlaceholder} dir={lang === 'en' ? 'ltr' : 'rtl'} />
+    <div className="grid gap-5 ">{(['he'] as const).map((lang) => <section key={lang} className="space-y-3">
+      <h3 className="font-bold text-brand-gold">עברית</h3>
+      <input required value={values[`title_${lang}`]} onChange={(e) => set(`title_${lang}`, e.target.value)} className={input} placeholder={copy.titlePlaceholder} dir="rtl" />
+      <textarea value={values[`description_${lang}`] ?? ''} onChange={(e) => set(`description_${lang}`, e.target.value)} className={input} rows={6} placeholder={copy.descPlaceholder} dir="rtl" />
     </section>)}</div>
     <ImageUploadField label={copy.image} folder="services" value={values.image_url} onUploaded={(url) => set('image_url', url)} />
     <details className="rounded border border-white/10 p-3"><summary className="cursor-pointer text-sm text-brand-silver">{copy.advancedImage}</summary><input type="text" inputMode="url" dir="ltr" value={values.image_url ?? ''} onChange={(e) => set('image_url', e.target.value)} className={`${input} mt-3`} placeholder="Image URL" /></details>

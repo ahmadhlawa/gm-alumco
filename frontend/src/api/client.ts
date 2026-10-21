@@ -43,7 +43,12 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...Object.fromEntries(new Headers(requestOptions.headers).entries()),
   };
-  const response = await fetch(`${baseUrl}${path}`, { ...requestOptions, headers });
+  let response: Response;
+  try {
+    response = await fetch(`${baseUrl}${path}`, { ...requestOptions, headers });
+  } catch {
+    throw new ApiError(0, 'Could not reach the API. Check the backend connection and try again.');
+  }
 
   if (response.status === 401 && authenticated) {
     clearAccessToken();

@@ -9,7 +9,6 @@ describe('admin mappers', () => {
 
   it('mirrors the simple partner name into the Hebrew + English columns', () => {
     expect(partnerPayload({ name: 'Schüco', logo_url: 'https://x.test/logo.png', website_url: '', is_active: true, sort_order: 2 })).toEqual({
-      name_en: 'Schüco',
       name_he: 'Schüco',
       logo_url: 'https://x.test/logo.png',
       website_url: null,

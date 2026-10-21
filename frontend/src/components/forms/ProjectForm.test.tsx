@@ -12,7 +12,7 @@ describe('ProjectForm admin language tabs', () => {
       </LanguageProvider>,
     );
     expect(html).toContain('עברית'); // Hebrew tab
-    expect(html).toContain('English'); // English tab
+    expect(html).not.toContain('English');
     expect(html).not.toContain('العربية'); // Arabic tab must be gone
   });
 });
@@ -27,9 +27,9 @@ describe('ProjectFormPage save payload', () => {
       description_en: 'Description',
     });
     expect(payload.title_he).toBe('כותרת');
-    expect(payload.title_en).toBe('Title');
+    expect(payload).not.toHaveProperty('title_en');
     expect(payload.description_he).toBe('תיאור');
-    expect(payload.description_en).toBe('Description');
+    expect(payload).not.toHaveProperty('description_en');
     // Arabic columns no longer exist in the schema, so none are sent.
     expect(Object.keys(payload).some((key) => key.endsWith('_ar'))).toBe(false);
   });

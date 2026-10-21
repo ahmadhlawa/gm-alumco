@@ -4,6 +4,16 @@ import { AdminAboutContent } from './AdminAboutContent';
 import { LanguageProvider } from '@/i18n';
 
 describe('AdminAboutContent page', () => {
+  it('replaces fixed paragraphs and bullets with one Hebrew body editor and preview', () => {
+    const html = renderToStaticMarkup(<LanguageProvider><AdminAboutContent /></LanguageProvider>);
+    expect(html).toContain('name="body_he"');
+    expect(html).toContain('maxLength="16000"');
+    expect(html).toContain('data-testid="about-body-preview"');
+    expect(html).not.toContain('פסקה 1 —');
+    expect(html).not.toContain('נקודה 1 —');
+    expect(html).toContain('טקסט החזון');
+    expect(html).toContain('טקסט המשימה');
+  });
   it('shows character counters for text fields', () => {
     const html = renderToStaticMarkup(
       <LanguageProvider>
@@ -26,6 +36,7 @@ describe('AdminAboutContent page', () => {
     expect(html).not.toMatch(/_ar\b/);
     expect(html).not.toMatch(/ערבית/);
     expect(html).not.toMatch(/Arabic/i);
+    expect(html).not.toContain('dir="ltr"');
   });
 
   it('does not expose the Difference & Stats group — it is fixed website structure', () => {

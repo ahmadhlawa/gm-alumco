@@ -3,6 +3,8 @@ import type { AboutPageContentDto } from '@/api/types';
 // Mirrors the DB seed row (migration 20260709_0001) verbatim, so a failed API
 // fetch renders identically to a freshly-seeded backend.
 export const defaultAboutPageContent: AboutPageContentDto = {
+  body_he: null,
+  body_en: null,
   title_en: 'Our success story',
   title_he: 'סיפור ההצלחה שלנו',
   subtitle_en: 'A journey of passion in architecture, begun to deliver the quality you deserve.',

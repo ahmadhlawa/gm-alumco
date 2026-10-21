@@ -53,10 +53,10 @@ def test_admin_can_crud_testimonial(client: TestClient, auth_headers) -> None:
     updated = client.put(
         f"/api/v1/admin/testimonials/{testimonial_id}",
         headers=headers,
-        json={"client_position_en": None, "message_en": "Updated", "rating": 4},
+        json={"client_position_he": None, "message_he": "המלצה מעודכנת", "rating": 4},
     )
     assert updated.json()["client_position_en"] is None
-    assert updated.json()["message_en"] == "Updated"
+    assert updated.json()["message_en"] == "Translated content"
     assert updated.json()["rating"] == 4
     assert client.delete(
         f"/api/v1/admin/testimonials/{testimonial_id}", headers=headers

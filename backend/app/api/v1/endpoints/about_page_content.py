@@ -1,5 +1,9 @@
-from fastapi import APIRouter, Depends
+import logging
+
+from app.services.about_content_service import translate_about_content
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import require_admin
@@ -16,11 +20,24 @@ from app.services.audit_service import record_audit
 
 public_router = APIRouter()
 admin_router = APIRouter()
+logger = logging.getLogger(__name__)
+
+
+def load_content(db: Session) -> AboutPageContent | None:
+    try:
+        return db.scalar(select(AboutPageContent).order_by(AboutPageContent.id))
+    except SQLAlchemyError as exc:
+        db.rollback()
+        logger.exception("Unable to load About content; check database connectivity and Alembic migrations")
+        raise HTTPException(
+            status_code=503,
+            detail="About content could not be loaded. Ask an administrator to check database connectivity and migrations. Nothing was saved.",
+        ) from exc
 
 
 def get_or_create_content(db: Session) -> AboutPageContent:
     """Return the singleton About page content, creating it if absent."""
-    content = db.scalar(select(AboutPageContent).order_by(AboutPageContent.id))
+    content = load_content(db)
     if content is None:
         content = AboutPageContent()
         db.add(content)
@@ -48,8 +65,12 @@ def update_about_content(
     db: Session = Depends(get_db),
     current_admin: Admin = Depends(require_admin),
 ) -> AboutPageContent:
-    content = get_or_create_content(db)
-    for field, value in data.model_dump(exclude_unset=True).items():
+    content = load_content(db)
+    translated = translate_about_content(data, content)
+    if content is None:
+        content = AboutPageContent()
+        db.add(content)
+    for field, value in translated.model_dump(exclude_unset=True).items():
         setattr(content, field, value)
     db.commit()
     db.refresh(content)

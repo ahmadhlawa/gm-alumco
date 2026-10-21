@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, String, func
+from sqlalchemy import DateTime, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -17,6 +17,8 @@ class AboutPageContent(Base):
     __tablename__ = "about_page_content"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    body_he: Mapped[str | None] = mapped_column(Text, nullable=True)
+    body_en: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # The `default=` values below are the same seed content as the migration's
     # insert (alembic/versions/20260709_0001_add_about_page_content.py). Kept

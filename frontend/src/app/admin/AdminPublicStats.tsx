@@ -1,3 +1,4 @@
+import { ApiError } from '@/api/client';
 import { useEffect, useState } from 'react';
 import { Save, RefreshCw } from 'lucide-react';
 import { createSiteContent, listAdminSiteContent, updateSiteContent } from '@/api/content';
@@ -83,7 +84,7 @@ function CompanyNumberCard({
       className="space-y-4 rounded-xl border border-white/5 bg-brand-surface-alt p-5"
     >
       <h3 className="text-lg font-bold text-brand-gold">{title}</h3>
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2">
         <label className="block space-y-2">
           <span className="text-sm font-bold text-brand-silver">{copy.valueLabel}</span>
           <input
@@ -103,15 +104,6 @@ function CompanyNumberCard({
             dir="rtl"
           />
         </label>
-        <label className="block space-y-2">
-          <span className="text-sm font-bold text-brand-silver">{copy.labelEn}</span>
-          <input
-            value={number.labelEn}
-            onChange={(e) => onChange({ ...number, labelEn: e.target.value })}
-            className="w-full rounded bg-brand-navy px-3 py-2 text-white"
-            dir="ltr"
-          />
-        </label>
       </div>
     </section>
   );
@@ -125,6 +117,7 @@ export function AdminPublicStats() {
   const [numbers, setNumbers] = useState<CompanyNumbers>(defaultCompanyNumbers);
   const [row, setRow] = useState<SiteContentDto | null>(null);
   const [status, setStatus] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     listAdminSiteContent()
@@ -144,18 +137,26 @@ export function AdminPublicStats() {
 
   const save = async () => {
     setStatus(copy.saving);
+    setSaving(true);
     // Project the three canonical numbers onto the full stats JSON, preserving
     // value chips / hero-since / about-highlight from the existing row.
     const content = applyCompanyNumbers(row?.value, numbers);
+    // Retain bilingual data in memory, but submit only editable Hebrew labels.
+    for (const stat of [...content.heroStats, ...content.aboutPreviewStats, ...content.aboutPageStats, content.aboutHighlight]) {
+      delete (stat.label as Partial<typeof stat.label>).en;
+    }
     const value = content as unknown as JsonValue;
     try {
       const saved = row
         ? await updateSiteContent(row.id, { value, is_active: true })
         : await createSiteContent({ section: 'public_stats', key: 'content', value, content_type: 'json', is_active: true });
       setRow(saved);
+      setNumbers(extractCompanyNumbers(saved.value));
       setStatus(copy.saved);
-    } catch {
-      setStatus(copy.error);
+    } catch (error) {
+      setStatus(error instanceof ApiError ? error.message : copy.error);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -167,12 +168,14 @@ export function AdminPublicStats() {
         action={
           <div className="flex gap-3">
             <button
+              disabled={saving}
               onClick={() => setNumbers(defaultCompanyNumbers)}
               className="inline-flex items-center gap-2 rounded bg-white/5 px-4 py-2 text-sm font-bold text-white hover:bg-white/10"
             >
               <RefreshCw className="h-4 w-4" /> {copy.reset}
             </button>
             <button
+              disabled={saving}
               onClick={() => void save()}
               className="inline-flex items-center gap-2 rounded bg-brand-gold px-4 py-2 text-sm font-bold text-brand-navy hover:bg-[#e3c454]"
             >

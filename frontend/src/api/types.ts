@@ -42,6 +42,7 @@ export interface HomepageVideoSectionDto {
   display_order: number;
 }
 export interface AboutPageContentDto {
+  body_he?: string | null; body_en?: string | null;
   title_en: string | null; title_he: string | null;
   subtitle_en: string | null; subtitle_he: string | null;
   paragraph_1_en: string | null; paragraph_1_he: string | null;

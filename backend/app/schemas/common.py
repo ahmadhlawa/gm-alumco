@@ -101,6 +101,20 @@ class TextSanitizedModel(BaseModel):
         return normalize_optional_text(value) if isinstance(value, str) else value
 
 
+class RequiredContentUpdate(TextSanitizedModel):
+    """Omitted required content is allowed on updates; explicit null is not."""
+
+    @field_validator(
+        "title_he", "title_en", "name_he", "name_en", "client_name_he",
+        "client_name_en", "message_he", "message_en", check_fields=False,
+    )
+    @classmethod
+    def reject_null_content(cls, value: Any) -> Any:
+        if value is None:
+            raise ValueError("Required content must not be blank or null")
+        return value
+
+
 class MessageResponse(BaseModel):
     message: str
 

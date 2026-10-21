@@ -1,3 +1,5 @@
+import { ApiError } from '@/api/client';
+import { hebrewContentPayload } from './adminMappers';
 import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createTestimonial, getAdminTestimonial, updateTestimonial } from '@/api/testimonials';
@@ -25,7 +27,7 @@ const COPY = {
   he: {
     editTitle: 'עריכת המלצה',
     addTitle: 'הוספת המלצה',
-    description: 'הזינו את חוות הדעת בעברית ובאנגלית.',
+    description: 'הזינו את חוות הדעת בעברית. האנגלית נוצרת אוטומטית.',
     namePlaceholder: 'שם הלקוח',
     positionPlaceholder: 'תפקיד / תיאור (אופציונלי)',
     messagePlaceholder: 'חוות הדעת',
@@ -34,12 +36,12 @@ const COPY = {
     active: 'פעיל ומוצג באתר',
     save: 'שמירת ההמלצה',
     saving: 'שומר…',
-    validation: 'יש להזין שם לקוח וחוות דעת בעברית ובאנגלית.',
+    validation: 'יש להזין שם לקוח וחוות דעת בעברית.',
   },
   en: {
     editTitle: 'Edit testimonial',
     addTitle: 'Add testimonial',
-    description: 'Enter the review in Hebrew and English.',
+    description: 'Enter the review in Hebrew.',
     namePlaceholder: 'Client name',
     positionPlaceholder: 'Position / title (optional)',
     messagePlaceholder: 'The review',
@@ -48,7 +50,7 @@ const COPY = {
     active: 'Active and visible on the site',
     save: 'Save testimonial',
     saving: 'Saving…',
-    validation: 'Please enter a client name and review in Hebrew and English.',
+    validation: 'Please enter a client name and review in Hebrew.',
   },
 };
 
@@ -70,22 +72,24 @@ export function TestimonialFormPage() {
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!values.client_name_he.trim() || !values.client_name_en.trim() || !values.message_he.trim() || !values.message_en.trim()) {
+    if (!values.client_name_he.trim() || !values.message_he.trim()) {
       setValidation(copy.validation);
       return;
     }
     setValidation(null);
     setSaving(true);
-    const payload = {
+    const payload = hebrewContentPayload({
       ...values,
       client_position_en: values.client_position_en || null,
       client_position_he: values.client_position_he || null,
       rating: Math.max(1, Math.min(5, values.rating || 5)),
-    };
+    });
     try {
       if (id) await updateTestimonial(id, payload);
       else await createTestimonial(payload);
       navigate('/admin/testimonials');
+    } catch (error) {
+      setValidation(error instanceof ApiError ? error.message : (language === 'en' ? 'Could not save. Please retry.' : 'השמירה נכשלה. נסו שוב.'));
     } finally {
       setSaving(false);
     }
@@ -98,11 +102,11 @@ export function TestimonialFormPage() {
     <div><h2 className="text-2xl font-bold text-white">{id ? copy.editTitle : copy.addTitle}</h2><p className="mt-1 text-brand-silver">{copy.description}</p></div>
     {validation && <div className="rounded border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-300">{validation}</div>}
 
-    <div className="grid gap-5 lg:grid-cols-2">{(['he', 'en'] as const).map((lang) => <section key={lang} className="space-y-3">
-      <h3 className="font-bold text-brand-gold">{lang === 'en' ? 'English' : 'עברית'}</h3>
-      <input required value={values[`client_name_${lang}`]} onChange={(e) => set(`client_name_${lang}`, e.target.value)} className={input} placeholder={copy.namePlaceholder} dir={lang === 'en' ? 'ltr' : 'rtl'} />
-      <input value={values[`client_position_${lang}`] ?? ''} onChange={(e) => set(`client_position_${lang}`, e.target.value)} className={input} placeholder={copy.positionPlaceholder} dir={lang === 'en' ? 'ltr' : 'rtl'} />
-      <textarea required value={values[`message_${lang}`]} onChange={(e) => set(`message_${lang}`, e.target.value)} className={input} rows={5} placeholder={copy.messagePlaceholder} dir={lang === 'en' ? 'ltr' : 'rtl'} />
+    <div className="grid gap-5 ">{(['he'] as const).map((lang) => <section key={lang} className="space-y-3">
+      <h3 className="font-bold text-brand-gold">עברית</h3>
+      <input required value={values[`client_name_${lang}`]} onChange={(e) => set(`client_name_${lang}`, e.target.value)} className={input} placeholder={copy.namePlaceholder} dir="rtl" />
+      <input value={values[`client_position_${lang}`] ?? ''} onChange={(e) => set(`client_position_${lang}`, e.target.value)} className={input} placeholder={copy.positionPlaceholder} dir="rtl" />
+      <textarea required value={values[`message_${lang}`]} onChange={(e) => set(`message_${lang}`, e.target.value)} className={input} rows={5} placeholder={copy.messagePlaceholder} dir="rtl" />
     </section>)}</div>
 
     <div className="grid gap-5 md:grid-cols-2">

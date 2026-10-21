@@ -1,3 +1,4 @@
+from app.services.translation_service import translate_public_stats
 from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
@@ -65,6 +66,8 @@ def create_site_content(
     db: Session = Depends(get_db),
     _: Admin = Depends(require_admin),
 ) -> SiteContent:
+    if data.section == 'public_stats' and data.key == 'content':
+        data = data.model_copy(update={'value': translate_public_stats(data.value)})
     return create_unique_record(
         db,
         SiteContent,
@@ -83,6 +86,14 @@ def update_site_content(
     content = get_site_record_or_404(
         db, SiteContent, content_id, label="Site content"
     )
+    section = data.section if data.section is not None else content.section
+    key = data.key if data.key is not None else content.key
+    was_public_stats = content.section == 'public_stats' and content.key == 'content'
+    if section == 'public_stats' and key == 'content' and ('value' in data.model_fields_set or not was_public_stats):
+        value = data.value if 'value' in data.model_fields_set else content.value
+        data = data.model_copy(update={'value': translate_public_stats(
+            value, existing=content.value if was_public_stats else None,
+        )})
     return update_unique_record(
         db,
         content,

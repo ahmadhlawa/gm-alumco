@@ -7,6 +7,8 @@ import { defaultAboutPageContent } from '@/data/aboutPageContent';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { ImageUploadField } from '@/components/forms/ImageUploadField';
 import { useLanguage } from '@/i18n';
+import { AboutBody } from '@/components/common/AboutBody';
+import { ABOUT_BODY_LIMIT, getAboutBody } from '@/lib/aboutBody';
 
 type FieldKey = keyof AboutPageContentDto;
 type Feedback = { kind: 'success' | 'error'; message: string } | null;
@@ -24,6 +26,9 @@ const COPY = {
     heCol: 'עברית', enCol: 'אנגלית',
     sectionSuccess: 'סיפור ההצלחה', sectionVisionMission: 'חזון ומשימה',
     imageLabel: 'תמונת סיפור ההצלחה',
+    bodyLabel: 'תוכן אודות — עברית',
+    bodyHint: 'הפרידו פסקאות בשורה ריקה. לרשימות, התחילו כל שורה ב־- או * או × או •. האנגלית נוצרת בשמירה.',
+    preview: 'תצוגה מקדימה',
     fields: {
       title: 'כותרת', subtitle: 'כותרת משנה', paragraph1: 'פסקה 1', paragraph2: 'פסקה 2',
       bullet1: 'נקודה 1', bullet2: 'נקודה 2', bullet3: 'נקודה 3', bullet4: 'נקודה 4',
@@ -39,6 +44,9 @@ const COPY = {
     heCol: 'Hebrew', enCol: 'English',
     sectionSuccess: 'Success Story', sectionVisionMission: 'Vision & Mission',
     imageLabel: 'Success Story image',
+    bodyLabel: 'About body — Hebrew',
+    bodyHint: 'Separate paragraphs with a blank line. Start list lines with -, *, × or •. English is generated on save.',
+    preview: 'Live preview',
     fields: {
       title: 'Title', subtitle: 'Subtitle', paragraph1: 'Paragraph 1', paragraph2: 'Paragraph 2',
       bullet1: 'Bullet 1', bullet2: 'Bullet 2', bullet3: 'Bullet 3', bullet4: 'Bullet 4',
@@ -93,27 +101,23 @@ export function AdminAboutContent() {
   const [form, setForm] = useState<AboutPageContentDto>(defaultAboutPageContent);
   const [feedback, setFeedback] = useState<Feedback>(null);
   const [saving, setSaving] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     getAdminAboutPageContent()
-      .then(setForm)
-      .catch(() => setFeedback({ kind: 'error', message: copy.loadError }));
+      .then((content) => { setForm(content); setLoaded(true); })
+      .catch((err: unknown) => setFeedback({ kind: 'error', message: err instanceof ApiError ? err.message : copy.loadError }));
     // Run once on mount; copy is stable per language.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const get = (key: FieldKey): string => (form[key] as string | null) ?? '';
   const set = (key: FieldKey, value: string) => setForm((current) => ({ ...current, [key]: value }));
+  const body = getAboutBody(form, 'he');
 
   const successPairs: PairField[] = [
     { keyHe: 'title_he', keyEn: 'title_en', label: copy.fields.title, max: 60 },
     { keyHe: 'subtitle_he', keyEn: 'subtitle_en', label: copy.fields.subtitle, max: 120 },
-    { keyHe: 'paragraph_1_he', keyEn: 'paragraph_1_en', label: copy.fields.paragraph1, max: 350, multiline: true },
-    { keyHe: 'paragraph_2_he', keyEn: 'paragraph_2_en', label: copy.fields.paragraph2, max: 350, multiline: true },
-    { keyHe: 'bullet_1_he', keyEn: 'bullet_1_en', label: copy.fields.bullet1, max: 90 },
-    { keyHe: 'bullet_2_he', keyEn: 'bullet_2_en', label: copy.fields.bullet2, max: 90 },
-    { keyHe: 'bullet_3_he', keyEn: 'bullet_3_en', label: copy.fields.bullet3, max: 90 },
-    { keyHe: 'bullet_4_he', keyEn: 'bullet_4_en', label: copy.fields.bullet4, max: 90 },
   ];
   // Experience number/label are edited on the Company Numbers page — see
   // publicStats.ts's aboutHighlight, which the public About page reads
@@ -136,7 +140,8 @@ export function AdminAboutContent() {
   const allPairs = [...successPairs, ...visionMissionPairs];
   const allSingles = successSingles;
   const hasOverLimit =
-    allPairs.some((f) => get(f.keyHe).length > f.max || get(f.keyEn).length > f.max) ||
+    body.length > ABOUT_BODY_LIMIT ||
+    allPairs.some((f) => get(f.keyHe).length > f.max) ||
     allSingles.some((f) => get(f.key).length > f.max);
 
   // The save payload is derived from the same field-group config the form
@@ -145,12 +150,12 @@ export function AdminAboutContent() {
   // exists on this page.
   const editableKeys: FieldKey[] = [
     'image_url',
-    ...allPairs.flatMap((f) => [f.keyHe, f.keyEn]),
+    ...allPairs.map((f) => f.keyHe),
     ...allSingles.map((f) => f.key),
   ];
 
   const renderPair = (field: PairField) => (
-    <div key={field.keyHe} className="grid gap-4 md:grid-cols-2">
+    <div key={field.keyHe} className="grid gap-4">
       <TextField
         label={`${field.label} — ${copy.heCol}`}
         value={get(field.keyHe)}
@@ -158,14 +163,6 @@ export function AdminAboutContent() {
         dir="rtl"
         multiline={field.multiline}
         onChange={(v) => set(field.keyHe, v)}
-      />
-      <TextField
-        label={`${field.label} — ${copy.enCol}`}
-        value={get(field.keyEn)}
-        max={field.max}
-        dir="ltr"
-        multiline={field.multiline}
-        onChange={(v) => set(field.keyEn, v)}
       />
     </div>
   );
@@ -182,6 +179,7 @@ export function AdminAboutContent() {
   );
 
   const save = async () => {
+    if (!loaded) return;
     if (hasOverLimit) {
       setFeedback({ kind: 'error', message: copy.overLimit });
       return;
@@ -192,6 +190,7 @@ export function AdminAboutContent() {
       const payload = Object.fromEntries(
         editableKeys.map((key) => [key, form[key]]),
       ) as Partial<AboutPageContentDto>;
+      payload.body_he = body;
       const saved = await updateAboutPageContent(payload);
       setForm(saved);
       setFeedback({ kind: 'success', message: copy.saved });
@@ -209,7 +208,7 @@ export function AdminAboutContent() {
         action={
           <button
             onClick={() => void save()}
-            disabled={saving || hasOverLimit}
+            disabled={!loaded || saving || hasOverLimit}
             className="inline-flex items-center gap-2 rounded bg-brand-gold px-4 py-2 text-sm font-bold text-brand-navy hover:bg-[#e3c454] disabled:opacity-60"
           >
             <Save className="h-4 w-4" /> {saving ? copy.saving : copy.save}
@@ -241,6 +240,24 @@ export function AdminAboutContent() {
         />
         {successSingles.map(renderSingle)}
         {successPairs.map(renderPair)}
+        <div className="space-y-2">
+          <label htmlFor="about-body-he" className="flex justify-between text-sm font-bold text-brand-silver">
+            <span>{copy.bodyLabel}</span><span>{body.length}/{ABOUT_BODY_LIMIT}</span>
+          </label>
+          <p id="about-body-hint" className="text-sm text-brand-silver">{copy.bodyHint}</p>
+          <textarea
+            id="about-body-he" name="body_he" dir="rtl" rows={14}
+            value={body} maxLength={ABOUT_BODY_LIMIT} aria-describedby="about-body-hint"
+            onChange={(event) => set('body_he', event.target.value)}
+            className="w-full resize-y rounded bg-brand-navy px-3 py-2 text-white border border-white/10 focus:border-brand-gold focus:outline-none"
+          />
+          <details open className="rounded border border-white/10">
+            <summary className="cursor-pointer p-3 text-sm font-bold text-brand-silver">{copy.preview}</summary>
+            <div data-testid="about-body-preview" role="region" aria-label={copy.preview} tabIndex={0} className="max-h-96 overflow-y-auto p-4">
+              <AboutBody text={body} language="he" />
+            </div>
+          </details>
+        </div>
       </section>
 
       <section className="space-y-4 rounded-xl border border-white/5 bg-brand-surface-alt p-5">

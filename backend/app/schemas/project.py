@@ -3,7 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from app.schemas.common import ImageUrlString, ORMModel, TextSanitizedModel
+from app.schemas.common import ImageUrlString, ORMModel, RequiredContentUpdate, TextSanitizedModel
 
 
 ProjectCategory = Literal["LOCAL", "INTERNATIONAL", "FEATURED"]
@@ -21,10 +21,11 @@ class ProjectBase(TextSanitizedModel):
 
 
 class ProjectCreate(ProjectBase):
-    pass
+    # The English counterpart is generated on a Hebrew-only admin write.
+    title_en: str | None = Field(default=None, min_length=1, max_length=255)
 
 
-class ProjectUpdate(TextSanitizedModel):
+class ProjectUpdate(RequiredContentUpdate):
     title_en: str | None = Field(default=None, min_length=1, max_length=255)
     title_he: str | None = Field(default=None, min_length=1, max_length=255)
     description_en: str | None = Field(default=None, max_length=2000)

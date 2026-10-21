@@ -70,14 +70,14 @@ def test_admin_can_crud_production_projects_and_images(
     updated = client.put(
         f"/api/v1/admin/production-projects/{project_id}",
         headers=headers,
-        json={"title_en": "Updated", "is_active": True},
+        json={"title_he": "פרויקט מעודכן", "is_active": True},
     )
     image = client.post(
         f"/api/v1/admin/production-projects/{project_id}/images",
         headers=headers,
         json={
             "image_url": "https://drive.google.com/production.jpg",
-            "alt_text_en": "Facade",
+            "alt_text_he": "חזית",
             "sort_order": 3,
         },
     )
@@ -92,7 +92,7 @@ def test_admin_can_crud_production_projects_and_images(
 
     assert listing.status_code == 200 and len(listing.json()) == 1
     assert detail.status_code == 200
-    assert updated.json()["title_en"] == "Updated"
+    assert updated.json()["title_en"] == "Translated content"
     assert updated.json()["is_active"] is True
     assert image.status_code == 201
     assert deleted_image.status_code == 204
