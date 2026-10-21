@@ -56,6 +56,8 @@ class Settings(BaseSettings):
     translation_url: str = "http://127.0.0.1:5000"
     # Shared translation budget for a complete CMS save, including image captions.
     translation_timeout_seconds: float = Field(default=15, gt=0, le=60)
+    # Long structured About bodies need multiple sequential translation requests.
+    about_translation_timeout_seconds: float = Field(default=60, gt=0, le=300)
 
     smtp_enabled: bool = True
     smtp_host: str | None = None

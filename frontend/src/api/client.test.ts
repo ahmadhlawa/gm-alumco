@@ -13,6 +13,14 @@ beforeEach(() => {
 });
 
 describe('apiRequest', () => {
+  it('reports a failed browser fetch as an actionable API error', async () => {
+    const { ApiError, apiRequest } = await import('./client');
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')));
+    const request = apiRequest('/admin/about-page-content', { method: 'PUT' });
+    await expect(request).rejects.toBeInstanceOf(ApiError);
+    await expect(request).rejects.toThrow(/backend connection/i);
+  });
+
   it('uses VITE_API_URL and adds the session JWT', async () => {
     const { setAccessToken } = await import('./token');
     const { apiRequest } = await import('./client');

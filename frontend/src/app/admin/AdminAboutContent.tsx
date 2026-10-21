@@ -101,11 +101,12 @@ export function AdminAboutContent() {
   const [form, setForm] = useState<AboutPageContentDto>(defaultAboutPageContent);
   const [feedback, setFeedback] = useState<Feedback>(null);
   const [saving, setSaving] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     getAdminAboutPageContent()
-      .then(setForm)
-      .catch(() => setFeedback({ kind: 'error', message: copy.loadError }));
+      .then((content) => { setForm(content); setLoaded(true); })
+      .catch((err: unknown) => setFeedback({ kind: 'error', message: err instanceof ApiError ? err.message : copy.loadError }));
     // Run once on mount; copy is stable per language.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -178,6 +179,7 @@ export function AdminAboutContent() {
   );
 
   const save = async () => {
+    if (!loaded) return;
     if (hasOverLimit) {
       setFeedback({ kind: 'error', message: copy.overLimit });
       return;
@@ -206,7 +208,7 @@ export function AdminAboutContent() {
         action={
           <button
             onClick={() => void save()}
-            disabled={saving || hasOverLimit}
+            disabled={!loaded || saving || hasOverLimit}
             className="inline-flex items-center gap-2 rounded bg-brand-gold px-4 py-2 text-sm font-bold text-brand-navy hover:bg-[#e3c454] disabled:opacity-60"
           >
             <Save className="h-4 w-4" /> {saving ? copy.saving : copy.save}

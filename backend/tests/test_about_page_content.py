@@ -1,8 +1,56 @@
 from fastapi.testclient import TestClient
 import httpx
-from sqlalchemy import select
+import pytest
+from sqlalchemy import select, text
 
 from app.models.about_page_content import AboutPageContent
+
+
+@pytest.mark.parametrize("method", ["get", "put"])
+def test_missing_body_migration_returns_actionable_error_without_writes(client, db, auth_headers, method):
+    headers = {**auth_headers(), "Origin": "http://localhost:5173"}
+    url = "/api/v1/admin/about-page-content"
+    original = client.get(url, headers=headers).json()
+    db.execute(text("ALTER TABLE about_page_content DROP COLUMN body_he"))
+    db.execute(text("ALTER TABLE about_page_content DROP COLUMN body_en"))
+    db.commit()
+    response = getattr(client, method)(url, headers=headers, **({"json": {"body_he": "חדש"}} if method == "put" else {}))
+    assert response.status_code == 503
+    assert "migration" in response.json()["detail"].lower()
+    assert response.headers["access-control-allow-origin"] == "http://localhost:5173"
+    row = db.execute(text("SELECT paragraph_1_he, vision_text_he, mission_text_en FROM about_page_content")).one()
+    assert tuple(row) == tuple(original[key] for key in ["paragraph_1_he", "vision_text_he", "mission_text_en"])
+
+
+def test_long_body_has_a_bounded_budget_longer_than_short_cms_fields(client, auth_headers, monkeypatch):
+    headers = auth_headers()
+    clock = [0.0]
+    monkeypatch.setattr("app.services.translation_service.monotonic", lambda: clock[0])
+    monkeypatch.setattr("app.services.about_content_service.monotonic", lambda: clock[0], raising=False)
+    def slow(url, **kwargs):
+        clock[0] += 3
+        return httpx.Response(200, json={"translatedText": "English paragraph"}, request=httpx.Request("POST", url))
+    monkeypatch.setattr("app.services.translation_service.httpx.post", slow)
+    body = "פתיחה ארוכה\n\n" + "\n".join(f"- נקודה {i}" for i in range(6)) + "\n\nסיום ארוך"
+    response = client.put("/api/v1/admin/about-page-content", headers=headers, json={"body_he": body})
+    assert response.status_code == 200, response.text
+    assert response.json()["body_en"] == "English paragraph\n\n" + "\n".join(["- English paragraph"] * 6) + "\n\nEnglish paragraph"
+
+
+def test_long_body_budget_exhaustion_preserves_existing_content(client, db, auth_headers, monkeypatch):
+    headers = auth_headers()
+    url = "/api/v1/admin/about-page-content"
+    original = client.get(url, headers=headers).json()
+    clock = [0.0]
+    monkeypatch.setattr("app.services.translation_service.monotonic", lambda: clock[0])
+    monkeypatch.setattr("app.services.about_content_service.monotonic", lambda: clock[0], raising=False)
+    def slow(url, **kwargs):
+        clock[0] += 31
+        return httpx.Response(200, json={"translatedText": "English paragraph"}, request=httpx.Request("POST", url))
+    monkeypatch.setattr("app.services.translation_service.httpx.post", slow)
+    response = client.put(url, headers=headers, json={"body_he": "פתיחה\n\nסיום", "image_url": "/uploads/test/changed.jpg"})
+    assert response.status_code == 503
+    assert client.get(url, headers=headers).json() == original
 
 
 def test_public_about_content_returns_seeded_defaults(client: TestClient) -> None:

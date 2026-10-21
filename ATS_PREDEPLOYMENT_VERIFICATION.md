@@ -1,4 +1,82 @@
-# ATS pre-deployment verification and blocker resolution
+# ATS verification: local About save failure
+
+Fix base: `fe77626ac9e8600643797b632f0b01738fadf1e2` on
+`feature/ats-auto-translate-he-en`. Verified locally on 2026-10-21.
+
+## Actual failure and diagnosis
+
+- Authenticated `PUT /api/v1/admin/about-page-content` returned **500**, body
+  `Internal Server Error`. Chromium reported a missing CORS response header and
+  `TypeError: Failed to fetch`, triggering the generic Admin error.
+- Backend reproduction raised `sqlalchemy.exc.OperationalError`, MySQL **1054**:
+  `Unknown column 'about_page_content.body_he' in 'field list'` during the About
+  SELECT. Both new body columns were absent. Database revision was `20260710_0001`;
+  Alembic head was `20261021_0001`.
+- The actual configured local translator is `http://127.0.0.1:5500`; a real
+  Hebrew request returned **200**, `Installing aluminum windows`. Port 5000
+  instead returned **400**, `he is not supported`. Existing local configuration
+  was retained; no container configuration was changed.
+- A long structured request exhausted the former 15-second budget with
+  `httpx.ReadTimeout` / **503**. A real browser save with the new About budget
+  translated 3,824 Hebrew characters to 5,748 English characters in **19.2 seconds**.
+
+## Fix and local database status
+
+- After checking `ENVIRONMENT=development`, a loopback MySQL host and the local
+  database identity, applied the existing additive migration `20261021_0001`.
+  Both nullable body columns now exist. A raw before/after comparison of every
+  legacy About value matched. No migration source or production database changed.
+- About lookup database errors now log a traceback and return actionable JSON
+  **503** responses with CORS headers. Browser network failures become readable
+  API errors. Admin saving is disabled until existing content has loaded.
+- A changed nonempty body uses `ABOUT_TRANSLATION_TIMEOUT_SECONDS`, default **60**,
+  greater than zero and at most **300**. Other saves retain their existing shared
+  15-second budget. All translation/validation still precedes content mutation.
+
+## Real integration evidence
+
+The local MySQL application user cannot create disposable databases (1044).
+Browser integration therefore used a new disposable **local SQLite** database,
+current model schema, separate API/frontend processes and synthetic Admin login.
+The migration itself was exercised on the verified local MySQL database above.
+Neither existing local content nor production data was used for browser edits.
+
+- Actual headless Chromium login and About editor; four long Hebrew paragraphs,
+  seven mixed-marker bullets, including paragraphs after the list.
+- Click Save: **200**, automatic English, original paragraph/list order and
+  `T.A.S` retained. Reload persisted the same content.
+- Public Hebrew page displayed four paragraphs and seven bullets. Clicking the
+  website **EN** switch displayed the translated body with the same structure.
+- Edit, save again, refresh: **passed**. All legacy fields, including every
+  Vision/Mission field in both languages, matched their baseline.
+- Actual HTTP API against the disposable database with an unreachable loopback
+  translation endpoint returned **503**, `Nothing was saved`; the complete stored
+  record, including timestamps and image, was unchanged.
+- Translation success used the real service on port 5500, without HTTP mocks.
+  Regression tests separately cover missing columns, CORS/error visibility,
+  extended/bounded deadlines, failed translation atomicity and fallback-save guard.
+
+## Validation and readiness
+
+- Backend complete suite, `python -m pytest -q`: **207 passed** in 157.09 seconds.
+- Frontend complete suite, `npm test -- --reporter=dot`: **134 passed**, 37 files.
+- `npm run typecheck`: **passed**.
+- `npm run build`: **passed**, existing large-chunk warning (637.14 KB JavaScript).
+- New failure-handling/long-body/network/load-guard regressions were observed
+  failing before their fixes. Independent review found no important issues.
+
+Ready for code review with the local bug fixed and required checks passed.
+No production access, Docker/VPS changes, deployment, merge or push was performed.
+Before deployment, separately authorize migration `20261021_0001` and verify the
+target runtime supports Hebrew and an appropriate About timeout. Rollback may
+leave the nullable columns in place; export authored body content before any
+schema downgrade. Large input can still hit translation or English length limits;
+those failures leave existing content intact. Machine translation quality needs
+normal editorial review.
+
+---
+
+# Prior pre-deployment verification (historical)
 
 Updated 2026-10-21. Fix base: `488afb0cb186c66306f4f47ea066a19a5fd9ff58`.
 Fix revision: the local commit containing this report; obtain its SHA with

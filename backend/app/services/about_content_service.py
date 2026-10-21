@@ -1,4 +1,7 @@
 """About-specific legacy mapping without altering the stored legacy columns."""
+from time import monotonic
+
+from app.core.config import settings
 from app.schemas.about_page_content import AboutPageContentUpdate
 from app.services.translation_service import translate_fields
 
@@ -26,4 +29,9 @@ def translate_about_content(data: AboutPageContentUpdate, existing: object | Non
             **translated.model_dump(exclude_unset=True),
             "body_he": data.body_he, "body_en": legacy_body(existing, "en"),
         })
-    return translate_fields(data, existing=existing, structured_fields=frozenset({"body_he"}))
+    deadline = (
+        monotonic() + settings.about_translation_timeout_seconds
+        if data.body_he and data.body_he != getattr(existing, "body_he", None)
+        else None
+    )
+    return translate_fields(data, existing=existing, structured_fields=frozenset({"body_he"}), _deadline=deadline)

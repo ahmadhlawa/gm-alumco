@@ -96,6 +96,11 @@ describe('Hebrew content with English admin interface', () => {
   });
 
   it('saves only editable Hebrew About content and the image', async () => {
+    vi.mocked(useState)
+      .mockImplementationOnce((() => [defaultAboutPageContent, vi.fn()]) as typeof useState)
+      .mockImplementationOnce((() => [null, vi.fn()]) as typeof useState)
+      .mockImplementationOnce((() => [false, vi.fn()]) as typeof useState)
+      .mockImplementationOnce((() => [true, vi.fn()]) as typeof useState);
     vi.mocked(updateAboutPageContent).mockResolvedValueOnce(defaultAboutPageContent);
     const page = AdminAboutContent();
     page.props.children[0].props.action.props.onClick();
@@ -108,6 +113,14 @@ describe('Hebrew content with English admin interface', () => {
     expect(payload.body_he).toBe(getAboutBody(defaultAboutPageContent, 'he'));
     expect(payload).not.toHaveProperty('paragraph_1_he');
     expect(payload).not.toHaveProperty('bullet_1_he');
+  });
+
+  it('prevents saving fallback About defaults before existing content has loaded', async () => {
+    const page = AdminAboutContent();
+    const button = page.props.children[0].props.action;
+    expect(button.props.disabled).toBe(true);
+    await button.props.onClick();
+    expect(updateAboutPageContent).not.toHaveBeenCalled();
   });
 
   it.each([false, true])('saves company-number Hebrew labels and preserves decorative content (edit=%s)', async (edit) => {

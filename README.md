@@ -180,8 +180,11 @@ display remain separate and unchanged.
 
 English is generated per text line while line breaks and bullet prefixes stay
 outside translation requests. A response that introduces new structural markers
-is rejected. The existing save timeout budget and atomic failure behavior apply;
-very large bodies can still exceed that budget or the English size limit.
+is rejected. Changed nonempty bodies use a separate whole-save budget,
+`ABOUT_TRANSLATION_TIMEOUT_SECONDS=60` (greater than 0, at most 300 seconds).
+Other saves retain `TRANSLATION_TIMEOUT_SECONDS=15`. Translation finishes before
+any content is written; failures preserve the existing record. Very large bodies
+can still exceed the configured budget or the English size limit.
 
 Before running the updated backend, apply Alembic revision `20261021_0001`
 (`alembic upgrade head` through the separately authorized migration process).
@@ -196,7 +199,10 @@ An application rollback can leave these nullable columns in place. The reversibl
 schema downgrade removes only the new columns; export any authored body data
 before downgrading, since legacy columns retain their old text, not subsequent
 flexible-body edits. Migration upgrade/downgrade is tested against local SQLite;
-production MySQL execution requires its own approved verification and backup.
+the upgrade was also verified on local development MySQL with all legacy values
+unchanged. Production MySQL execution requires its own approved verification and
+backup. A missing migration produces an actionable About API 503 response. The
+Admin disables saving until existing content loads and shows API/network errors.
 
 ## Data & Uploads
 
