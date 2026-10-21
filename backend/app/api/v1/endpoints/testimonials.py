@@ -1,3 +1,4 @@
+from app.services.translation_service import translate_fields
 from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
@@ -55,7 +56,7 @@ def create_testimonial(
     db: Session = Depends(get_db),
     _: Admin = Depends(require_admin),
 ) -> Testimonial:
-    return create_entity(db, Testimonial, data)
+    return create_entity(db, Testimonial, translate_fields(data))
 
 
 @admin_router.put("/{testimonial_id}", response_model=TestimonialRead)
@@ -65,7 +66,7 @@ def update_testimonial(
     db: Session = Depends(get_db),
     _: Admin = Depends(require_admin),
 ) -> Testimonial:
-    return update_entity(db, get_entity_or_404(db, Testimonial, testimonial_id), data)
+    return update_entity(db, get_entity_or_404(db, Testimonial, testimonial_id), translate_fields(data, existing=get_entity_or_404(db, Testimonial, testimonial_id)))
 
 
 @admin_router.delete("/{testimonial_id}", status_code=status.HTTP_204_NO_CONTENT)

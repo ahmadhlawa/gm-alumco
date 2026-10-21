@@ -1,3 +1,4 @@
+from app.services.translation_service import translate_fields
 from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
@@ -61,7 +62,7 @@ def create_production_project(
     db: Session = Depends(get_db),
     current_admin: Admin = Depends(require_admin),
 ) -> ProductionProject:
-    project = create_production_project_entity(db, data)
+    project = create_production_project_entity(db, translate_fields(data))
     record_audit(
         db,
         admin_id=current_admin.id,
@@ -79,7 +80,7 @@ def update_production_project(
     db: Session = Depends(get_db),
     current_admin: Admin = Depends(require_admin),
 ) -> ProductionProject:
-    project = update_entity(db, get_entity_or_404(db, ProductionProject, project_id), data)
+    project = update_entity(db, get_entity_or_404(db, ProductionProject, project_id), translate_fields(data, existing=get_entity_or_404(db, ProductionProject, project_id)))
     record_audit(
         db,
         admin_id=current_admin.id,

@@ -1,3 +1,4 @@
+from app.services.translation_service import translate_fields
 from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
@@ -53,7 +54,7 @@ def create_service(
     db: Session = Depends(get_db),
     current_admin: Admin = Depends(require_admin),
 ) -> Service:
-    service = create_entity(db, Service, data)
+    service = create_entity(db, Service, translate_fields(data))
     record_audit(
         db,
         admin_id=current_admin.id,
@@ -71,7 +72,7 @@ def update_service(
     db: Session = Depends(get_db),
     current_admin: Admin = Depends(require_admin),
 ) -> Service:
-    service = update_entity(db, get_entity_or_404(db, Service, service_id), data)
+    service = update_entity(db, get_entity_or_404(db, Service, service_id), translate_fields(data, existing=get_entity_or_404(db, Service, service_id)))
     record_audit(
         db,
         admin_id=current_admin.id,

@@ -1,3 +1,4 @@
+from app.services.translation_service import translate_fields
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -49,7 +50,7 @@ def update_about_content(
     current_admin: Admin = Depends(require_admin),
 ) -> AboutPageContent:
     content = get_or_create_content(db)
-    for field, value in data.model_dump(exclude_unset=True).items():
+    for field, value in translate_fields(data, existing=content).model_dump(exclude_unset=True).items():
         setattr(content, field, value)
     db.commit()
     db.refresh(content)
