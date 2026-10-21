@@ -62,9 +62,7 @@ function toValues(dto: ProjectDetailDto): ProjectFormValues {
 
 export function toPayload(values: ProjectFormValues): Partial<ProjectDto> {
   return {
-    title_en: values.title_en.trim(),
     title_he: values.title_he.trim(),
-    description_en: values.description_en.trim() || null,
     description_he: values.description_he.trim() || null,
     category: values.category,
     main_image_url: values.main_image_url.trim() || null,

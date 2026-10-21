@@ -27,10 +27,6 @@ export const EMPTY_PRODUCTION_PROJECT: ProductionProjectFormValues = {
   sort_order: 0,
 };
 
-const LANGS = [
-  { key: 'he', label: 'עברית', dir: 'rtl' as const },
-  { key: 'en', label: 'English', dir: 'ltr' as const },
-] as const;
 
 const COPY = {
   he: {
@@ -42,7 +38,7 @@ const COPY = {
     published: 'פעיל ומוצג באתר',
     save: 'שמירת פרויקט ייצור',
     saving: 'שומר...',
-    validation: 'יש להזין כותרת בעברית ובאנגלית.',
+    validation: 'יש להזין כותרת בעברית.',
   },
   en: {
     title: 'Project title',
@@ -53,11 +49,10 @@ const COPY = {
     published: 'Active and visible on the site',
     save: 'Save production project',
     saving: 'Saving...',
-    validation: 'Please enter the title in Hebrew and English.',
+    validation: 'Please enter the title in Hebrew.',
   },
 };
 
-type Lang = (typeof LANGS)[number]['key'];
 
 const inputClass =
   'w-full h-12 px-4 bg-brand-navy border border-white/10 rounded focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold text-white';
@@ -75,7 +70,7 @@ export function ProductionProjectForm({ initialValues, submitting, disabled, err
   const { language } = useLanguage();
   const copy = language === 'en' ? COPY.en : COPY.he;
   const [values, setValues] = useState<ProductionProjectFormValues>(initialValues ?? EMPTY_PRODUCTION_PROJECT);
-  const [lang, setLang] = useState<Lang>('he');
+  const lang = 'he' as const;
   const [validation, setValidation] = useState<string | null>(null);
 
   const set = <K extends keyof ProductionProjectFormValues>(key: K, value: ProductionProjectFormValues[K]) =>
@@ -83,7 +78,7 @@ export function ProductionProjectForm({ initialValues, submitting, disabled, err
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (!values.title_he.trim() || !values.title_en.trim()) {
+    if (!values.title_he.trim()) {
       setValidation(copy.validation);
       return;
     }
@@ -91,7 +86,7 @@ export function ProductionProjectForm({ initialValues, submitting, disabled, err
     void onSubmit(values);
   };
 
-  const activeLang = LANGS.find((item) => item.key === lang)!;
+  const activeLang = { label: 'עברית', dir: 'rtl' as const };
   const titleKey = `title_${lang}` as const;
   const descriptionKey = `description_${lang}` as const;
   const manufacturerKey = `manufacturer_${lang}` as const;
@@ -104,23 +99,6 @@ export function ProductionProjectForm({ initialValues, submitting, disabled, err
           {validation ?? error}
         </div>
       )}
-
-      <div className="flex gap-2">
-        {LANGS.map((item) => (
-          <button
-            key={item.key}
-            type="button"
-            onClick={() => setLang(item.key)}
-            className={`rounded px-4 py-2 text-sm font-bold transition-colors ${
-              lang === item.key
-                ? 'bg-brand-gold text-white'
-                : 'border border-white/10 bg-brand-navy text-brand-silver hover:text-white'
-            }`}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
 
       <div className="space-y-2">
         <label className="text-sm font-bold text-gray-200">{copy.title} ({activeLang.label})</label>

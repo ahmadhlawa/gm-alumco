@@ -1,4 +1,5 @@
 import pytest
+import httpx
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
@@ -10,6 +11,17 @@ from app.db.base import Base
 from app.db.database import get_db
 from app.main import app
 from app.models import Admin  # noqa: F401 - imports all model metadata
+
+
+@pytest.fixture(autouse=True)
+def local_translation_http(monkeypatch):
+    """Tests never depend on the shared VPS translator or send it CMS data."""
+    def post(url, **kwargs):
+        return httpx.Response(
+            200, json={"translatedText": "Translated content"},
+            request=httpx.Request("POST", url),
+        )
+    monkeypatch.setattr("app.services.translation_service.httpx.post", post)
 
 
 @pytest.fixture(autouse=True)

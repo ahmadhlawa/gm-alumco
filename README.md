@@ -152,6 +152,22 @@ python -m app.utils.seed_admin
 
 The seed command is optional and reads its values from environment variables. There is no public registration endpoint.
 
+CMS content is edited in Hebrew. FastAPI generates English through the internal
+LibreTranslate `/translate` endpoint before writing projects, production projects,
+services, testimonials, partners, About content, company-number labels, and image
+captions. Unchanged Hebrew preserves existing English; clearing optional Hebrew
+also clears its English counterpart. Legacy English-only API updates remain
+supported. Website and admin interface language switching is unchanged.
+
+Set `TRANSLATION_URL` (default `http://127.0.0.1:5000`) and
+`TRANSLATION_TIMEOUT_SECONDS` (default 15, maximum 60) in the backend environment.
+The translation budget spans the save; repeated text is cached within that save.
+Latin names and model numbers are kept verbatim; Hebrew names use the translation
+engine and should be checked during content review. Service failures return 503;
+invalid or overlength translated content returns 422. These failures save nothing.
+No backfill or database migration is required. Tests use SQLite and mocked HTTP;
+run `python -m pytest` from `backend` to validate without contacting LibreTranslate.
+
 ## Data & Uploads
 
 Database schema changes are managed with Alembic migrations. Uploaded images are stored under the backend upload directory and must be preserved across deployments.

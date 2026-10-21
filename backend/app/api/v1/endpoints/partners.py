@@ -67,7 +67,8 @@ def update_partner(
     db: Session = Depends(get_db),
     current_admin: Admin = Depends(require_admin),
 ) -> Partner:
-    partner = update_entity(db, get_entity_or_404(db, Partner, partner_id), translate_fields(data, existing=get_entity_or_404(db, Partner, partner_id)))
+    existing = get_entity_or_404(db, Partner, partner_id)
+    partner = update_entity(db, existing, translate_fields(data, existing=existing))
     record_audit(
         db,
         admin_id=current_admin.id,

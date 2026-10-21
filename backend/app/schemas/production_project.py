@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from app.schemas.common import ImageUrlString, ORMModel, TextSanitizedModel
+from app.schemas.common import ImageUrlString, ORMModel, RequiredContentUpdate, TextSanitizedModel
 
 
 class ProductionProjectImageCreate(TextSanitizedModel):
@@ -31,7 +31,7 @@ class ProductionProjectCreate(ProductionProjectBase):
     images: list[ProductionProjectImageCreate] = Field(default_factory=list)
 
 
-class ProductionProjectUpdate(TextSanitizedModel):
+class ProductionProjectUpdate(RequiredContentUpdate):
     title_en: str | None = Field(default=None, min_length=1, max_length=255)
     title_he: str | None = Field(default=None, min_length=1, max_length=255)
     description_en: str | None = Field(default=None, max_length=2000)

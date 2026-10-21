@@ -136,7 +136,7 @@ export function AdminAboutContent() {
   const allPairs = [...successPairs, ...visionMissionPairs];
   const allSingles = successSingles;
   const hasOverLimit =
-    allPairs.some((f) => get(f.keyHe).length > f.max || get(f.keyEn).length > f.max) ||
+    allPairs.some((f) => get(f.keyHe).length > f.max) ||
     allSingles.some((f) => get(f.key).length > f.max);
 
   // The save payload is derived from the same field-group config the form
@@ -145,12 +145,12 @@ export function AdminAboutContent() {
   // exists on this page.
   const editableKeys: FieldKey[] = [
     'image_url',
-    ...allPairs.flatMap((f) => [f.keyHe, f.keyEn]),
+    ...allPairs.map((f) => f.keyHe),
     ...allSingles.map((f) => f.key),
   ];
 
   const renderPair = (field: PairField) => (
-    <div key={field.keyHe} className="grid gap-4 md:grid-cols-2">
+    <div key={field.keyHe} className="grid gap-4">
       <TextField
         label={`${field.label} — ${copy.heCol}`}
         value={get(field.keyHe)}
@@ -158,14 +158,6 @@ export function AdminAboutContent() {
         dir="rtl"
         multiline={field.multiline}
         onChange={(v) => set(field.keyHe, v)}
-      />
-      <TextField
-        label={`${field.label} — ${copy.enCol}`}
-        value={get(field.keyEn)}
-        max={field.max}
-        dir="ltr"
-        multiline={field.multiline}
-        onChange={(v) => set(field.keyEn, v)}
       />
     </div>
   );

@@ -25,9 +25,9 @@ describe('AdminPublicStats — Company Numbers page', () => {
     expect(html).toContain('שנות ניסיון');
     expect(html).toContain('שנות אחריות');
     // English labels
-    expect(html).toContain('Completed projects');
-    expect(html).toContain('Years of experience');
-    expect(html).toContain('Years warranty');
+    expect(html).not.toContain('value="Completed projects"');
+    expect(html).not.toContain('value="Years of experience"');
+    expect(html).not.toContain('value="Years warranty"');
   });
 
   it('never exposes Arabic in the admin UI', () => {

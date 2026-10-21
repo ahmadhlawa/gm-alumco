@@ -72,7 +72,8 @@ def update_service(
     db: Session = Depends(get_db),
     current_admin: Admin = Depends(require_admin),
 ) -> Service:
-    service = update_entity(db, get_entity_or_404(db, Service, service_id), translate_fields(data, existing=get_entity_or_404(db, Service, service_id)))
+    existing = get_entity_or_404(db, Service, service_id)
+    service = update_entity(db, existing, translate_fields(data, existing=existing))
     record_audit(
         db,
         admin_id=current_admin.id,

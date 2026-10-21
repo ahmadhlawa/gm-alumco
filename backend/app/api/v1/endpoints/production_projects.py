@@ -80,7 +80,8 @@ def update_production_project(
     db: Session = Depends(get_db),
     current_admin: Admin = Depends(require_admin),
 ) -> ProductionProject:
-    project = update_entity(db, get_entity_or_404(db, ProductionProject, project_id), translate_fields(data, existing=get_entity_or_404(db, ProductionProject, project_id)))
+    existing = get_entity_or_404(db, ProductionProject, project_id)
+    project = update_entity(db, existing, translate_fields(data, existing=existing))
     record_audit(
         db,
         admin_id=current_admin.id,
@@ -122,7 +123,7 @@ def create_production_project_image(
     image = add_production_project_image(
         db,
         get_production_project_or_404(db, project_id),
-        data,
+        translate_fields(data),
     )
     record_audit(
         db,

@@ -54,6 +54,7 @@ class Settings(BaseSettings):
 
     # Host-local shared LibreTranslate service; never called from the browser.
     translation_url: str = "http://127.0.0.1:5000"
+    # Shared translation budget for a complete CMS save, including image captions.
     translation_timeout_seconds: float = Field(default=15, gt=0, le=60)
 
     smtp_enabled: bool = True

@@ -26,6 +26,7 @@ describe('AdminAboutContent page', () => {
     expect(html).not.toMatch(/_ar\b/);
     expect(html).not.toMatch(/ערבית/);
     expect(html).not.toMatch(/Arabic/i);
+    expect(html).not.toContain('dir="ltr"');
   });
 
   it('does not expose the Difference & Stats group — it is fixed website structure', () => {

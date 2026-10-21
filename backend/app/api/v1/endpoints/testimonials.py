@@ -66,7 +66,8 @@ def update_testimonial(
     db: Session = Depends(get_db),
     _: Admin = Depends(require_admin),
 ) -> Testimonial:
-    return update_entity(db, get_entity_or_404(db, Testimonial, testimonial_id), translate_fields(data, existing=get_entity_or_404(db, Testimonial, testimonial_id)))
+    existing = get_entity_or_404(db, Testimonial, testimonial_id)
+    return update_entity(db, existing, translate_fields(data, existing=existing))
 
 
 @admin_router.delete("/{testimonial_id}", status_code=status.HTTP_204_NO_CONTENT)

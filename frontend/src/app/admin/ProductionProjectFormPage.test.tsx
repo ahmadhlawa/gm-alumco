@@ -33,6 +33,7 @@ describe('Production Project create flow', () => {
       { image_url: 'https://x.test/first.jpg', alt_text_en: null, alt_text_he: null, sort_order: 0 },
       { image_url: 'https://x.test/second.jpg', alt_text_en: null, alt_text_he: null, sort_order: 1 },
     ]);
+    expect(Object.keys(payload).some((key) => key.endsWith('_en'))).toBe(false);
   });
 
   it('renders staged image previews with remove controls before creation', () => {

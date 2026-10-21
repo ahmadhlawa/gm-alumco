@@ -24,11 +24,6 @@ export const EMPTY_PROJECT: ProjectFormValues = {
   sort_order: 0,
 };
 
-// Admin manages Hebrew + English only.
-const LANGS = [
-  { key: 'he', label: 'עברית', dir: 'rtl' as const },
-  { key: 'en', label: 'English', dir: 'ltr' as const },
-] as const;
 
 // Admin form copy — Hebrew + English only (Hebrew is the default). No Arabic.
 const COPY = {
@@ -42,7 +37,7 @@ const COPY = {
     publishedLabel: 'מפורסם (מוצג באתר)',
     save: 'שמירת הפרויקט',
     saving: 'שומר…',
-    validation: 'יש להזין כותרת לפרויקט בעברית ובאנגלית.',
+    validation: 'יש להזין כותרת לפרויקט בעברית.',
     categories: { LOCAL: 'בארץ', INTERNATIONAL: 'בחו״ל', FEATURED: 'נבחר' },
   },
   en: {
@@ -55,12 +50,11 @@ const COPY = {
     publishedLabel: 'Published (visible on the site)',
     save: 'Save project',
     saving: 'Saving…',
-    validation: 'Please enter the project title in Hebrew and English.',
+    validation: 'Please enter the project title in Hebrew.',
     categories: { LOCAL: 'Local', INTERNATIONAL: 'International', FEATURED: 'Featured' },
   },
 };
 
-type Lang = (typeof LANGS)[number]['key'];
 
 const inputClass =
   'w-full h-12 px-4 bg-brand-navy border border-white/10 rounded focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold text-white';
@@ -76,7 +70,7 @@ export function ProjectForm({ initialValues, submitting, error, onSubmit }: Prop
   const { language } = useLanguage();
   const copy = language === 'en' ? COPY.en : COPY.he;
   const [values, setValues] = useState<ProjectFormValues>(initialValues ?? EMPTY_PROJECT);
-  const [lang, setLang] = useState<Lang>('he');
+  const lang = 'he' as const;
   const [validation, setValidation] = useState<string | null>(null);
 
   const set = <K extends keyof ProjectFormValues>(key: K, value: ProjectFormValues[K]) =>
@@ -84,7 +78,7 @@ export function ProjectForm({ initialValues, submitting, error, onSubmit }: Prop
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!values.title_he.trim() || !values.title_en.trim()) {
+    if (!values.title_he.trim()) {
       setValidation(copy.validation);
       return;
     }
@@ -92,7 +86,7 @@ export function ProjectForm({ initialValues, submitting, error, onSubmit }: Prop
     void onSubmit(values);
   };
 
-  const activeLang = LANGS.find((l) => l.key === lang)!;
+  const activeLang = { label: 'עברית', dir: 'rtl' as const };
   const titleKey = `title_${lang}` as const;
   const descKey = `description_${lang}` as const;
 
@@ -109,24 +103,6 @@ export function ProjectForm({ initialValues, submitting, error, onSubmit }: Prop
           {validation ?? error}
         </div>
       )}
-
-      {/* Language switcher for the localized fields */}
-      <div className="flex gap-2">
-        {LANGS.map((l) => (
-          <button
-            key={l.key}
-            type="button"
-            onClick={() => setLang(l.key)}
-            className={`px-4 py-2 rounded font-bold text-sm transition-colors ${
-              lang === l.key
-                ? 'bg-brand-gold text-white'
-                : 'bg-brand-navy text-brand-silver hover:text-white border border-white/10'
-            }`}
-          >
-            {l.label}
-          </button>
-        ))}
-      </div>
 
       <div className="space-y-2">
         <label className="text-sm font-bold text-gray-200">{copy.titleLabel} ({activeLang.label})</label>

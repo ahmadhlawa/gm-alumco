@@ -49,8 +49,12 @@ def update_about_content(
     db: Session = Depends(get_db),
     current_admin: Admin = Depends(require_admin),
 ) -> AboutPageContent:
-    content = get_or_create_content(db)
-    for field, value in translate_fields(data, existing=content).model_dump(exclude_unset=True).items():
+    content = db.scalar(select(AboutPageContent).order_by(AboutPageContent.id))
+    translated = translate_fields(data, existing=content)
+    if content is None:
+        content = AboutPageContent()
+        db.add(content)
+    for field, value in translated.model_dump(exclude_unset=True).items():
         setattr(content, field, value)
     db.commit()
     db.refresh(content)

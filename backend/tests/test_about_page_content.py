@@ -40,11 +40,11 @@ def test_admin_can_read_and_update_about_content(client: TestClient, auth_header
         },
     )
     assert update.status_code == 200
-    assert update.json()["title_en"] == "Updated title"
+    assert update.json()["title_en"] == "Translated content"
     assert update.json()["stat_1_number"] == "500+"
 
     public = client.get("/api/v1/about-page-content")
-    assert public.json()["title_en"] == "Updated title"
+    assert public.json()["title_en"] == "Translated content"
 
 
 def test_admin_update_is_partial(client: TestClient, auth_headers) -> None:
