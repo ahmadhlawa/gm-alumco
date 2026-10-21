@@ -11,6 +11,7 @@ import { ApiError } from '@/api/client';
 import { AdminAboutContent } from './AdminAboutContent';
 import { AdminPublicStats } from './AdminPublicStats';
 import { defaultAboutPageContent } from '@/data/aboutPageContent';
+import { getAboutBody } from '@/lib/aboutBody';
 import { defaultCompanyNumbers, defaultPublicStats } from '@/data/publicStats';
 import { updateAboutPageContent } from '@/api/aboutPageContent';
 import { createSiteContent, updateSiteContent } from '@/api/content';
@@ -104,6 +105,9 @@ describe('Hebrew content with English admin interface', () => {
     expect(payload.image_url).toBe('/images/our-success-story.png');
     expect(Object.keys(payload).some((key) => key.endsWith('_en'))).toBe(false);
     expect(payload).not.toHaveProperty('stat_1_number');
+    expect(payload.body_he).toBe(getAboutBody(defaultAboutPageContent, 'he'));
+    expect(payload).not.toHaveProperty('paragraph_1_he');
+    expect(payload).not.toHaveProperty('bullet_1_he');
   });
 
   it.each([false, true])('saves company-number Hebrew labels and preserves decorative content (edit=%s)', async (edit) => {

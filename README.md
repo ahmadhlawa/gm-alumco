@@ -166,8 +166,37 @@ The translation budget spans the save; repeated text is cached within that save.
 Latin names and model numbers are kept verbatim; Hebrew names use the translation
 engine and should be checked during content review. Service failures return 503;
 invalid or overlength translated content returns 422. These failures save nothing.
-No backfill or database migration is required. Tests use SQLite and mocked HTTP;
+Automatic translation needs no backfill. The flexible About body requires the
+additive migration described below. Tests use SQLite and mocked HTTP;
 run `python -m pytest` from `backend` to validate without contacting LibreTranslate.
+
+### Flexible About body
+
+The main About editor accepts up to 16,000 characters in Hebrew, with blank lines
+between paragraphs and `-`, `*`, `×`, or `•` at the start of list lines. Paragraphs
+and multiple lists retain their order. The live preview and public page use the
+same safe text renderer; HTML is displayed as text. Vision/Mission controls and
+display remain separate and unchanged.
+
+English is generated per text line while line breaks and bullet prefixes stay
+outside translation requests. A response that introduces new structural markers
+is rejected. The existing save timeout budget and atomic failure behavior apply;
+very large bodies can still exceed that budget or the English size limit.
+
+Before running the updated backend, apply Alembic revision `20261021_0001`
+(`alembic upgrade head` through the separately authorized migration process).
+It adds nullable `body_he` and `body_en` TEXT columns and retains all old paragraph,
+bullet, and Vision/Mission columns. No production migration has been executed by
+this work. Until a body is saved, the editor/public page derive it from the legacy
+fields without modifying them or appending duplicate content. The first unchanged
+legacy save copies the existing English. An explicitly empty/null body update
+clears the new body and suppresses the legacy display fallback.
+
+An application rollback can leave these nullable columns in place. The reversible
+schema downgrade removes only the new columns; export any authored body data
+before downgrading, since legacy columns retain their old text, not subsequent
+flexible-body edits. Migration upgrade/downgrade is tested against local SQLite;
+production MySQL execution requires its own approved verification and backup.
 
 ## Data & Uploads
 

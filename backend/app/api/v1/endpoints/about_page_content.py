@@ -1,4 +1,4 @@
-from app.services.translation_service import translate_fields
+from app.services.about_content_service import translate_about_content
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -50,7 +50,7 @@ def update_about_content(
     current_admin: Admin = Depends(require_admin),
 ) -> AboutPageContent:
     content = db.scalar(select(AboutPageContent).order_by(AboutPageContent.id))
-    translated = translate_fields(data, existing=content)
+    translated = translate_about_content(data, content)
     if content is None:
         content = AboutPageContent()
         db.add(content)

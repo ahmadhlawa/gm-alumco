@@ -9,7 +9,7 @@ import type { AboutPageContentDto } from '@/api/types';
 import { getPublicStatsContent } from '@/api/content';
 import { defaultPublicStats, type PublicStatsContent } from '@/data/publicStats';
 import { motion } from 'motion/react';
-import { CheckCircle2 } from 'lucide-react';
+import { AboutBody } from '@/components/common/AboutBody';
 import { useLanguage } from '@/i18n';
 import { normalizeImageUrl } from '@/lib/utils';
 
@@ -77,21 +77,7 @@ export function About() {
                 title={content.title}
                 subtitle={content.subtitle}
               />
-              <p className="text-brand-silver mb-6 leading-relaxed text-lg">
-                {content.paragraph1}
-              </p>
-              <p className="text-brand-silver mb-8 leading-relaxed text-lg">
-                {content.paragraph2}
-              </p>
-
-              <ul className="space-y-4">
-                {content.bullets.map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-white font-medium">
-                    <CheckCircle2 className="text-brand-gold w-5 h-5 flex-shrink-0" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
+              <AboutBody text={content.body} language={language} />
             </motion.div>
 
             <motion.div

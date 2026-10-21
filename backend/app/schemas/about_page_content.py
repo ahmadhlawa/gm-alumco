@@ -1,11 +1,23 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 from app.schemas.common import ImageUrlString, ORMModel, SafeLinkString, TextSanitizedModel
 
 
 class AboutPageContentBase(TextSanitizedModel):
+    # At most 64,000 UTF-8 bytes, within MySQL TEXT capacity even for 4-byte characters.
+    body_he: str | None = Field(default=None, max_length=16000)
+    body_en: str | None = Field(default=None, max_length=16000)
+
+    @field_validator("*", mode="before")
+    @classmethod
+    def normalize_text_fields(cls, value, info: ValidationInfo):
+        if info.field_name in {"body_he", "body_en"} and isinstance(value, str):
+            # Empty saved bodies intentionally suppress the legacy fallback.
+            return value.replace("\r\n", "\n").replace("\r", "\n").strip()
+        return TextSanitizedModel.normalize_text_fields(value)
+
     title_en: str | None = Field(default=None, max_length=60)
     title_he: str | None = Field(default=None, max_length=60)
     subtitle_en: str | None = Field(default=None, max_length=120)
@@ -57,7 +69,10 @@ class AboutPageContentBase(TextSanitizedModel):
 
 
 class AboutPageContentUpdate(AboutPageContentBase):
-    pass
+    @field_validator("body_he", "body_en", mode="before")
+    @classmethod
+    def clear_body(cls, value):
+        return "" if value is None else value
 
 
 class AboutPageContentRead(AboutPageContentBase, ORMModel):

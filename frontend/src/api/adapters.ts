@@ -1,5 +1,6 @@
 import type { Partner, ProductionProject, Project, Service, Testimonial } from '@/types';
 import { defaultAboutPageContent } from '@/data/aboutPageContent';
+import { getAboutBody } from '@/lib/aboutBody';
 import type { AboutPageContentDto, Locale, PartnerDto, ProductionProjectDto, ProjectDto, ServiceDto, SiteContentDto, TestimonialDto } from './types';
 
 function nonEmpty(value: string | null | undefined): string | undefined {
@@ -45,6 +46,7 @@ export function assembleSiteContent(rows: SiteContentDto[]): Record<string, unkn
 }
 
 export interface AboutContentView {
+  body: string;
   title: string;
   subtitle: string;
   paragraph1: string;
@@ -69,6 +71,7 @@ export interface AboutContentView {
 // experience_number/experience_label_* for backward compatibility, but this
 // view model never surfaces them.
 export const toAboutContentView = (dto: AboutPageContentDto, locale: Locale): AboutContentView => ({
+  body: getAboutBody(dto, locale),
   title: pick(locale, dto.title_he, dto.title_en),
   subtitle: pick(locale, dto.subtitle_he, dto.subtitle_en),
   paragraph1: pick(locale, dto.paragraph_1_he, dto.paragraph_1_en),

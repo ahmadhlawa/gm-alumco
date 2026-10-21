@@ -16,6 +16,25 @@ COMPANY_IDS = {"completed-projects", "years-experience", "warranty-years"}
 HEBREW = re.compile(r"[\u0590-\u05ff]")
 # Keep Latin brand names and model numbers verbatim, including in mixed text.
 LATIN_NAME = re.compile(r"([A-Za-z\u00c0-\u024f][A-Za-z\u00c0-\u024f0-9.+&'/-]*(?:[ \t]+[A-Za-z\u00c0-\u024f0-9][A-Za-z\u00c0-\u024f0-9.+&'/-]*)*)")
+BODY_BULLET = re.compile(r"^([ \t]*[-*\u00d7\u2022][ \t]*)(.*)$")
+
+
+def translate_body(text: str, *, deadline: float, cache: dict[str, str]) -> str:
+    """Translate line text only; never send structural markers or newlines upstream."""
+    lines = []
+    for line in text.split("\n"):
+        if not line.strip():
+            lines.append(line)
+            continue
+        bullet = BODY_BULLET.match(line)
+        prefix = bullet[1] if bullet else line[:len(line) - len(line.lstrip())]
+        content = bullet[2] if bullet else line.lstrip()
+        suffix = content[len(content.rstrip()):]
+        translated = translate_hebrew(content.strip(), _deadline=deadline, _cache=cache) if content.strip() else ""
+        if "\n" in translated or "\r" in translated or BODY_BULLET.match(translated):
+            raise HTTPException(status_code=503, detail="Automatic translation changed the body structure. Nothing was saved; please retry.")
+        lines.append(prefix + translated + suffix)
+    return "\n".join(lines)
 
 
 def translate_hebrew(
@@ -77,6 +96,7 @@ def _validate_hebrew_sources(value: object) -> None:
 def translate_fields(
     data: T, *, existing: object | None = None,
     _deadline: float | None = None, _cache: dict[str, str] | None = None,
+    structured_fields: frozenset[str] = frozenset(),
 ) -> T:
     """Hebrew is authoritative; preserve English when its source is unchanged.
 
@@ -96,11 +116,14 @@ def translate_fields(
         if existing is not None and getattr(existing, he_key, object()) == source:
             payload.pop(en_key, None)
             continue
-        payload[en_key] = (
-            translate_hebrew(source.strip(), _deadline=deadline, _cache=cache)
-            if isinstance(source, str) and source.strip()
-            else None
-        )
+        if he_key in structured_fields:
+            payload[en_key] = translate_body(source, deadline=deadline, cache=cache) if source is not None else None
+        else:
+            payload[en_key] = (
+                translate_hebrew(source.strip(), _deadline=deadline, _cache=cache)
+                if isinstance(source, str) and source.strip()
+                else None
+            )
     # Production project creation includes captions in the same transaction.
     if "images" in payload:
         payload["images"] = [
