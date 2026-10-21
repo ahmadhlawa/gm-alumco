@@ -18,6 +18,9 @@ class TestimonialBase(TextSanitizedModel):
 
 
 class TestimonialCreate(TestimonialBase):
+    # The English counterpart is generated on a Hebrew-only admin write.
+    client_name_en: str | None = Field(default=None, max_length=180)
+    message_en: str | None = Field(default=None, max_length=2000)
     pass
 
 

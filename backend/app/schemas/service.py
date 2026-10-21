@@ -18,6 +18,8 @@ class ServiceBase(TextSanitizedModel):
 
 
 class ServiceCreate(ServiceBase):
+    # The English counterpart is generated on a Hebrew-only admin write.
+    title_en: str | None = Field(default=None, min_length=1, max_length=255)
     pass
 
 

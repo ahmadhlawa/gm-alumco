@@ -15,6 +15,8 @@ class PartnerBase(TextSanitizedModel):
 
 
 class PartnerCreate(PartnerBase):
+    # The English counterpart is generated on a Hebrew-only admin write.
+    name_en: str | None = Field(default=None, min_length=1, max_length=255)
     pass
 
 

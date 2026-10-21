@@ -52,6 +52,10 @@ class Settings(BaseSettings):
 
     frontend_url: str = "http://localhost:5173"
 
+    # Host-local shared LibreTranslate service; never called from the browser.
+    translation_url: str = "http://127.0.0.1:5000"
+    translation_timeout_seconds: float = Field(default=15, gt=0, le=60)
+
     smtp_enabled: bool = True
     smtp_host: str | None = None
     smtp_port: int = 587
