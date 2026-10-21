@@ -163,12 +163,49 @@ Website and admin interface language switching is unchanged.
 Set `TRANSLATION_URL` (default `http://127.0.0.1:5000`) and
 `TRANSLATION_TIMEOUT_SECONDS` (default 15, maximum 60) in the backend environment.
 The translation budget spans the save; repeated text is cached within that save.
-Latin names and model numbers are kept verbatim; Hebrew names use the translation
-engine and should be checked during content review. Service failures return 503;
+Latin names and model numbers are kept verbatim. The narrow Hebrew glossary in
+`backend/app/services/translation_service.py` protects the ATS company name and
+confirmed industry terms; other Hebrew names still need content review.
+Service failures return 503;
 invalid or overlength translated content returns 422. These failures save nothing.
 Automatic translation needs no backfill. The flexible About body requires the
 additive migration described below. Tests use SQLite and mocked HTTP;
 run `python -m pytest` from `backend` to validate without contacting LibreTranslate.
+
+#### Protected Hebrew terminology
+
+| Hebrew source | Canonical English |
+|---|---|
+| טכנו אלום סיסטם (including final-letter and space/hyphen variants) | Techno Alum System |
+| אלוקובונד | ALUCOBOND |
+| חיפויי אלוקובונד | ALUCOBOND cladding |
+| קירות מסך | curtain walls |
+| חזיתות מבנים | building façades |
+
+The ALUCOBOND brand/cladding terminology follows the [manufacturer's façade documentation](https://www.alucobond.com/en/products/according-to-application/facades/);
+curtain walls follows [Strømmen's aluminium systems terminology](https://strommengroup.com/en/curtain-walls).
+Matches require word boundaries, allowing common attached Hebrew prepositions
+and conjunctions to remain available to the translation engine; the glossary
+does not replace unrelated words or guess additional terms. Recognized Hebrew
+phrases and existing Latin names are masked before translation, preserving
+whole-sentence context, then restored
+to canonical text. Pure glossary entries need no translation request. Missing,
+duplicated, corrupted or unexpected markers reject the complete save with 503.
+Paragraphs and list markers remain outside translation as before.
+
+This affects new or changed Hebrew only. It does not rewrite stored English,
+including previously malformed translations; unchanged Hebrew preserves it.
+For existing About content, **proposed only, explicit approval required**:
+prepare a before/after preview for the single selected About record and only the
+English fields containing the confirmed errors. Review `The Aluminum Sistm` →
+`Techno Alum System`, `The Alkovunds` → `ALUCOBOND cladding` when paired with
+`חיפויי אלוקובונד`, `Screen walls` → `curtain walls`, and `Building fronts` →
+`building façades`. Confirm the Hebrew source and field context for each edit.
+After approval, back up those exact values and apply only approved English
+changes in one transaction with an expected-value/source guard; abort if the
+record changed since review. Preserve all other fields. Rollback restores the
+backed-up values only if the corrected values still match. No backfill, database
+update tool, migration or correction has been executed by this glossary change.
 
 ### Flexible About body
 

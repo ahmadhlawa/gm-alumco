@@ -13,7 +13,7 @@ from app.schemas.production_project import ProductionProjectUpdate
 from app.schemas.project import ProjectUpdate
 from app.schemas.service import ServiceUpdate
 from app.schemas.testimonial import TestimonialUpdate as ReviewUpdate
-from app.services.translation_service import translate_fields, translate_public_stats
+from app.services.translation_service import translate_fields, translate_hebrew, translate_public_stats
 
 
 @pytest.fixture
@@ -26,6 +26,74 @@ def translator(monkeypatch):
 
     monkeypatch.setattr("app.services.translation_service.httpx.post", post)
     return calls
+
+
+@pytest.mark.parametrize("name", [
+    "טכנו אלום סיסטם", "טכנו אלומ סיסטם", "טכנו אלום סיסטמ",
+    "טכנו-אלום-סיסטם", "טכנו־אלום־סיסטם", "טכנו\u00a0אלום\tסיסטם",
+])
+def test_hebrew_company_name_variations_are_canonical_without_http(name, translator):
+    assert translate_hebrew(name) == "Techno Alum System"
+    assert translator == []
+
+
+@pytest.mark.parametrize("source,english", [
+    ("קירות מסך", "curtain walls"),
+    ("חזיתות מבנים", "building façades"),
+    ("חיפויי אלוקובונד", "ALUCOBOND cladding"),
+    ("אלוקובונד", "ALUCOBOND"),
+])
+def test_confirmed_industry_terms_are_preserved(source, english, translator):
+    assert translate_hebrew(source) == english
+    assert translator == []
+
+
+def test_brand_protection_retains_sentence_context_and_latin_names(monkeypatch):
+    def post(url, *, json, timeout):
+        query = json["q"]
+        assert "טכנו אלום סיסטם" not in query
+        assert "Techno Alum System" not in query
+        assert "Schüco AWS 75.SI+" not in query
+        assert "היא חברה מובילה" in query
+        return httpx.Response(200, json={"translatedText": query.replace("היא חברה מובילה", "is a leading company").replace("עם", "with")}, request=httpx.Request("POST", url))
+    monkeypatch.setattr("app.services.translation_service.httpx.post", post)
+    assert translate_hebrew("טכנו אלום סיסטם היא חברה מובילה עם Schüco AWS 75.SI+.") == "Techno Alum System is a leading company with Schüco AWS 75.SI+."
+
+
+@pytest.mark.parametrize("source", ["אלוקובונדים", "קירות מסכים", "טכנו אלום סיסטמטית"])
+def test_glossary_does_not_replace_partial_words(source, translator):
+    assert translate_hebrew(source) == "English text"
+
+
+def test_protected_source_lookalikes_and_repeated_names_are_safe(monkeypatch):
+    def post(url, *, json, timeout):
+        return httpx.Response(200, json={"translatedText": json["q"].replace("וגם", "and")}, request=httpx.Request("POST", url))
+    monkeypatch.setattr("app.services.translation_service.httpx.post", post)
+    source = "ZXQATS0QXZ טכנו אלום סיסטם וגם טכנו אלום סיסטם"
+    assert translate_hebrew(source) == "ZXQATS0QXZ Techno Alum System and Techno Alum System"
+
+
+def test_placeholder_capitalization_does_not_change_canonical_brand(monkeypatch):
+    def post(url, *, json, timeout):
+        return httpx.Response(200, json={"translatedText": json["q"].replace("היא חברה", "is a company").lower()}, request=httpx.Request("POST", url))
+    monkeypatch.setattr("app.services.translation_service.httpx.post", post)
+    assert translate_hebrew("טכנו אלום סיסטם היא חברה") == "Techno Alum System is a company"
+
+
+def test_hebrew_proclitics_keep_company_name_protected_in_context(monkeypatch):
+    def post(url, *, json, timeout):
+        query = json["q"]
+        assert "טכנו" not in query and "קירות מסך" not in query
+        translated = query.replace("אנחנו ב", "We at ").replace("מתמחים ב", "specialize in ")
+        return httpx.Response(200, json={"translatedText": translated}, request=httpx.Request("POST", url))
+    monkeypatch.setattr("app.services.translation_service.httpx.post", post)
+    assert translate_hebrew("אנחנו בטכנו אלום סיסטם מתמחים בקירות מסך") == "We at Techno Alum System specialize in curtain walls"
+
+
+@pytest.mark.parametrize("name", ["3M", "123ABC", "3M VHB 4910", "AWS_75", "3M_VHB"])
+def test_names_and_model_numbers_remain_intact_next_to_company_glossary(name, translator):
+    assert translate_hebrew("טכנו אלום סיסטם " + name) == "Techno Alum System " + name
+    assert translator == []
 
 
 @pytest.mark.parametrize("route,payload,field", [

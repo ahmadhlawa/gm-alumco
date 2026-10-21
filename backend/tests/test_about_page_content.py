@@ -6,6 +6,79 @@ from sqlalchemy import select, text
 from app.models.about_page_content import AboutPageContent
 
 
+def test_brands_and_terms_in_long_body_preserve_structure_and_existing_english(client, db, auth_headers, monkeypatch):
+    headers = auth_headers()
+    url = "/api/v1/admin/about-page-content"
+    baseline = client.get(url, headers=headers).json()
+    def post(url, *, json, timeout):
+        query = json["q"]
+        assert "טכנו" not in query and "אלוקובונד" not in query and "קירות מסך" not in query
+        return httpx.Response(200, json={"translatedText": query.replace("תוכן ארוך", "Long content").replace("המשך", "More")}, request=httpx.Request("POST", url))
+    monkeypatch.setattr("app.services.translation_service.httpx.post", post)
+    paragraph = "תוכן ארוך " * 80
+    body = paragraph + "טכנו אלום סיסטם\n\n" + "\n".join([
+        "- טכנו אלום סיסטם", "* קירות מסך", "× חיפויי אלוקובונד", "• חזיתות מבנים",
+        "- T.A.S", "* Techno Alum System", "• אלוקובונד",
+    ]) + "\n\nהמשך טכנו־אלום־סיסטם"
+    response = client.put(url, headers=headers, json={"body_he": body})
+    assert response.status_code == 200, response.text
+    saved = response.json()
+    assert saved["body_he"] == body
+    assert saved["body_en"] == "Long content " * 80 + "Techno Alum System\n\n- Techno Alum System\n* curtain walls\n× ALUCOBOND cladding\n• building façades\n- T.A.S\n* Techno Alum System\n• ALUCOBOND\n\nMore Techno Alum System"
+    assert client.get("/api/v1/about-page-content").json()["body_en"] == saved["body_en"]
+    for key in ["vision_text_he", "vision_text_en", "mission_text_he", "mission_text_en"]:
+        assert saved[key] == baseline[key]
+    def offline(*args, **kwargs):
+        raise AssertionError("Unchanged Hebrew must preserve stored English without translation")
+    monkeypatch.setattr("app.services.translation_service.httpx.post", offline)
+    response = client.put(url, headers=headers, json={"body_he": body, "body_en": "Unapproved"})
+    assert response.status_code == 200
+    assert response.json()["body_en"] == saved["body_en"]
+
+
+@pytest.mark.parametrize("failure", ["missing", "duplicate", "corrupted", "suffix", "prefix"])
+def test_lost_or_corrupted_protected_terms_never_write_partial_content(client, auth_headers, monkeypatch, failure):
+    headers = auth_headers()
+    url = "/api/v1/admin/about-page-content"
+    original = client.get(url, headers=headers).json()
+    calls = []
+    def post(url, *, json, timeout):
+        query = json["q"]
+        calls.append(query)
+        if len(calls) == 1:
+            result = "Translated introduction"
+        elif failure == "missing":
+            result = "The Aluminum Sistm"
+        elif failure == "duplicate":
+            result = query + " " + query
+        elif failure == "corrupted":
+            result = "Corrupted " + query.replace("QXZ", "broken")
+        elif failure == "suffix":
+            result = query.replace("QXZ", "QXZX")
+        else:
+            result = query.replace("ZXQATS", "XZXQATS")
+        return httpx.Response(200, json={"translatedText": result}, request=httpx.Request("POST", url))
+    monkeypatch.setattr("app.services.translation_service.httpx.post", post)
+    response = client.put(url, headers=headers, json={"body_he": "פתיחה\n\n- טכנו אלום סיסטם היא חברה", "image_url": "/uploads/test/new.jpg"})
+    assert response.status_code == 503
+    assert "Nothing was saved" in response.json()["detail"]
+    assert client.get(url, headers=headers).json() == original
+
+
+@pytest.mark.parametrize("english", ["T.A.S is a leading company.", "The Aluminum Sistm is a leading company."])
+def test_glossary_never_backfills_or_rewrites_unchanged_stored_english(client, db, auth_headers, monkeypatch, english):
+    headers = auth_headers()
+    row = AboutPageContent(body_he="טכנו אלום סיסטם היא חברה מובילה.", body_en=english)
+    db.add(row)
+    db.commit()
+    def offline(*args, **kwargs):
+        raise AssertionError("Existing English needs explicit approval for a targeted correction")
+    monkeypatch.setattr("app.services.translation_service.httpx.post", offline)
+    response = client.put("/api/v1/admin/about-page-content", headers=headers, json={"body_he": row.body_he, "image_url": "/uploads/test/about.jpg"})
+    assert response.status_code == 200
+    assert response.json()["body_en"] == english
+
+
 @pytest.mark.parametrize("method", ["get", "put"])
 def test_missing_body_migration_returns_actionable_error_without_writes(client, db, auth_headers, method):
     headers = {**auth_headers(), "Origin": "http://localhost:5173"}

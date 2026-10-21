@@ -17,6 +17,52 @@ HEBREW = re.compile(r"[\u0590-\u05ff]")
 # Keep Latin brand names and model numbers verbatim, including in mixed text.
 LATIN_NAME = re.compile(r"([A-Za-z\u00c0-\u024f][A-Za-z\u00c0-\u024f0-9.+&'/-]*(?:[ \t]+[A-Za-z\u00c0-\u024f0-9][A-Za-z\u00c0-\u024f0-9.+&'/-]*)*)")
 BODY_BULLET = re.compile(r"^([ \t]*[-*\u00d7\u2022][ \t]*)(.*)$")
+# Only confirmed ATS names/terms. Whole-word matches avoid altering other Hebrew.
+TERM_SEPARATOR = r"[ \t\u00a0\u05be-]+"
+HEBREW_GLOSSARY = {
+    "company": (rf"טכנו{TERM_SEPARATOR}אלו[םמ]{TERM_SEPARATOR}סיסט[םמ]", "Techno Alum System"),
+    "cladding": (rf"חיפויי{TERM_SEPARATOR}אלוקובונד", "ALUCOBOND cladding"),
+    "alucobond": (r"אלוקובונד", "ALUCOBOND"),
+    "curtain_walls": (rf"קירות{TERM_SEPARATOR}מסך", "curtain walls"),
+    "facades": (rf"חזיתות{TERM_SEPARATOR}מבנים", "building façades"),
+}
+GLOSSARY_PATTERN = re.compile(
+    r"(?<!\w)(?P<proclitic>[ובכלמשה]{0,2})(?:"
+    + "|".join(f"(?P<{key}>{pattern})" for key, (pattern, _) in HEBREW_GLOSSARY.items()) + r")(?!\w)"
+)
+# Include digits/underscores in complete model tokens (3M, AWS_75); this keeps
+# generated markers separate without changing the established Latin-only path.
+PROTECTED_CONTENT = re.compile(
+    GLOSSARY_PATTERN.pattern
+    + r"|(?P<latin>[A-Za-z\u00c0-\u024f0-9_][A-Za-z\u00c0-\u024f0-9_.+&'/-]*(?:[ \t]+[A-Za-z\u00c0-\u024f0-9_][A-Za-z\u00c0-\u024f0-9_.+&'/-]*)*)"
+)
+
+
+def _protect_terms(text: str) -> tuple[str, dict[str, str], str]:
+    # Deterministic per-request markers, with no collision with authored text.
+    prefix = "ZXQATS"
+    while prefix.casefold() in text.casefold():
+        prefix += "X"
+    replacements = {}
+
+    def mask(match: re.Match) -> str:
+        marker = f"{prefix}{len(replacements)}QXZ"
+        replacements[marker] = match["latin"] if match["latin"] is not None else HEBREW_GLOSSARY[match.lastgroup][1]
+        # Leave attached Hebrew prepositions/conjunctions available to translate.
+        return (match["proclitic"] or "") + marker
+
+    return PROTECTED_CONTENT.sub(mask, text), replacements, prefix
+
+
+def _restore_terms(text: str, replacements: dict[str, str], prefix: str) -> str:
+    for marker, canonical in replacements.items():
+        token = r"(?<![A-Za-z0-9_])" + re.escape(marker) + r"(?![A-Za-z0-9_])"
+        text, count = re.subn(token, lambda _: canonical, text, flags=re.IGNORECASE)
+        if count != 1:
+            raise ValueError("Translation lost or duplicated a protected term")
+    if prefix.casefold() in text.casefold():
+        raise ValueError("Translation introduced an unknown protected term")
+    return text
 
 
 def translate_body(text: str, *, deadline: float, cache: dict[str, str]) -> str:
@@ -46,7 +92,11 @@ def translate_hebrew(
     cache = _cache if _cache is not None else {}
     if text in cache:
         return cache[text]
-    parts = LATIN_NAME.split(text)
+    protected = GLOSSARY_PATTERN.search(text) is not None
+    query, replacements, prefix = _protect_terms(text) if protected else (text, {}, "")
+    # Keep full sentence context around glossary terms (e.g. Hebrew pronouns).
+    # Existing Latin-only protection retains its established behavior otherwise.
+    parts = [text] if protected else LATIN_NAME.split(text)
     if len(parts) > 1:
         return "".join(
             part[:len(part) - len(part.lstrip())]
@@ -56,12 +106,15 @@ def translate_hebrew(
             for part in parts
         )
     try:
+        if protected and not HEBREW.search(query):
+            cache[text] = _restore_terms(query, replacements, prefix)
+            return cache[text]
         remaining = deadline - monotonic()
         if remaining <= 0:
             raise ValueError("Translation deadline exceeded")
         response = httpx.post(
             f"{settings.translation_url.rstrip('/')}/translate",
-            json={"q": text, "source": "he", "target": "en", "format": "text"},
+            json={"q": query, "source": "he", "target": "en", "format": "text"},
             timeout=remaining,
         )
         response.raise_for_status()
@@ -70,7 +123,7 @@ def translate_hebrew(
         result = response.json()["translatedText"]
         if not isinstance(result, str) or not result.strip():
             raise ValueError("Empty translation")
-        cache[text] = result.strip()
+        cache[text] = _restore_terms(result.strip(), replacements, prefix) if protected else result.strip()
         return cache[text]
     except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
         raise HTTPException(
