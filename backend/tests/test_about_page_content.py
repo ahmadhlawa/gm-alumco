@@ -53,17 +53,19 @@ def test_admin_update_is_partial(client: TestClient, auth_headers) -> None:
     client.put(
         "/api/v1/admin/about-page-content",
         headers=headers,
-        json={"title_en": "First update"},
+        json={"title_he": "עדכון ראשון"},
     )
     second = client.put(
         "/api/v1/admin/about-page-content",
         headers=headers,
-        json={"subtitle_en": "Second update"},
+        json={"subtitle_he": "עדכון שני"},
     )
     assert second.status_code == 200
     body = second.json()
-    assert body["title_en"] == "First update"
-    assert body["subtitle_en"] == "Second update"
+    assert body["title_he"] == "עדכון ראשון"
+    assert body["subtitle_he"] == "עדכון שני"
+    assert body["title_en"] == "Translated content"
+    assert body["subtitle_en"] == "Translated content"
 
 
 def test_admin_update_rejects_over_limit_title(client: TestClient, auth_headers) -> None:
@@ -112,7 +114,7 @@ def test_admin_update_records_audit_log(client: TestClient, auth_headers) -> Non
     client.put(
         "/api/v1/admin/about-page-content",
         headers=headers,
-        json={"title_en": "Audited update"},
+        json={"title_he": "עדכון מתועד"},
     )
     logs = client.get("/api/v1/admin/audit-logs", headers=headers)
     assert logs.status_code == 200

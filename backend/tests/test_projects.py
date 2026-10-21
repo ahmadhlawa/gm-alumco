@@ -79,13 +79,13 @@ def test_admin_can_crud_projects_and_see_inactive(
     updated = client.put(
         f"/api/v1/admin/projects/{project_id}",
         headers=headers,
-        json={"title_en": "Updated"},
+        json={"title_he": "פרויקט מעודכן"},
     )
     deleted = client.delete(f"/api/v1/admin/projects/{project_id}", headers=headers)
 
     assert listing.status_code == 200 and len(listing.json()) == 1
     assert detail.status_code == 200
-    assert updated.json()["title_en"] == "Updated"
+    assert updated.json()["title_en"] == "Translated content"
     assert deleted.status_code == 204
 
 
@@ -102,7 +102,7 @@ def test_admin_can_add_and_delete_project_image(
         headers=headers,
         json={
             "image_url": "https://drive.google.com/gallery.jpg",
-            "alt_text_en": "Facade",
+            "alt_text_he": "חזית",
             "sort_order": 3,
         },
     )

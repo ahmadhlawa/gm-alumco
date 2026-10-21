@@ -88,8 +88,12 @@ def update_site_content(
     )
     section = data.section if data.section is not None else content.section
     key = data.key if data.key is not None else content.key
-    if section == 'public_stats' and key == 'content' and 'value' in data.model_fields_set:
-        data = data.model_copy(update={'value': translate_public_stats(data.value, existing=content.value)})
+    was_public_stats = content.section == 'public_stats' and content.key == 'content'
+    if section == 'public_stats' and key == 'content' and ('value' in data.model_fields_set or not was_public_stats):
+        value = data.value if 'value' in data.model_fields_set else content.value
+        data = data.model_copy(update={'value': translate_public_stats(
+            value, existing=content.value if was_public_stats else None,
+        )})
     return update_unique_record(
         db,
         content,

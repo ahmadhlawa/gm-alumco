@@ -33,7 +33,7 @@ def test_project_mutations_are_audited(
     client.put(
         f"/api/v1/admin/projects/{project_id}",
         headers=headers,
-        json={"title_en": "Renamed"},
+        json={"title_he": "שם חדש"},
     )
     client.delete(f"/api/v1/admin/projects/{project_id}", headers=headers)
 
@@ -52,7 +52,7 @@ def test_service_and_partner_mutations_are_audited(
     client.put(
         f"/api/v1/admin/services/{service['id']}",
         headers=headers,
-        json={"title_en": "Updated service"},
+        json={"title_he": "שירות מעודכן"},
     )
     client.delete(f"/api/v1/admin/services/{service['id']}", headers=headers)
 

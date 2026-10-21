@@ -156,8 +156,9 @@ CMS content is edited in Hebrew. FastAPI generates English through the internal
 LibreTranslate `/translate` endpoint before writing projects, production projects,
 services, testimonials, partners, About content, company-number labels, and image
 captions. Unchanged Hebrew preserves existing English; clearing optional Hebrew
-also clears its English counterpart. Legacy English-only API updates remain
-supported. Website and admin interface language switching is unchanged.
+also clears its English counterpart. English-only content writes return 422;
+submitted English requires its paired Hebrew source and is never authoritative.
+Website and admin interface language switching is unchanged.
 
 Set `TRANSLATION_URL` (default `http://127.0.0.1:5000`) and
 `TRANSLATION_TIMEOUT_SECONDS` (default 15, maximum 60) in the backend environment.

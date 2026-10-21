@@ -48,9 +48,9 @@ def test_admin_can_crud_service_and_read_inactive(client: TestClient, auth_heade
     updated = client.put(
         f"/api/v1/admin/services/{service_id}",
         headers=headers,
-        json={"title_en": "Updated"},
+        json={"title_he": "שירות מעודכן"},
     )
-    assert updated.json()["title_en"] == "Updated"
+    assert updated.json()["title_en"] == "Translated content"
     assert client.delete(f"/api/v1/admin/services/{service_id}", headers=headers).status_code == 204
     assert client.get(f"/api/v1/services/{service_id}").status_code == 404
 
