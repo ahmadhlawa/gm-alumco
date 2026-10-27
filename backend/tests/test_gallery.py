@@ -2,6 +2,148 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from app.models.gallery import GalleryImage
+import pytest
+
+
+PHOTO_URL = "/uploads/gallery/12345678-1234-1234-1234-123456789abc.png"
+
+
+def test_project_photos_exclude_legacy_and_hidden_records(client, db):
+    db.add_all([
+        GalleryImage(image_url=PHOTO_URL, category="LOCAL"),
+        GalleryImage(image_url=PHOTO_URL, category="facades"),
+        GalleryImage(image_url=PHOTO_URL, category="PROJECT_PHOTO_LOCAL", sort_order=2),
+        GalleryImage(image_url=PHOTO_URL, category="PROJECT_PHOTO_INTERNATIONAL", sort_order=1),
+        GalleryImage(image_url=PHOTO_URL, category="PROJECT_PHOTO_LOCAL", is_active=False),
+    ])
+    db.commit()
+    response = client.get("/api/v1/gallery/project-photos")
+    assert response.status_code == 200
+    assert [item["category"] for item in response.json()] == ["INTERNATIONAL", "LOCAL"]
+    assert len(client.get("/api/v1/gallery/project-photos?category=LOCAL").json()) == 1
+    assert client.get("/api/v1/gallery/project-photos?category=facades").status_code == 422
+
+
+def test_project_photo_create_retry_order_updates_and_audit(client, db, auth_headers):
+    from app.models.audit_log import AuditLog
+    from sqlalchemy import select
+
+    headers = auth_headers()
+    payload = {"image_url": PHOTO_URL, "category": "LOCAL"}
+    first = client.post("/api/v1/admin/gallery/project-photos", headers=headers, json=payload)
+    assert first.status_code == 201
+    image_id = first.json()["id"]
+    assert first.json()["category"] == "LOCAL"
+    assert first.json()["title_en"] is None
+    retry = client.post("/api/v1/admin/gallery/project-photos", headers=headers, json=payload)
+    assert retry.json()["id"] == image_id
+    second = client.post("/api/v1/admin/gallery/project-photos", headers=headers, json={
+        **payload, "image_url": PHOTO_URL.replace("abc.png", "abd.png"),
+    })
+    assert second.json()["sort_order"] > first.json()["sort_order"]
+    updated = client.put(f"/api/v1/admin/gallery/project-photos/{image_id}", headers=headers,
+                         json={"category": "INTERNATIONAL", "is_active": False})
+    assert updated.status_code == 200
+    assert updated.json()["category"] == "INTERNATIONAL"
+    assert updated.json()["is_active"] is False
+    assert len(client.get("/api/v1/gallery/project-photos").json()) == 1
+    # Retrying a lost create response must never republish a subsequently hidden photo.
+    assert client.post("/api/v1/admin/gallery/project-photos", headers=headers,
+                       json=payload).json()["is_active"] is False
+    assert len(client.get("/api/v1/admin/gallery/project-photos", headers=headers).json()) == 2
+    published = client.put(f"/api/v1/admin/gallery/project-photos/{image_id}", headers=headers,
+                           json={"is_active": True})
+    assert published.json()["is_active"] is True
+    assert len(client.get("/api/v1/gallery/project-photos").json()) == 2
+    assert len(list(db.scalars(select(AuditLog).where(AuditLog.entity_type == "project_photo")))) == 4
+
+
+@pytest.mark.parametrize("patch", [{"category": None}, {"category": "facades"},
+                                  {"is_active": None}, {"sort_order": -1},
+                                  {"image_url": "https://example.com/photo.jpg"}])
+def test_project_photo_patch_validation(client, auth_headers, patch):
+    headers = auth_headers()
+    item = client.post("/api/v1/admin/gallery/project-photos", headers=headers,
+                       json={"image_url": PHOTO_URL, "category": "LOCAL"}).json()
+    response = client.put(f"/api/v1/admin/gallery/project-photos/{item['id']}",
+                          headers=headers, json=patch)
+    assert response.status_code == 422
+
+
+@pytest.mark.parametrize("url", ["javascript:alert(1)", "//evil.test/x.jpg",
+                                "/uploads/gallery/../secret.png", "/uploads/gallery/%2e%2e.png",
+                                "https://example.com/photo.png", "/uploads/projects/a.png"])
+def test_project_photo_rejects_non_gallery_uploads(client, auth_headers, url):
+    response = client.post("/api/v1/admin/gallery/project-photos", headers=auth_headers(),
+                           json={"image_url": url, "category": "LOCAL"})
+    assert response.status_code == 422
+
+
+def test_project_photo_auth_and_legacy_update_protection(client, db, auth_headers):
+    assert client.get("/api/v1/admin/gallery/project-photos").status_code == 401
+    assert client.post("/api/v1/admin/gallery/project-photos", json={}).status_code == 401
+    assert client.put("/api/v1/admin/gallery/project-photos/1", json={}).status_code == 401
+    legacy = GalleryImage(**gallery_payload())
+    db.add(legacy)
+    db.commit()
+    headers = auth_headers()
+    assert client.put(f"/api/v1/admin/gallery/project-photos/{legacy.id}", headers=headers,
+                      json={"is_active": False}).status_code == 404
+    assert db.get(GalleryImage, legacy.id).is_active is True
+
+
+def test_project_photos_empty_and_tie_order(client, db):
+    assert client.get("/api/v1/gallery/project-photos").json() == []
+    first = GalleryImage(image_url=PHOTO_URL, category="PROJECT_PHOTO_LOCAL", sort_order=1)
+    second = GalleryImage(image_url=PHOTO_URL, category="PROJECT_PHOTO_LOCAL", sort_order=1)
+    db.add_all([first, second])
+    db.commit()
+    assert [x["id"] for x in client.get("/api/v1/gallery/project-photos").json()] == [first.id, second.id]
+
+
+@pytest.mark.parametrize("extra", [{"category": "facades"}, {"category": None},
+                                  {"title_en": "Unwanted caption"}, {"sort_order": 99}])
+def test_project_photo_create_contract(client, auth_headers, extra):
+    response = client.post("/api/v1/admin/gallery/project-photos", headers=auth_headers(),
+                           json={"image_url": PHOTO_URL, "category": "LOCAL", **extra})
+    assert response.status_code == 422
+
+
+def test_project_photo_invalid_role_and_inactive_admin(client, auth_headers, db):
+    from app.models.admin import Admin
+    from sqlalchemy import select
+
+    headers = auth_headers(role="viewer")
+    assert client.get("/api/v1/admin/gallery/project-photos", headers=headers).status_code == 403
+    assert client.post("/api/v1/admin/gallery/project-photos", headers=headers,
+                       json={"image_url": PHOTO_URL, "category": "LOCAL"}).status_code == 403
+    admin = db.scalar(select(Admin).where(Admin.role == "viewer"))
+    admin.is_active = False
+    db.commit()
+    assert client.get("/api/v1/admin/gallery/project-photos", headers=headers).status_code == 401
+
+
+def test_upload_to_gallery_publish_and_hide_integration(client, auth_headers, tmp_path, monkeypatch):
+    import base64
+    from app.api.v1.endpoints import uploads
+
+    monkeypatch.setattr(uploads, "UPLOAD_ROOT", tmp_path)
+    headers = auth_headers()
+    image = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=")
+    uploaded = client.post("/api/v1/admin/uploads/image", headers=headers, data={"folder": "gallery"},
+                           files={"file": ("photo.png", image, "image/png")})
+    assert uploaded.status_code == 201
+    payload = uploaded.json()
+    assert (tmp_path / "gallery" / payload["filename"]).read_bytes() == image
+    created = client.post("/api/v1/admin/gallery/project-photos", headers=headers,
+                          json={"image_url": payload["url"], "category": "INTERNATIONAL"})
+    assert created.status_code == 201
+    item = created.json()
+    assert client.get("/api/v1/gallery/project-photos").json()[0]["id"] == item["id"]
+    assert client.put(f"/api/v1/admin/gallery/project-photos/{item['id']}", headers=headers,
+                      json={"is_active": False}).status_code == 200
+    assert client.get("/api/v1/gallery/project-photos").json() == []
+    assert (tmp_path / "gallery" / payload["filename"]).read_bytes() == image
 
 
 def gallery_payload(**overrides) -> dict:

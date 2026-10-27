@@ -2,6 +2,8 @@ node_modules/
 build/
 dist/
 coverage/
+test-results/
+playwright-report/
 .worktrees/
 .superpowers/
 .DS_Store

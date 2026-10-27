@@ -19,18 +19,18 @@ export interface GalleryImageDto {
 export interface NewGalleryImage {
   image_url: string;
   category: GalleryLocation;
-  is_active: boolean;
-  sort_order: number;
 }
 
 export const listGalleryImages = () =>
-  apiRequest<GalleryImageDto[]>('/gallery');
+  apiRequest<GalleryImageDto[]>('/gallery/project-photos');
 
 export const listAdminGalleryImages = () =>
-  apiRequest<GalleryImageDto[]>('/admin/gallery', { authenticated: true });
+  apiRequest<GalleryImageDto[]>('/admin/gallery/project-photos', {
+    authenticated: true,
+  });
 
 export const createGalleryImage = (data: NewGalleryImage) =>
-  apiRequest<GalleryImageDto>('/admin/gallery', {
+  apiRequest<GalleryImageDto>('/admin/gallery/project-photos', {
     method: 'POST',
     body: JSON.stringify(data),
     authenticated: true,
@@ -38,9 +38,9 @@ export const createGalleryImage = (data: NewGalleryImage) =>
 
 export const updateGalleryImage = (
   id: number,
-  data: Partial<Pick<GalleryImageDto, 'category' | 'is_active' | 'sort_order'>>,
+  data: { category?: GalleryLocation; is_active?: boolean },
 ) =>
-  apiRequest<GalleryImageDto>('/admin/gallery/' + id, {
+  apiRequest<GalleryImageDto>('/admin/gallery/project-photos/' + id, {
     method: 'PUT',
     body: JSON.stringify(data),
     authenticated: true,

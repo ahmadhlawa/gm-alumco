@@ -1,11 +1,16 @@
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import require_admin
 from app.db.database import get_db
 from app.models.admin import Admin
 from app.models.gallery import GalleryImage
-from app.schemas.gallery import GalleryCreate, GalleryRead, GalleryUpdate
+from app.schemas.gallery import (
+    GalleryCreate, GalleryRead, GalleryUpdate,
+    PhotoCategory, ProjectPhotoCreate, ProjectPhotoUpdate,
+)
+from app.services.audit_service import record_audit
 from app.services.crud import (
     create_entity,
     get_entity_or_404,
@@ -17,6 +22,96 @@ from app.services.crud import (
 
 public_router = APIRouter()
 admin_router = APIRouter()
+
+# Explicit provenance in the existing category column keeps legacy records out
+# of the new feature without rewriting data or changing the database schema.
+PHOTO_CATEGORIES = {key: f"PROJECT_PHOTO_{key}" for key in ("LOCAL", "INTERNATIONAL")}
+
+
+def photo_statement():
+    return select(GalleryImage).where(GalleryImage.category.in_(PHOTO_CATEGORIES.values()))
+
+
+def photo_read(image: GalleryImage) -> GalleryRead:
+    return GalleryRead.model_validate(image).model_copy(
+        update={"category": image.category.removeprefix("PROJECT_PHOTO_")}
+    )
+
+
+# Static routes must precede the legacy /{image_id} routes.
+@public_router.get("/project-photos", response_model=list[GalleryRead])
+def read_project_photos(
+    category: PhotoCategory | None = None,
+    db: Session = Depends(get_db),
+) -> list[GalleryRead]:
+    statement = photo_statement().where(GalleryImage.is_active.is_(True))
+    if category is not None:
+        statement = statement.where(GalleryImage.category == PHOTO_CATEGORIES[category])
+    return [photo_read(image) for image in db.scalars(
+        statement.order_by(GalleryImage.sort_order, GalleryImage.id)
+    )]
+
+
+@admin_router.get("/project-photos", response_model=list[GalleryRead])
+def read_admin_project_photos(
+    db: Session = Depends(get_db),
+    _: Admin = Depends(require_admin),
+) -> list[GalleryRead]:
+    return [photo_read(image) for image in db.scalars(
+        photo_statement().order_by(GalleryImage.sort_order, GalleryImage.id)
+    )]
+
+
+@admin_router.post("/project-photos", response_model=GalleryRead, status_code=201)
+def create_project_photo(
+    data: ProjectPhotoCreate,
+    db: Session = Depends(get_db),
+    current_admin: Admin = Depends(require_admin),
+) -> GalleryRead:
+    # Serialize creates on one existing row in MySQL. This protects URL-based
+    # retry deduplication and ordering across workers/admins without a migration.
+    db.scalar(select(Admin).order_by(Admin.id).limit(1).with_for_update())
+    # Locking reads see the latest committed rows under MySQL REPEATABLE READ,
+    # even when authentication already opened a snapshot before the lock wait.
+    existing = db.scalar(photo_statement().where(
+        GalleryImage.image_url == data.image_url
+    ).order_by(GalleryImage.id).limit(1).with_for_update())
+    if existing is not None:
+        return photo_read(existing)
+    last = db.scalar(photo_statement().order_by(
+        GalleryImage.sort_order.desc(), GalleryImage.id.desc()
+    ).limit(1).with_for_update())
+    next_order = (last.sort_order if last is not None else 0) + 1
+    image = GalleryImage(image_url=data.image_url, category=PHOTO_CATEGORIES[data.category],
+                         sort_order=next_order, is_active=True)
+    db.add(image)
+    db.commit()
+    db.refresh(image)
+    record_audit(db, admin_id=current_admin.id, action="create",
+                 entity_type="project_photo", entity_id=image.id)
+    return photo_read(image)
+
+
+@admin_router.put("/project-photos/{image_id}", response_model=GalleryRead)
+def update_project_photo(
+    image_id: int,
+    data: ProjectPhotoUpdate,
+    db: Session = Depends(get_db),
+    current_admin: Admin = Depends(require_admin),
+) -> GalleryRead:
+    image = db.scalar(photo_statement().where(GalleryImage.id == image_id))
+    if image is None:
+        raise HTTPException(status_code=404, detail="Not found")
+    patch = data.model_dump(exclude_unset=True)
+    if "category" in patch:
+        patch["category"] = PHOTO_CATEGORIES[patch["category"]]
+    for field, value in patch.items():
+        setattr(image, field, value)
+    db.commit()
+    db.refresh(image)
+    record_audit(db, admin_id=current_admin.id, action="update",
+                 entity_type="project_photo", entity_id=image.id)
+    return photo_read(image)
 
 
 @public_router.get("", response_model=list[GalleryRead])
