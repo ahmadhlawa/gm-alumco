@@ -221,3 +221,111 @@ def test_gallery_rejects_values_that_exceed_database_lengths(
 
     assert long_title.status_code == 422
     assert long_category.status_code == 422
+
+
+@pytest.mark.parametrize("reserved", ["PROJECT_PHOTO_LOCAL", "PROJECT_PHOTO_INTERNATIONAL"])
+def test_legacy_create_cannot_claim_project_photo_categories(client, db, auth_headers, reserved):
+    from sqlalchemy import select
+
+    response = client.post(
+        "/api/v1/admin/gallery",
+        headers=auth_headers(),
+        json=gallery_payload(category=reserved),
+    )
+    assert response.status_code == 422
+    assert db.scalar(select(GalleryImage).where(GalleryImage.category == reserved)) is None
+
+
+@pytest.mark.parametrize("reserved", ["PROJECT_PHOTO_LOCAL", "PROJECT_PHOTO_INTERNATIONAL"])
+def test_legacy_update_cannot_convert_existing_record_into_project_photo(
+    client, db, auth_headers, reserved,
+):
+    headers = auth_headers()
+    created = client.post(
+        "/api/v1/admin/gallery", headers=headers, json=gallery_payload()
+    )
+    assert created.status_code == 201
+    image_id = created.json()["id"]
+
+    blocked = client.put(
+        f"/api/v1/admin/gallery/{image_id}",
+        headers=headers,
+        json={"category": reserved, "title_en": "Should not save"},
+    )
+    assert blocked.status_code == 422
+    db.refresh(db.get(GalleryImage, image_id))
+    current = client.get(f"/api/v1/admin/gallery/{image_id}", headers=headers)
+    assert current.status_code == 200
+    assert current.json()["category"] == "facades"
+    assert current.json()["title_en"] == "Image"
+
+
+def test_project_photo_is_unreachable_and_immutable_via_legacy_gallery_routes(
+    client, db, auth_headers,
+):
+    headers = auth_headers()
+    legacy = client.post(
+        "/api/v1/admin/gallery", headers=headers, json=gallery_payload()
+    )
+    assert legacy.status_code == 201
+    created = client.post(
+        "/api/v1/admin/gallery/project-photos",
+        headers=headers,
+        json={"image_url": PHOTO_URL, "category": "LOCAL"},
+    )
+    assert created.status_code == 201
+    photo_id = created.json()["id"]
+    legacy_id = legacy.json()["id"]
+
+    # Dedicated APIs only: legacy lists (including category-filtered reads)
+    # must not display records owned by the photo-only gallery.
+    public = client.get("/api/v1/gallery")
+    admin = client.get("/api/v1/admin/gallery", headers=headers)
+    assert [image["id"] for image in public.json()] == [legacy_id]
+    assert [image["id"] for image in admin.json()] == [legacy_id]
+    assert client.get("/api/v1/gallery?category=PROJECT_PHOTO_LOCAL").json() == []
+    assert [image["id"] for image in client.get("/api/v1/gallery/project-photos").json()] == [photo_id]
+
+    assert client.get(f"/api/v1/admin/gallery/{photo_id}", headers=headers).status_code == 404
+    assert client.put(
+        f"/api/v1/admin/gallery/{photo_id}", headers=headers,
+        json={"category": "facades", "image_url": "https://example.com/replaced.jpg",
+              "title_en": "Injected title", "is_active": False},
+    ).status_code == 404
+    assert client.delete(
+        f"/api/v1/admin/gallery/{photo_id}", headers=headers,
+    ).status_code == 404
+
+    db.expire_all()
+    photo = db.get(GalleryImage, photo_id)
+    assert photo.category == "PROJECT_PHOTO_LOCAL"
+    assert photo.image_url == PHOTO_URL
+    assert photo.title_en is None
+    assert photo.is_active is True
+
+    # Dedicated edit/hide controls continue to work after blocked legacy requests.
+    dedicated = client.put(
+        f"/api/v1/admin/gallery/project-photos/{photo_id}",
+        headers=headers, json={"is_active": False, "category": "INTERNATIONAL"},
+    )
+    assert dedicated.status_code == 200
+    assert dedicated.json()["category"] == "INTERNATIONAL"
+    assert dedicated.json()["is_active"] is False
+
+    # Ordinary existing gallery operations continue to work.
+    assert client.put(
+        f"/api/v1/admin/gallery/{legacy_id}", headers=headers,
+        json={"title_en": "Updated legacy"},
+    ).status_code == 200
+    assert client.delete(
+        f"/api/v1/admin/gallery/{legacy_id}", headers=headers,
+    ).status_code == 204
+
+
+def test_legacy_gallery_list_preserves_null_categories(client, db, auth_headers):
+    image = GalleryImage(**gallery_payload(category=None))
+    db.add(image)
+    db.commit()
+    assert [item["id"] for item in client.get("/api/v1/gallery").json()] == [image.id]
+    response = client.get("/api/v1/admin/gallery", headers=auth_headers())
+    assert [item["id"] for item in response.json()] == [image.id]
