@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import require_admin
@@ -13,8 +13,6 @@ from app.schemas.gallery import (
 from app.services.audit_service import record_audit
 from app.services.crud import (
     create_entity,
-    get_entity_or_404,
-    list_entities,
     soft_delete_entity,
     update_entity,
 )
@@ -36,6 +34,30 @@ def photo_read(image: GalleryImage) -> GalleryRead:
     return GalleryRead.model_validate(image).model_copy(
         update={"category": image.category.removeprefix("PROJECT_PHOTO_")}
     )
+
+
+def legacy_gallery_statement():
+    # Keep existing nullable categories visible while excluding records owned by
+    # the new project-photo API. SQL NOT IN alone also excludes NULL categories.
+    return select(GalleryImage).where(or_(
+        GalleryImage.category.is_(None),
+        GalleryImage.category.not_in(tuple(PHOTO_CATEGORIES.values())),
+    ))
+
+
+def legacy_gallery_or_404(db: Session, image_id: int) -> GalleryImage:
+    image = db.scalar(legacy_gallery_statement().where(GalleryImage.id == image_id))
+    if image is None:
+        raise HTTPException(status_code=404, detail="Not found")
+    return image
+
+
+def reject_reserved_legacy_category(category: str | None) -> None:
+    if category in PHOTO_CATEGORIES.values():
+        raise HTTPException(
+            status_code=422,
+            detail="Project photo categories must use the project-photos API",
+        )
 
 
 # Static routes must precede the legacy /{image_id} routes.
@@ -119,12 +141,10 @@ def read_gallery(
     category: str | None = None,
     db: Session = Depends(get_db),
 ) -> list[GalleryImage]:
-    return list_entities(
-        db,
-        GalleryImage,
-        active_only=True,
-        filters={"category": category},
-    )
+    statement = legacy_gallery_statement().where(GalleryImage.is_active.is_(True))
+    if category is not None:
+        statement = statement.where(GalleryImage.category == category)
+    return list(db.scalars(statement.order_by(GalleryImage.sort_order, GalleryImage.id)))
 
 
 @admin_router.get("", response_model=list[GalleryRead])
@@ -132,7 +152,9 @@ def read_admin_gallery(
     db: Session = Depends(get_db),
     _: Admin = Depends(require_admin),
 ) -> list[GalleryImage]:
-    return list_entities(db, GalleryImage)
+    return list(db.scalars(
+        legacy_gallery_statement().order_by(GalleryImage.sort_order, GalleryImage.id)
+    ))
 
 
 @admin_router.get("/{image_id}", response_model=GalleryRead)
@@ -141,7 +163,7 @@ def read_admin_gallery_image(
     db: Session = Depends(get_db),
     _: Admin = Depends(require_admin),
 ) -> GalleryImage:
-    return get_entity_or_404(db, GalleryImage, image_id)
+    return legacy_gallery_or_404(db, image_id)
 
 
 @admin_router.post("", response_model=GalleryRead, status_code=status.HTTP_201_CREATED)
@@ -150,6 +172,7 @@ def create_gallery_image(
     db: Session = Depends(get_db),
     _: Admin = Depends(require_admin),
 ) -> GalleryImage:
+    reject_reserved_legacy_category(data.category)
     return create_entity(db, GalleryImage, data)
 
 
@@ -160,7 +183,9 @@ def update_gallery_image(
     db: Session = Depends(get_db),
     _: Admin = Depends(require_admin),
 ) -> GalleryImage:
-    return update_entity(db, get_entity_or_404(db, GalleryImage, image_id), data)
+    image = legacy_gallery_or_404(db, image_id)
+    reject_reserved_legacy_category(data.category)
+    return update_entity(db, image, data)
 
 
 @admin_router.delete("/{image_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -169,5 +194,5 @@ def delete_gallery_image(
     db: Session = Depends(get_db),
     _: Admin = Depends(require_admin),
 ) -> Response:
-    soft_delete_entity(db, get_entity_or_404(db, GalleryImage, image_id))
+    soft_delete_entity(db, legacy_gallery_or_404(db, image_id))
     return Response(status_code=status.HTTP_204_NO_CONTENT)
