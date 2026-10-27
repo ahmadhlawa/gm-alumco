@@ -41,16 +41,16 @@ export function Navbar() {
     { name: t('דף הבית', "Home"), path: '/', scrollTarget: 'home' },
     { name: t('עלינו', "About"), path: '/', scrollTarget: 'about' },
     { name: t('שירותים', "Services"), path: '/', scrollTarget: 'services' },
-    { name: t('פרויקטים', "Projects"), path: '/', scrollTarget: 'projects' },
+    { name: t('פרויקטים', "Projects"), path: '/projects' },
     { name: t('פרויקטי ייצור', "Production"), path: '/production' },
     { name: t('השותפים שלנו', "Partners"), path: '/', scrollTarget: 'partners' },
     { name: t('צור קשר', "Contact"), path: '/contact' },
   ];
 
   const handleNavClick = (event: MouseEvent<HTMLAnchorElement>, link: NavLink) => {
+    setIsMobileMenuOpen(false);
     if (!link.scrollTarget) return;
     event.preventDefault();
-    setIsMobileMenuOpen(false);
     const action = getHomeNavigationAction(location.pathname, link.scrollTarget);
     if (action.type === 'scroll') scrollToHomeSection(action.target);
     else navigate(action.to, { state: action.state });
@@ -90,6 +90,7 @@ export function Navbar() {
                 <li key={link.name}>
                   <Link
                     to={link.path}
+                    aria-current={isActive ? 'page' : undefined}
                     onClick={(event) => handleNavClick(event, link)}
                     className={cn(
                       "text-sm font-medium transition-colors hover:text-brand-gold relative py-2",
@@ -130,8 +131,12 @@ export function Navbar() {
 
           {/* Mobile Menu Toggle */}
           <button 
+            type="button"
+            aria-label={isMobileMenuOpen ? t('סגירת תפריט', 'Close menu') : t('פתיחת תפריט', 'Open menu')}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-navigation"
             className={cn(
-              "p-2 lg:hidden",
+              "min-h-11 min-w-11 p-2 lg:hidden",
               isScrolled ? "text-white" : "text-white"
             )}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -144,9 +149,11 @@ export function Navbar() {
       {/* Mobile Navigation */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
+          <motion.nav
+            id="mobile-navigation"
+            aria-label={t('ניווט ראשי', 'Main navigation')}
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: '100vh' }}
+            animate={{ opacity: 1, height: 'calc(100dvh - 60px)' }}
             exit={{ opacity: 0, height: 0 }}
             className="fixed inset-0 top-[60px] bg-brand-navy z-40 lg:hidden overflow-y-auto"
           >
@@ -156,9 +163,10 @@ export function Navbar() {
                   <li key={link.name} className="border-b border-white/5 pb-2">
                     <Link
                       to={link.path}
+                      aria-current={((link.scrollTarget === 'home' && location.pathname === '/') || (!link.scrollTarget && location.pathname === link.path)) ? 'page' : undefined}
                       onClick={(event) => handleNavClick(event, link)}
                       className={cn(
-                        "text-lg font-medium block",
+                        "block min-h-11 py-2 text-lg font-medium",
                         ((link.scrollTarget === 'home' && location.pathname === '/') ||
                           (!link.scrollTarget && location.pathname === link.path))
                           ? "text-brand-gold"
@@ -181,7 +189,7 @@ export function Navbar() {
                 </Button>
               </div>
             </div>
-          </motion.div>
+          </motion.nav>
         )}
       </AnimatePresence>
     </header>

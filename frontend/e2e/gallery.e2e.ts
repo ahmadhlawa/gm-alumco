@@ -174,13 +174,13 @@ test('empty category, single-photo viewer, RTL keys and touch navigation', async
   await gallery.getByRole('button', { name: /פתיחת תמונה/ }).click();
   const dialog = page.getByRole('dialog');
   await expect(dialog.getByRole('button')).toHaveCount(1);
-  await expect(dialog.getByRole('status')).toHaveText('1 / 1');
+  await expect(dialog.getByRole('status').filter({ hasText: /^\d+ \/ \d+$/ })).toHaveText('1 / 1');
   await page.keyboard.press('Escape');
   api.items.push(photo(2), photo(3));
   await page.reload({ waitUntil: 'domcontentloaded' });
   await gallery.getByRole('button', { name: /פתיחת תמונה 1/ }).click();
   await page.keyboard.press('ArrowLeft');
-  await expect(dialog.getByRole('status')).toHaveText('2 / 3');
+  await expect(dialog.getByRole('status').filter({ hasText: /^\d+ \/ \d+$/ })).toHaveText('2 / 3');
   await dialog.evaluate((element) => {
     const start = new Touch({
       identifier: 1,
@@ -201,7 +201,7 @@ test('empty category, single-photo viewer, RTL keys and touch navigation', async
       new TouchEvent('touchend', { changedTouches: [end], bubbles: true }),
     );
   });
-  await expect(dialog.getByRole('status')).toHaveText('3 / 3');
+  await expect(dialog.getByRole('status').filter({ hasText: /^\d+ \/ \d+$/ })).toHaveText('3 / 3');
 });
 
 test('public fetch retry and broken photo recovery', async ({ page }) => {
@@ -239,9 +239,9 @@ test('lightbox traps focus, navigates, locks scroll and restores opener', async 
   ).toBeFocused();
   await expect(page.locator('body')).toHaveCSS('overflow', 'hidden');
   await page.keyboard.press('ArrowRight');
-  await expect(dialog.getByRole('status')).toHaveText('2 / 3');
+  await expect(dialog.getByRole('status').filter({ hasText: /^\d+ \/ \d+$/ })).toHaveText('2 / 3');
   await page.keyboard.press('ArrowLeft');
-  await expect(dialog.getByRole('status')).toHaveText('1 / 3');
+  await expect(dialog.getByRole('status').filter({ hasText: /^\d+ \/ \d+$/ })).toHaveText('1 / 3');
   for (let i = 0; i < 5; i++) {
     await page.keyboard.press('Tab');
     expect(

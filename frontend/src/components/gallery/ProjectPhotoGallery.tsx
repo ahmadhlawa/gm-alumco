@@ -49,7 +49,7 @@ function PhotoImage({
           onError={() => setFailed(true)}
           className={
             viewer
-              ? 'max-h-[calc(100dvh-10rem)] max-w-full object-contain'
+              ? 'max-h-[calc(100dvh-12rem-env(safe-area-inset-top)-env(safe-area-inset-bottom))] max-w-full object-contain sm:max-h-[calc(100dvh-10rem)]'
               : 'h-full w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-105'
           }
         />
@@ -132,6 +132,7 @@ function PhotoViewer({
         }
       }}
       onTouchStart={(event) => {
+        if (event.touches.length !== 1) { touchStart.current = null; return; }
         const touch = event.touches[0];
         touchStart.current = { x: touch.clientX, y: touch.clientY };
       }}
@@ -147,14 +148,14 @@ function PhotoViewer({
         )
           navigate((dx < 0 ? 1 : -1) * (dir === 'rtl' ? -1 : 1));
       }}
-      className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none items-center justify-center overflow-hidden overscroll-none bg-black/95 px-4 py-20 text-white open:flex backdrop:bg-black/95 sm:px-20"
+      className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none items-center justify-center overflow-hidden overscroll-none bg-black/95 px-[max(env(safe-area-inset-left),env(safe-area-inset-right))] pt-[calc(5rem+env(safe-area-inset-top))] pb-[calc(6rem+env(safe-area-inset-bottom))] text-white open:flex backdrop:bg-black/95 sm:px-20 sm:py-20"
     >
       <button
         ref={closeRef}
         type="button"
         onClick={onClose}
         aria-label={t('סגירה', 'Close')}
-        className={`absolute end-4 top-4 z-10 ${CONTROL}`}
+        className={`absolute end-4 top-[calc(1rem+env(safe-area-inset-top))] z-10 sm:top-4 ${CONTROL}`}
       >
         <X className="h-6 w-6" />
       </button>
@@ -167,7 +168,7 @@ function PhotoViewer({
             type="button"
             aria-label={t('התמונה הקודמת', 'Previous photo')}
             onClick={() => navigate(-1)}
-            className={`absolute start-2 top-1/2 -translate-y-1/2 sm:start-5 ${CONTROL}`}
+            className={`absolute start-6 bottom-[calc(1.5rem+env(safe-area-inset-bottom))] sm:start-5 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 ${CONTROL}`}
           >
             <ChevronLeft className="h-6 w-6 rtl:rotate-180" />
           </button>
@@ -175,7 +176,7 @@ function PhotoViewer({
             type="button"
             aria-label={t('התמונה הבאה', 'Next photo')}
             onClick={() => navigate(1)}
-            className={`absolute end-2 top-1/2 -translate-y-1/2 sm:end-5 ${CONTROL}`}
+            className={`absolute end-6 bottom-[calc(1.5rem+env(safe-area-inset-bottom))] sm:end-5 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 ${CONTROL}`}
           >
             <ChevronRight className="h-6 w-6 rtl:rotate-180" />
           </button>
@@ -184,7 +185,7 @@ function PhotoViewer({
       <span
         role="status"
         aria-live="polite"
-        className="absolute bottom-6 text-sm text-white/80"
+        className="absolute bottom-[calc(2.25rem+env(safe-area-inset-bottom))] text-sm text-white/80 sm:bottom-6"
         dir="ltr"
       >
         {index + 1} / {photos.length}
@@ -238,7 +239,7 @@ export function ProjectPhotoGallery() {
 
   return (
     <section
-      className="bg-brand-navy py-20 text-white md:py-24"
+      className="bg-brand-navy py-12 text-white sm:py-16 md:py-24"
       aria-labelledby="project-photo-gallery"
     >
       <div className="container mx-auto px-4">
@@ -250,10 +251,11 @@ export function ProjectPhotoGallery() {
               'A visual collection of local and international projects.',
             )}
             centered
+            className="mb-6 max-sm:[&_h2]:text-2xl max-sm:[&_p]:text-sm max-sm:[&_p]:leading-6 sm:mb-12"
           />
         </div>
         <div
-          className="mb-10 flex flex-wrap items-center justify-center gap-3"
+          className="mb-6 grid grid-cols-3 items-center gap-2 sm:mb-10 sm:flex sm:flex-wrap sm:justify-center sm:gap-3"
           role="group"
           aria-label={t('סינון לפי מיקום', 'Filter by location')}
         >
@@ -266,7 +268,7 @@ export function ProjectPhotoGallery() {
                 setFilter(key);
                 setSelectedId(null);
               }}
-              className={`rounded-full px-5 py-2.5 text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold ${filter === key ? 'bg-brand-gold text-brand-navy' : 'border border-white/20 text-brand-silver hover:border-brand-gold hover:text-white'}`}
+              className={`min-h-11 whitespace-nowrap rounded-full px-1 py-2.5 text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold sm:px-5 lg:min-h-0 ${filter === key ? 'bg-brand-gold text-brand-navy' : 'border border-white/20 text-brand-silver hover:border-brand-gold hover:text-white'}`}
             >
               {projectFilterLabel(key, language)}
             </button>
@@ -276,7 +278,7 @@ export function ProjectPhotoGallery() {
           <div
             role="status"
             aria-label={t('טוען תמונות…', 'Loading photos…')}
-            className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+            className="grid grid-cols-2 gap-2.5 sm:gap-5 lg:grid-cols-3"
           >
             {[0, 1, 2].map((key) => (
               <div
@@ -308,7 +310,7 @@ export function ProjectPhotoGallery() {
               : t('אין תמונות בקטגוריה זו.', 'No photos in this category yet.')}
           </p>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:gap-6 lg:grid-cols-3">
             {visiblePhotos.map((photo, index) => (
               <button
                 key={photo.id}
