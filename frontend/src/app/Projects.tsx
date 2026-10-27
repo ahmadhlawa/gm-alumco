@@ -1,3 +1,4 @@
+import { ProjectPhotoGallery } from '@/components/gallery/ProjectPhotoGallery';
 import { PageHero } from '@/components/common/PageHero';
 import { SectionHeader } from '@/components/common/SectionHeader';
 import { CTASection } from '@/components/common/CTASection';
@@ -145,6 +146,7 @@ export function Projects() {
         </div>
       </section>
 
+      <ProjectPhotoGallery />
       <CTASection />
     </div>
   );
