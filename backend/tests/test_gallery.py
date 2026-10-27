@@ -327,5 +327,94 @@ def test_legacy_gallery_list_preserves_null_categories(client, db, auth_headers)
     db.add(image)
     db.commit()
     assert [item["id"] for item in client.get("/api/v1/gallery").json()] == [image.id]
-    response = client.get("/api/v1/admin/gallery", headers=auth_headers())
+    headers = auth_headers()
+    response = client.get("/api/v1/admin/gallery", headers=headers)
     assert [item["id"] for item in response.json()] == [image.id]
+    assert client.get(f"/api/v1/admin/gallery/{image.id}", headers=headers).status_code == 200
+    updated = client.put(f"/api/v1/admin/gallery/{image.id}", headers=headers,
+                         json={"title_en": "Updated", "category": None})
+    assert updated.status_code == 200
+    assert updated.json()["category"] is None
+    assert updated.json()["title_en"] == "Updated"
+    assert client.delete(f"/api/v1/admin/gallery/{image.id}", headers=headers).status_code == 204
+    assert client.get("/api/v1/gallery").json() == []
+
+
+@pytest.fixture
+def collated_gallery_db(db):
+    """Exercise namespace comparisons with case/accent/space-insensitive SQL."""
+    import unicodedata
+    from sqlalchemy import MetaData, String
+
+    def comparison_key(value):
+        return "".join(char for char in unicodedata.normalize("NFKD", value)
+                       if not unicodedata.combining(char)).casefold().rstrip()
+
+    def compare(left, right):
+        left, right = comparison_key(left), comparison_key(right)
+        return (left > right) - (left < right)
+
+    connection = db.connection()
+    connection.connection.driver_connection.create_collation("gallery_ci", compare)
+    # Only replace this fixture's empty, in-memory table; leave ORM metadata intact.
+    table = GalleryImage.__table__.to_metadata(MetaData())
+    table.c.category.type = String(100, collation="gallery_ci")
+    GalleryImage.__table__.drop(connection)
+    table.create(connection)
+    return db
+
+
+@pytest.mark.parametrize("legacy_category", [
+    "project_photo_local", "Project_Photo_International", "PRÓJECT_PHOTO_LOCAL",
+])
+def test_collated_legacy_categories_cannot_enter_project_photo_namespace(
+    collated_gallery_db, client, auth_headers, legacy_category,
+):
+    from sqlalchemy import select
+
+    db = collated_gallery_db
+    headers = auth_headers()
+    legacy = client.post("/api/v1/admin/gallery", headers=headers,
+                         json=gallery_payload(category=legacy_category, image_url=PHOTO_URL))
+    assert legacy.status_code == 201
+    legacy_id = legacy.json()["id"]
+    # Prove the database collation regards this legacy spelling as equal to a
+    # reserved tag. The API must still enforce an exact namespace boundary.
+    canonical = "PROJECT_PHOTO_INTERNATIONAL" if "international" in legacy_category.lower() else "PROJECT_PHOTO_LOCAL"
+    assert db.scalar(select(GalleryImage.id).where(GalleryImage.category == canonical)) == legacy_id
+    assert client.get("/api/v1/gallery/project-photos").json() == []
+    photo = client.post("/api/v1/admin/gallery/project-photos", headers=headers,
+                        json={"image_url": PHOTO_URL, "category": "LOCAL"})
+    assert photo.status_code == 201
+    photo_id = photo.json()["id"]
+    assert photo_id != legacy_id
+    assert photo.json()["category"] == "LOCAL"
+    assert photo.json()["title_en"] is None
+    assert [item["id"] for item in client.get("/api/v1/gallery/project-photos").json()] == [photo_id]
+    assert [item["id"] for item in client.get("/api/v1/gallery").json()] == [legacy_id]
+    assert [item["id"] for item in client.get("/api/v1/admin/gallery", headers=headers).json()] == [legacy_id]
+    assert client.get(f"/api/v1/admin/gallery/{photo_id}", headers=headers).status_code == 404
+    assert client.put(f"/api/v1/admin/gallery/{photo_id}", headers=headers,
+                      json={"category": "facades"}).status_code == 404
+    assert client.delete(f"/api/v1/admin/gallery/{photo_id}", headers=headers).status_code == 404
+    # Updating an ordinary record to another collation-equivalent spelling must
+    # not move it into the photo namespace either; canonical reserved tags fail.
+    assert client.put(f"/api/v1/admin/gallery/{legacy_id}", headers=headers,
+                      json={"category": legacy_category.title()}).status_code == 200
+    assert client.put(f"/api/v1/admin/gallery/{legacy_id}", headers=headers,
+                      json={"category": canonical}).status_code == 422
+    assert client.delete(f"/api/v1/admin/gallery/{legacy_id}", headers=headers).status_code == 204
+    assert client.get("/api/v1/gallery").json() == []
+
+
+def test_collated_existing_padded_category_remains_legacy(collated_gallery_db, client, auth_headers):
+    # Existing rows can contain padding even though incoming text is stripped.
+    db = collated_gallery_db
+    image = GalleryImage(**gallery_payload(category="PROJECT_PHOTO_LOCAL "))
+    db.add(image)
+    db.commit()
+    headers = auth_headers()
+    assert client.get("/api/v1/gallery/project-photos").json() == []
+    assert [item["id"] for item in client.get("/api/v1/gallery").json()] == [image.id]
+    assert client.get(f"/api/v1/admin/gallery/{image.id}", headers=headers).status_code == 200
+    assert client.delete(f"/api/v1/admin/gallery/{image.id}", headers=headers).status_code == 204

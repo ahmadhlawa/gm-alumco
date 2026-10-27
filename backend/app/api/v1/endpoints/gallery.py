@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
-from sqlalchemy import or_, select
+from sqlalchemy import LargeBinary, cast, or_, select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import require_admin
@@ -26,8 +26,17 @@ admin_router = APIRouter()
 PHOTO_CATEGORIES = {key: f"PROJECT_PHOTO_{key}" for key in ("LOCAL", "INTERNATIONAL")}
 
 
+def is_project_photo_category():
+    # Provenance tags require exact bytes, matching the Python write guard.
+    # MySQL's inherited collation may ignore case, accents or trailing spaces;
+    # those legacy spellings must never be admitted to the photo-only API.
+    return cast(GalleryImage.category, LargeBinary).in_(
+        tuple(value.encode("ascii") for value in PHOTO_CATEGORIES.values())
+    )
+
+
 def photo_statement():
-    return select(GalleryImage).where(GalleryImage.category.in_(PHOTO_CATEGORIES.values()))
+    return select(GalleryImage).where(is_project_photo_category())
 
 
 def photo_read(image: GalleryImage) -> GalleryRead:
@@ -41,7 +50,7 @@ def legacy_gallery_statement():
     # the new project-photo API. SQL NOT IN alone also excludes NULL categories.
     return select(GalleryImage).where(or_(
         GalleryImage.category.is_(None),
-        GalleryImage.category.not_in(tuple(PHOTO_CATEGORIES.values())),
+        ~is_project_photo_category(),
     ))
 
 
