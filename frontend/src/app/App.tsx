@@ -17,6 +17,7 @@ import { RequireAuth } from '@/components/admin/RequireAuth';
 import { RequireSuperAdmin } from '@/components/admin/RequireSuperAdmin';
 import { AdminAuthProvider } from '@/components/admin/AdminAuthProvider';
 import { Dashboard } from '@/app/admin/Dashboard';
+import { AdminGallery } from '@/app/admin/AdminGallery';
 import { AdminProjects } from '@/app/admin/AdminProjects';
 import { AdminProductionProjects } from '@/app/admin/AdminProductionProjects';
 import { AdminAdmins } from '@/app/admin/AdminAdmins';
@@ -103,6 +104,7 @@ function AppContent() {
           <Route path="/admin" element={<AdminLanguageProvider><RequireAuth><AdminAuthProvider><AdminLayout /></AdminAuthProvider></RequireAuth></AdminLanguageProvider>}>
             <Route index element={<Dashboard />} />
             <Route path="projects" element={<AdminProjects />} />
+            <Route path="gallery" element={<AdminGallery />} />
             <Route path="projects/new" element={<ProjectFormPage />} />
             <Route path="projects/:id/edit" element={<ProjectFormPage />} />
             <Route path="production-projects" element={<AdminProductionProjects />} />
