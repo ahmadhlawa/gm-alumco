@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion, type Variants } from 'motion/react';
-import { Building2, Calendar, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
+import { Calendar, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
+import { Button } from '@/components/common/Button';
 import type { Project } from '@/types';
 import { useLanguage } from '@/i18n';
 import { projectCategoryLabel } from '@/lib/projectCategories';
@@ -79,6 +80,32 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
   const current = showcase[active] ?? showcase[0];
   const chips = current?.tags && current.tags.length > 0 ? current.tags : fallbackChips;
   const description = current ? current.shortDescription || current.description || '' : '';
+  const allProjectsLink = (
+    <Button href="/projects" variant="secondary">
+      {t('כל הפרויקטים', 'View All Projects')}
+    </Button>
+  );
+
+  if (!current) {
+    return (
+      <section
+        id="projects"
+        dir={dir}
+        className="scroll-mt-24 border-y border-white/5 bg-brand-navy py-12 md:py-16"
+      >
+        <div className="container mx-auto max-w-2xl space-y-5 px-4 text-center">
+          <h2 className="text-2xl font-bold text-white md:text-3xl">
+            {t('הפרויקטים שלנו', 'Our projects')}
+          </h2>
+          <p className="leading-7 text-brand-silver">
+            {t('גלו את העבודות שלנו בארץ ובחו״ל בגלריית התמונות.',
+              'Explore our local and international work in the photo gallery.')}
+          </p>
+          {allProjectsLink}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -122,16 +149,6 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
           <p className="mt-4 text-lg leading-8 text-brand-silver">{subtitle}</p>
         </div>
 
-        {total === 0 || !current ? (
-          <div className="mx-auto flex min-h-[300px] max-w-xl flex-col items-center justify-center border border-white/10 bg-white/[0.03] px-6 py-16 text-center">
-            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-brand-gold/30 bg-brand-gold/10">
-              <Building2 className="h-7 w-7 text-brand-gold" />
-            </div>
-            <p className="text-xl font-bold text-white">
-              {t('הפרויקטים שלנו יתווספו בקרוב', 'Our projects will be added soon')}
-            </p>
-          </div>
-        ) : (
           <div
             className="grid items-center gap-8 lg:grid-cols-[1.85fr_1fr] lg:gap-12 xl:gap-16"
             onMouseEnter={() => setIsPaused(true)}
@@ -285,7 +302,7 @@ export function FeaturedProjectsShowcase({ projects }: FeaturedProjectsShowcaseP
               </AnimatePresence>
             </div>
           </div>
-        )}
+        <div className="mt-10 text-center">{allProjectsLink}</div>
       </div>
     </section>
   );

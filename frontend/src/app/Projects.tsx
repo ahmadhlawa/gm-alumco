@@ -1,3 +1,4 @@
+import { ProjectPhotoGallery } from '@/components/gallery/ProjectPhotoGallery';
 import { PageHero } from '@/components/common/PageHero';
 import { SectionHeader } from '@/components/common/SectionHeader';
 import { CTASection } from '@/components/common/CTASection';
@@ -25,12 +26,14 @@ export function Projects() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    let active = true;
     setLoading(true);
     setError(false);
     getProjects(language)
-      .then(data => setProjects(data))
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
+      .then(data => { if (active) setProjects(data); })
+      .catch(() => { if (active) setError(true); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, [language]);
 
   // Build the chip list from the categories actually present in the data,
@@ -56,7 +59,7 @@ export function Projects() {
         image="/images/backgrounds/tas-bg-projects.webp"
       />
 
-      <section className="relative isolate overflow-hidden py-24">
+      {(loading || error || projects.length > 0) && <section className="relative isolate overflow-hidden py-24">
         {/* Subtle architectural backdrop — surface-washed for text readability */}
         <img
           aria-hidden
@@ -143,8 +146,9 @@ export function Projects() {
             )}
           </div>
         </div>
-      </section>
+      </section>}
 
+      <ProjectPhotoGallery />
       <CTASection />
     </div>
   );

@@ -5,6 +5,16 @@ import { LanguageProvider } from '@/i18n';
 import { Navbar } from './Navbar';
 
 describe('Navbar language switcher', () => {
+  it('links Projects directly to its active route', () => {
+    const html = renderToStaticMarkup(
+      <MemoryRouter initialEntries={['/projects']}>
+        <LanguageProvider><Navbar /></LanguageProvider>
+      </MemoryRouter>,
+    );
+    const projectsLink = html.match(/<a[^>]*href="\/projects"[^>]*>/)?.[0];
+    expect(projectsLink).toContain('aria-current="page"');
+  });
+
   it('offers English from the default Hebrew public language and never offers Arabic', () => {
     const html = renderToStaticMarkup(
       <MemoryRouter>

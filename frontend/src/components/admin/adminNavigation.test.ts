@@ -9,6 +9,7 @@ describe('admin navigation', () => {
     expect(paths).toEqual([
       '/admin',
       '/admin/projects',
+      '/admin/gallery',
       '/admin/production-projects',
       '/admin/services',
       '/admin/partners',
